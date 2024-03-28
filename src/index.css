@@ -7,7 +7,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+
+.layout {
+  /* 여기에 Layout 컴포넌트에 대한 스타일을 정의합니다. */
+  /* 예시로 배경색과 패딩을 지정합니다. */
+  background-color: #f0f0f0;
+  padding: 20px;
 }
