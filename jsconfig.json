@@ -2,18 +2,10 @@
   "compilerOptions": {
     "baseUrl": "./src"
   },
-  "include": [
-    "src"
-  ],
+  "include": ["src", "src/db"],
   "paths": {
-    "pages/*": [
-      "pages/*"
-    ],
-    "components/*": [
-      "components/*"
-    ],
-    "db/*": [
-      "db/*"
-    ]
+    "pages/*": ["pages/*"],
+    "components/*": ["components/*"],
+    "db/*":["db/*"]
   }
 }
