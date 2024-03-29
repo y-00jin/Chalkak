@@ -1,16 +1,28 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* 오뮤 다예쁨체 */
+@font-face {
+  font-family: 'omyu_pretty';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-01@1.0/omyu_pretty.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
 }
 
-
 .layout {
-  /* 여기에 Layout 컴포넌트에 대한 스타일을 정의합니다. */
-  /* 예시로 배경색과 패딩을 지정합니다. */
-  background-color: #f0f0f0;
-  padding: 20px;
+  @apply h-[85vh];
+  font-family: 'omyu_pretty', sans-serif; /* 여기에 원하는 폰트 이름을 넣어주세요 */
+}
+
+/* 구름 버튼 */
+.cloud-button{
+  @apply bg-transparent border-none  text-base cursor-pointer h-[150px] pl-2 text-[#96DBF4] mx-auto my-0 w-[40%];
+
+  /* 구름 모양 배경 이미지 */
+  background-image: url('../public/images/cloud.png');
+  background-size: contain; /* 이미지가 버튼의 크기에 맞게 들어가도록 설정합니다. */
+  background-repeat: no-repeat; /* 이미지 반복 없앱니다. */
+  background-position: center; /* 이미지를 가운데로 정렬합니다. */
 }

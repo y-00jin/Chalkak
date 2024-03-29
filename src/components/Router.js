@@ -1,14 +1,16 @@
 import { Route, Routes, Navigate } from 'react-router';
-import TestIndex from 'pages/test/Test';
-import TestNew from 'pages/test/TestNew';
+import Login from 'pages/memory/Login';
+import Connection from 'pages/memory/Connection';
+import Write from 'pages/memory/Write';
 
 export default function Router() {
     return (
         <>
             {/** 경로 설정 */}
             <Routes>
-                <Route path="/" element={<TestIndex />} />   {/** 루트(/) 경로를 라우터로 잡아줌 */}
-                <Route path="/test/new" element={<TestNew />} />
+                <Route path="/" element={<Login />} />
+                <Route path="/memory/write" element={<Write />} />
+                <Route path="/memory/connection" element={<Connection />} />
 
                 {/** 설정된 경로를 제외한 나머지 경로로 접속한 경우 루트 페이지로 이동 */}
                 <Route path="*" element={<Navigate replace to="/" />} />
