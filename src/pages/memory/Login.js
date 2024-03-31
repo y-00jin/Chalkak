@@ -1,7 +1,7 @@
 import { RiKakaoTalkFill } from "react-icons/ri";
 import { useNavigate } from 'react-router-dom'; 
 
-export default function Login() {
+export default function MemoryLogin() {
     const navigate = useNavigate();
     return (
        
@@ -38,7 +38,7 @@ export default function Login() {
                     <button
                         type="button"
                         className="text-black flex gap-2 bg-[#fef01b] hover:bg-[#fef01b]/90 font-medium rounded-full w-full px-5 py-4 text-center items-center justify-center"
-                        onClick={() => navigate(`/memory/write`)}
+                        onClick={() => navigate(`/memory/new`)}
                     >
                         <RiKakaoTalkFill className="w-6 h-6 " />
                         Sign in with Kakao

@@ -1,7 +1,7 @@
 import MemoryHeader from "components/MemoryHeader";
 import MemoryWrite from "components/MemoryWrite";
 import { useNavigate } from 'react-router-dom';
-export default function Write() {
+export default function MemoryNew() {
 
     const navigate = useNavigate();
 
