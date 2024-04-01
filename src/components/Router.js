@@ -1,7 +1,7 @@
 import MapHome from 'pages/map';
-// import MemoryConnection from 'pages/memory/connection';
+import MemoryConnection from 'pages/memory/connection';
 import MemoryLogin from 'pages/memory/login';
-// import MemoryNew from 'pages/memory/new';
+import MemoryNew from 'pages/memory/new';
 import { Route, Routes, Navigate } from 'react-router';
 export default function Router() {
     return (
@@ -11,8 +11,8 @@ export default function Router() {
 
                 {/** 추억 */}
                 <Route path="/" element={<MemoryLogin />} />
-                {/* <Route path="/memory/new" element={<MemoryNew />} />
-                <Route path="/memory/connection" element={<MemoryConnection />} /> */}
+                <Route path="/memory/new" element={<MemoryNew />} />
+                <Route path="/memory/connection" element={<MemoryConnection />} />
 
                 {/** 지도서비스 */}
                 <Route path="/map" element={<MapHome/>} />
