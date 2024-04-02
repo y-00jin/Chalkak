@@ -6,7 +6,7 @@ export default function MemoryWrite( {title, buttonText, onSubmit}) {
 
     return(
         <div >
-            <div className="mx-auto w-full max-w-sm text-center flex flex-col gap-5 ">
+            <div className="mx-auto text-center flex flex-col gap-5 ">
                 <div className="text-center text-2xl font-bold">
                     { title }
                 </div>

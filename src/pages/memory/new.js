@@ -7,8 +7,7 @@ export default function MemoryNew() {
 
     return (
         <>
-            <MemoryHeader onSubmit={() => {navigate(`/`)}} />
-            <div className=" h-full flex flex-col justify-center">
+            <div className="h-full flex flex-col justify-center">
 
 
                 <MemoryWrite
@@ -17,15 +16,17 @@ export default function MemoryNew() {
                     onSubmit={() => { navigate(`/map`) }}
                 />
 
-                <div className="w-full max-w-sm mx-auto flex justify-center ">
-                    <button className="mx-auto mt-5 text-gray-400"
-                        onClick={() => { navigate(`/memory/connection`) }}
+                <div className="mx-auto max-w-sm flex flex-col justify-center mt-5 gap-4 text-gray-500">
+                    <button onClick={() => { navigate(`/memory/connection`) }}
                     >상대방 코드로 연결하기</button>
+
+                    <button onClick={() => { navigate(`/`) }}
+                    >로그아웃</button>
                 </div>
 
-
-
             </div>
+
+
         </>
     )
 }

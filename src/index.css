@@ -12,7 +12,7 @@
 }
 
 .layout {
-  @apply h-[85vh];
+  @apply h-[100vh];
   font-family: 'omyu_pretty', sans-serif; /* 여기에 원하는 폰트 이름을 넣어주세요 */
 }
 
@@ -26,3 +26,42 @@
   background-repeat: no-repeat; /* 이미지 반복 없앱니다. */
   background-position: center; /* 이미지를 가운데로 정렬합니다. */
 }
+
+
+/* ## MAP ## */
+
+/* 모바일 화면 */
+@media only screen and (max-width: 600px) {
+  .map-container {
+    @apply relative w-full h-screen;
+  }
+
+  .menu-tab {
+    @apply fixed top-0 left-0 w-full h-12 bg-gray-900 text-white text-center flex justify-center items-center z-50;
+  }
+
+  /* 사이드 바 토글 버튼 */
+  .mobile-menu-btn{
+    @apply rounded-full  bg-[#96DBF4] text-white cursor-pointer z-20 shadow-lg text-3xl font-bold size-14 flex items-center justify-center;
+  }
+}
+
+/* 데스크톱 화면 */
+@media only screen and (min-width: 601px) {
+  .map-container {
+    @apply flex flex-row h-screen;
+  }
+
+  /* 사이드 바 */
+  .sidebar {
+    @apply absolute top-0 left-0 h-full bg-white w-[380px] border-none z-10 shadow-lg ;
+    /* transition-all duration-200 */
+  }
+
+  /* 사이드 바 토글 버튼 */
+  .sidebar-toggle{
+    @apply absolute top-[50%] w-6 h-14 p-2 bg-white rounded-e-md border-none text-gray-800 cursor-pointer z-20 shadow-lg;
+  }
+
+}
+
