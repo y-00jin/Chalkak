@@ -34,32 +34,6 @@ export default function Map({ setMap }) {
         
     }, [setMap]);
 
-
-       // 컴포넌트 마운트 시 실행
-    //    useEffect(() => {
-    //     const script = document.createElement('script');
-    //     script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.REACT_APP_KAKAO_API_KEY}&autoload=false`;
-    //     script.async = true;
-    //     // script.onload = onLoadKakaoMap;
-    //     document.head.appendChild(script);
-
-    //     const onLoadKakaoMap = () => {
-    //         window.kakao.maps.load(() => {
-    //           const mapContainer = document.getElementById('map');
-    //           const mapOption = {
-    //             center: new window.kakao.maps.LatLng(DEFAULT_LAT, DEFAULT_LNG), // 지도의 중심좌표
-    //             level: 3, // 지도의 확대 레벨
-    //           };
-    //           const map = new window.kakao.maps.Map(mapContainer, mapOption);
-    //           setMap(map);
-    //         });
-    //       };
-        
-    //       script.addEventListener('load', onLoadKakaoMap);
-
-    // }, [setMap]);
-
-
     return (
         <>
             <div id="map" className="w-full h-screen"></div>

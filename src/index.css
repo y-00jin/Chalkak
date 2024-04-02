@@ -11,10 +11,84 @@
   font-style: normal;
 }
 
-.layout {
-  @apply h-[100vh];
+/* ### components > Layout */
+.layout-box {
+  @apply h-[100vh] w-full;
   font-family: 'omyu_pretty', sans-serif; /* 여기에 원하는 폰트 이름을 넣어주세요 */
 }
+/* components > Layout ### */
+
+/* ### pages > memory > login */
+/* 로그인 박스 */
+.login-box{
+  @apply flex flex-col justify-center items-center px-6 my-auto h-full;
+}
+/* 로그인 로고 박스 */
+.login-logo-box{
+  /* @apply  mx-auto w-full max-w-sm text-center; */
+}
+/* 로그인 로고 이미지 */
+.login-logo-img{
+  @apply flex justify-center;
+}
+/* 로그인 로고 텍스트 */
+.login-logo-text-bold{
+  @apply text-center mt-6 text-2xl font-bold text-gray-600;
+}
+/* 로그인 로고 텍스트 */
+.login-logo-text{
+  @apply mt-2 text-center text-sm text-gray-600;
+}
+/* 로그인 버튼 박스 */
+.login-btn-box{
+  @apply mt-14 mx-auto w-[90%] max-w-sm flex flex-col gap-3;
+}
+/* 로그인 버튼 */
+.login-btn{
+  @apply text-white flex gap-2 font-medium rounded-full w-full px-5 py-4 text-center items-center justify-center;
+}
+/* kakao 버튼 */
+.login-btn-kakao{
+  @apply text-black bg-[#fef01b] hover:bg-[#fef01b]/90;
+}
+/* naver 버튼 */
+.login-btn-naver{
+  @apply bg-[#2db400] hover:bg-[#2db400]/90;
+}
+/* google 버튼 */
+.login-btn-google{
+  @apply bg-[#4285F4] hover:bg-[#4285F4]/90;
+}
+/* pages > memory > login ### */
+
+
+/* ### components > MemoryWrite */
+.memory-write-box{
+  @apply mx-auto text-center flex flex-col gap-5;
+}
+.memory-write-title{
+  @apply text-2xl font-bold;
+}
+.memory-write-input-box{
+  @apply w-[80%] max-w-sm  mx-auto border-b-2 border-gray-600 hover:border-[#96DBF4] py-2;
+}
+.memory-write-input{
+  @apply appearance-none bg-transparent border-none w-full text-gray-700 py-1 px-2 focus:outline-none
+}
+.memory-write-btn-box{
+  @apply mt-24 mx-auto w-[90%] max-w-sm flex flex-col gap-3
+}
+/* components > MemoryWrite ### */
+
+/* ### pages > memory > new & connection */
+.new-box, .connection-box{
+  @apply h-full flex flex-col justify-center;
+}
+.new-btn-box, .connection-btn-box{
+ @apply mx-auto max-w-sm flex flex-col justify-center mt-5 gap-4 text-gray-500;
+}
+/* pages > memory > new & connection ### */
+
 
 /* 구름 버튼 */
 .cloud-button{
@@ -28,7 +102,7 @@
 }
 
 
-/* ## MAP ## */
+/* ### pages > map > index */
 
 /* 모바일 화면 */
 @media only screen and (max-width: 600px) {
@@ -36,13 +110,15 @@
     @apply relative w-full h-screen;
   }
 
-  .menu-tab {
-    @apply fixed top-0 left-0 w-full h-12 bg-gray-900 text-white text-center flex justify-center items-center z-50;
+  .map-mobile-box {
+    @apply absolute top-0 left-0 z-10 flex w-full p-4;
   }
 
-  /* 사이드 바 토글 버튼 */
-  .mobile-menu-btn{
+  .map-mobile-menu-btn{
     @apply rounded-full  bg-[#96DBF4] text-white cursor-pointer z-20 shadow-lg text-3xl font-bold size-14 flex items-center justify-center;
+  }
+  .map-mobile-menu-input{
+    @apply flex-grow ml-2 rounded-full px-5 py-1 border border-gray-300 focus:outline-none focus:border-[#96DBF4] shadow-lg;
   }
 }
 
@@ -53,13 +129,13 @@
   }
 
   /* 사이드 바 */
-  .sidebar {
+  .map-sidebar {
     @apply absolute top-0 left-0 h-full bg-white w-[380px] border-none z-10 shadow-lg ;
     /* transition-all duration-200 */
   }
 
   /* 사이드 바 토글 버튼 */
-  .sidebar-toggle{
+  .map-sidebar-toggle{
     @apply absolute top-[50%] w-6 h-14 p-2 bg-white rounded-e-md border-none text-gray-800 cursor-pointer z-20 shadow-lg;
   }
 

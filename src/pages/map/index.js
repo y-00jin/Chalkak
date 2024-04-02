@@ -34,10 +34,10 @@ export default function MapHome() {
       {/* PC 환경 - 사이드바와 지도 */}
       {!isMobile && (
         <>
-          <div className={`sidebar ${!isSidebarOpen ? 'hidden' : ''}`}>
+          <div className={`map-sidebar ${!isSidebarOpen ? 'hidden' : ''}`}>
             <h2>Sidebar</h2>
           </div>
-          <button className={`sidebar-toggle ${isSidebarOpen ? 'left-[380px]' : 'left-0'}`} onClick={toggleSidebar}>
+          <button className={`map-sidebar-toggle ${isSidebarOpen ? 'left-[380px]' : 'left-0'}`} onClick={toggleSidebar}>
             {isSidebarOpen ? '<' : '>'}
           </button>
         </>
@@ -45,16 +45,16 @@ export default function MapHome() {
 
       {/* 모바일 환경 - 버튼을 클릭하면 사이드바가 전체 화면에 나타남 */}
       {isMobile && (
-        <div className='absolute top-0 left-0 z-10 flex w-full p-4'>
+        <div className='map-mobile-box'>
           {/* <button className="mobile-sidebar-toggle " onClick={toggleSidebar}>
             {isSidebarOpen ? <IoIosMenu/> : 'close'}
           </button> */}
 
-          <button className="mobile-menu-btn " onClick={() => navigate(`/mypage`)}>
+          <button className="map-mobile-menu-btn " onClick={() => navigate(`/mypage`)}>
             <IoIosMenu />
           </button>
 
-          <input type="text" placeholder="장소 검색" className="flex-grow ml-2 rounded-full px-5 py-1 border border-gray-300 focus:outline-none focus:border-[#96DBF4] shadow-lg" />
+          <input type="text" placeholder="장소 검색" className="map-mobile-menu-input " />
           
         </div>
       )}
