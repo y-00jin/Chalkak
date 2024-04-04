@@ -130,7 +130,7 @@
 
   /* 사이드 바 */
   .map-sidebar {
-    @apply absolute top-0 left-0 h-full bg-white w-[380px] border-none z-10 shadow-lg ;
+    @apply absolute top-0 p-5 left-20 h-full bg-white w-[380px] border-none z-10 shadow-lg ;
     /* transition-all duration-200 */
   }
 

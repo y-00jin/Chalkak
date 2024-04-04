@@ -1,17 +1,14 @@
 import Map from 'components/Map';
+import Sidebar from 'components/Sidebar';
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom'; 
-
-import { IoIosMenu } from "react-icons/io";
-
+import { GoStar } from "react-icons/go";
+import { TfiPencilAlt } from "react-icons/tfi";
 
 
 export default function MapHome() {
-  const navigate = useNavigate();
-  
   const [map, setMap] = useState(null);
+
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 600);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true); // 기본값은 사이드바가 열린 상태로 설정
 
   useEffect(() => {
     const handleResize = () => {
@@ -23,42 +20,24 @@ export default function MapHome() {
 
   }, []);
 
-  // 사이드바 펼침/접힘 함수
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
-
   return (
     <div className="map-container">
 
-      {/* PC 환경 - 사이드바와 지도 */}
-      {!isMobile && (
-        <>
-          <div className={`map-sidebar ${!isSidebarOpen ? 'hidden' : ''}`}>
-            <h2>Sidebar</h2>
-          </div>
-          <button className={`map-sidebar-toggle ${isSidebarOpen ? 'left-[380px]' : 'left-0'}`} onClick={toggleSidebar}>
-            {isSidebarOpen ? '<' : '>'}
-          </button>
-        </>
-      )}
 
-      {/* 모바일 환경 - 버튼을 클릭하면 사이드바가 전체 화면에 나타남 */}
-      {isMobile && (
-        <div className='map-mobile-box'>
-          {/* <button className="mobile-sidebar-toggle " onClick={toggleSidebar}>
-            {isSidebarOpen ? <IoIosMenu/> : 'close'}
-          </button> */}
+      {/* 사이드바 및 메뉴바 */}
+      <Sidebar isMobile={isMobile} />
 
-          <button className="map-mobile-menu-btn " onClick={() => navigate(`/mypage`)}>
-            <IoIosMenu />
-          </button>
+      {/* 지도서비스 기능 버튼 */}
+      <div className={`absolute right-4 ${isMobile ? 'top-24' : 'top-4'} z-10 flex flex-col gap-4`}>
+        <button className='rounded-full bg-white text-black cursor-pointer p-2 z-20 shadow-lg text-3xl font-bold size-14 flex items-center justify-center'>
+          <GoStar />
+        </button>
+        <button className='rounded-full bg-white text-black cursor-pointer p-4 z-20 shadow-lg text-3xl  size-14 flex items-center justify-center'>
+          <TfiPencilAlt />
+        </button>
+      </div>
 
-          <input type="text" placeholder="장소 검색" className="map-mobile-menu-input " />
-          
-        </div>
-      )}
-
+      {/* 지도 */}
       <Map setMap={setMap} />
     </div>
   );
