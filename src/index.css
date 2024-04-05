@@ -120,6 +120,27 @@
   .map-mobile-menu-input{
     @apply flex-grow ml-2 rounded-full px-5 py-1 border border-gray-300 focus:outline-none focus:border-[#96DBF4] shadow-lg;
   }
+
+  /* 기존 PC 사이드바 제거 */
+  .map-sidebar-box{
+    @apply hidden;
+  }
+
+  .map-mobile-menu-box{
+    @apply z-30 absolute w-[50%] right-0  h-screen bg-white p-5;
+  }
+
+  .map-mobile-menu-list{
+    @apply gap-4 flex flex-col;
+  }
+
+  .map-mobile-menu-item{
+    @apply flex items-center gap-2 cursor-pointer text-xl;
+  }
+
+  .map-mobile-menu-box-bg{
+    @apply z-30 absolute w-[50%] left-0 h-screen bg-gray-950 opacity-50;
+  }
 }
 
 /* 데스크톱 화면 */
@@ -129,14 +150,18 @@
   }
 
   /* 사이드 바 */
-  .map-sidebar {
+  .map-sidebar-content {
     @apply absolute top-0 p-5 left-20 h-full bg-white w-[380px] border-none z-10 shadow-lg ;
     /* transition-all duration-200 */
   }
 
   /* 사이드 바 토글 버튼 */
-  .map-sidebar-toggle{
+  .map-sidebar-content-toggle{
     @apply absolute top-[50%] w-6 h-14 p-2 bg-white rounded-e-md border-none text-gray-800 cursor-pointer z-20 shadow-lg;
+  }
+
+  .map-mobile-menu-box, .map-mobile-box{
+    @apply hidden;
   }
 
 }
