@@ -7,7 +7,7 @@ import { CiSettings } from "react-icons/ci";
 import { HiUserCircle } from "react-icons/hi2";
 import { BiMenu } from "react-icons/bi";
 import { AiOutlineClose } from "react-icons/ai";
-
+import { FiMapPin } from "react-icons/fi";
 
 
 export default function Sidebar({ isMobile }) {
@@ -33,7 +33,7 @@ export default function Sidebar({ isMobile }) {
 
                         <div className='map-sidebar-item map-sidebar-item-active flex flex-col bg-[#96DBF4]  cursor-pointer text-white size-20 items-center justify-center'>
                             <button>
-                                <GoStar className='size-6' />
+                                <FiMapPin className='size-6' />
                             </button>
                             지도
                         </div>
@@ -70,7 +70,12 @@ export default function Sidebar({ isMobile }) {
 
                     <div className={`map-sidebar-content ${!isSidebarOpen ? 'hidden' : ''}`}>
 
-                        <h2>Sidebar</h2>
+                        <input type="text" placeholder="장소 검색" className="flex-grow rounded-full px-5 py-3 w-full border border-gray-300 focus:outline-none focus:border-[#96DBF4] shadow-lg" />
+                        
+                        <div>
+                            <p className='text-gray-400 my-5 px-3'>검색된 장소 정보가 없습니다.</p>
+                        </div>
+                        
                     </div>
                     <button className={`map-sidebar-content-toggle ${isSidebarOpen ? 'left-[460px]' : 'left-20'}`} onClick={toggleSidebar}>
                         {isSidebarOpen ? '<' : '>'}
@@ -111,7 +116,7 @@ export default function Sidebar({ isMobile }) {
 
                     <div className="map-mobile-menu-list">
                         <Link to="/" className="map-mobile-menu-item  ">
-                            <GoStar />
+                            <FiMapPin />
                             지도
                         </Link>
                         <Link to="/" className="map-mobile-menu-item  ">
