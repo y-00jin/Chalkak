@@ -9,7 +9,6 @@ import { FiMapPin } from "react-icons/fi";
 import { SiMaplibre } from "react-icons/si";
 import { Scrollbars } from 'react-custom-scrollbars';
 import MapSearch from './MapSearch';
-import MapSave from './MapSave';
 import MemoryChange from './MemoryChange';
 
 export default function Sidebar({ isMobile }) {
@@ -112,7 +111,8 @@ export default function Sidebar({ isMobile }) {
                             추억 정보
                         </div>
 
-                        <div className={`map-sidebar-item ${activeMenu === 'memoryChange' ? 'map-sidebar-item-active' : ''}  flex flex-col cursor-pointer size-20 items-center justify-center`}>
+                        <div className={`map-sidebar-item ${activeMenu === 'memoryChange' ? 'map-sidebar-item-active' : ''}  flex flex-col cursor-pointer size-20 items-center justify-center`}
+                        onClick={() => handleMenuClick('memoryChange')}>
                             <button>
                                 <CiSettings className='size-7' />
                             </button>
@@ -130,7 +130,7 @@ export default function Sidebar({ isMobile }) {
 
                     <div className={`map-sidebar-content ${!isSidebarOpen ? 'hidden' : ''}`}>
                         {activeMenu === 'mapSearch' && <MapSearch datas={datas} isMobile={false}/>}
-                        {activeMenu === 'mapSave' && <MapSave />}
+                        {activeMenu === 'mapSave' && <div>추억저장</div>}
                         {activeMenu === 'memoryInfo' && <div>추억정보</div>}
                         {activeMenu === 'memoryChange' && <MemoryChange/>}
                     </div>
@@ -148,36 +148,18 @@ export default function Sidebar({ isMobile }) {
                     <input type="text" placeholder="장소 검색" className="map-mobile-menu-input " onClick={handleSearchClick} />
                 </div>
 
-                {activeMenu != "mapSearch" && 
+                {isMobile && activeMenu != "mapSearch" && 
                 <div>
                     {/* {activeMenu === 'mapSearch' && <MapSearch datas={datas} setActiveMenu={setActiveMenu}/>} */}
-                    {activeMenu === 'mapSave' && <MapSave />}
+                    {activeMenu === 'mapSave' && <div>추억 저장</div>}
                     {activeMenu === 'memoryInfo' && <div>추억 정보</div>}
                     {activeMenu === 'memoryChange' && <MemoryChange closeEvent={handleMenuClick}/>}
                 </div>
                 }
 
-
-
                 {showMapSearch &&
                     <MapSearch datas={datas} setShowMapSearch={setShowMapSearch} isMobile={true} />
                 }
-
-                {/* <div className="z-50 absolute bg-white w-full h-full flex flex-col gap-2 px-5 py-5">
-                    <div className='w-full flex h-14 gap-4'>
-                        <input type="text" placeholder="장소 검색" className="map-mobile-menu-input" onClick={handleSearchClick} />
-                        <button className='float-right' onClick={() => setShowMapSearch((val) => !val)}>
-                            <AiOutlineClose className='size-5' />
-                        </button>
-                    </div>
-
-                    <Scrollbars thumbSize={85}>
-                        {showMapSearch && <MapSearch datas={datas} />}
-                    </Scrollbars>
-
-                </div> */}
-
-
 
             </div>
 
@@ -200,8 +182,6 @@ export default function Sidebar({ isMobile }) {
 
                         </div>
 
-
-
                         <div className="map-mobile-menu-list">
 
                             <button className="map-mobile-menu-item" onClick={() => setIsOpen(false)}>
@@ -220,23 +200,6 @@ export default function Sidebar({ isMobile }) {
                                 <CiSettings />
                                 추억 변경
                             </button>
-
-                            {/* <Navigate to="/" className="map-mobile-menu-item  ">
-                                <FiMapPin />
-                                지도
-                            </Navigate>
-                            <Navigate to="/" className="map-mobile-menu-item  ">
-                                <GoStar />
-                                저장
-                            </Navigate>
-                            <Navigate to="/" className="map-mobile-menu-item  ">
-                                <IoInformationCircleOutline />
-                                추억 정보
-                            </Navigate>
-                            <Navigate to="/" className="map-mobile-menu-item  ">
-                                <CiSettings />
-                                추억 변경
-                            </Navigate> */}
                         </div>
                     </div>
                     <div className="map-mobile-menu-box-bg" onClick={() => setIsOpen((val) => !val)}>
