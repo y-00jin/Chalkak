@@ -9,10 +9,14 @@ import { FiMapPin } from "react-icons/fi";
 import { SiMaplibre } from "react-icons/si";
 import { Scrollbars } from 'react-custom-scrollbars';
 import MapSearch from './MapSearch';
+import MapSave from './MapSave';
+import MemoryChange from './MemoryChange';
 
 export default function Sidebar({ isMobile }) {
 
-    const [showMapSearch, setShowMapSearch] = useState(true); // MapSearch 컴포넌트를 보여줄지 여부를 관리하는 state
+    const [activeMenu, setActiveMenu] = useState('mapSearch');
+    const [showMapSearch, setShowMapSearch] = useState(false);
+
 
     // 임시 데이터
     const [datas, setDatas] = useState([
@@ -66,7 +70,13 @@ export default function Sidebar({ isMobile }) {
     // 클릭 시에 MapSearch 컴포넌트를 보이도록 상태 업데이트
     const handleSearchClick = () => {
         setShowMapSearch(true);
-      };
+    };
+
+    const handleMenuClick = (target) => {
+        setShowMapSearch(false);    // 모바일일때 지도 검색 안보이도록
+        setIsOpen(false);
+        setActiveMenu(target);
+    };
 
     return (
 
@@ -78,28 +88,31 @@ export default function Sidebar({ isMobile }) {
 
                         <img src="/images/chalkak_logo.png" alt="Chalkak Logo" width="200px" />
 
-                        <div className='map-sidebar-item map-sidebar-item-active flex flex-col bg-[#96DBF4]  cursor-pointer text-white size-20 items-center justify-center'>
+                        <div className={`map-sidebar-item ${activeMenu === 'mapSearch' ? 'map-sidebar-item-active' : ''}  flex flex-col cursor-pointer size-20 items-center justify-center`}
+                            onClick={() => handleMenuClick('mapSearch')}>
                             <button>
                                 <FiMapPin className='size-6' />
                             </button>
                             지도
                         </div>
 
-                        <div className='map-sidebar-item flex flex-col size-20 items-center cursor-pointer justify-center' >
+                        <div className={`map-sidebar-item ${activeMenu === 'mapSave' ? 'map-sidebar-item-active' : ''}  flex flex-col cursor-pointer size-20 items-center justify-center`}
+                            onClick={() => handleMenuClick('mapSave')}>
                             <button>
                                 <GoStar className='size-7' />
                             </button>
                             저장
                         </div>
 
-                        <div className='map-sidebar-item flex flex-col size-20 items-center cursor-pointer justify-center' >
+                        <div className={`map-sidebar-item ${activeMenu === 'memoryInfo' ? 'map-sidebar-item-active' : ''}  flex flex-col cursor-pointer size-20 items-center justify-center`}
+                            onClick={() => handleMenuClick('memoryInfo')}>
                             <button>
                                 <IoInformationCircleOutline className='size-7' />
                             </button>
                             추억 정보
                         </div>
 
-                        <div className='map-sidebar-item flex flex-col size-20 items-center cursor-pointer justify-center'>
+                        <div className={`map-sidebar-item ${activeMenu === 'memoryChange' ? 'map-sidebar-item-active' : ''}  flex flex-col cursor-pointer size-20 items-center justify-center`}>
                             <button>
                                 <CiSettings className='size-7' />
                             </button>
@@ -116,31 +129,10 @@ export default function Sidebar({ isMobile }) {
 
 
                     <div className={`map-sidebar-content ${!isSidebarOpen ? 'hidden' : ''}`}>
-
-                        <input type="text" placeholder="장소 검색" className="flex-grow rounded-full px-5 py-3 w-full border border-gray-300 focus:outline-none focus:border-[#96DBF4] shadow-lg" />
-
-                        <div className='h-[90%] flex flex-col gap-2 my-5 px-5'>
-                        <Scrollbars thumbSize={85}>
-
-                            {showMapSearch && <MapSearch datas={datas} />} {/* MapSearch 컴포넌트를 보여주는 조건부 렌더링 */}
-
-                            {/* {datas.map(data => (
-                                <div key={data.id} className='flex gap-3 items-center border-b-gray-200 py-5 border-b'>
-                                    <SiMaplibre className='size-10 text-slate-300' />
-                                    <div>
-                                        <p>{data.location_nm}</p>
-                                        <p>{data.address}</p>
-                                    </div>
-                                </div>
-                            ))} */}
-
-                        </Scrollbars>
-                        </div>
-
-                        {/* <div>
-                            <p className='text-gray-400 my-5 px-3'>검색된 장소 정보가 없습니다.</p>
-                        </div> */}
-
+                        {activeMenu === 'mapSearch' && <MapSearch datas={datas} isMobile={false}/>}
+                        {activeMenu === 'mapSave' && <MapSave />}
+                        {activeMenu === 'memoryInfo' && <div>추억정보</div>}
+                        {activeMenu === 'memoryChange' && <MemoryChange/>}
                     </div>
                     <button className={`map-sidebar-content-toggle ${isSidebarOpen ? 'left-[460px]' : 'left-20'}`} onClick={toggleSidebar}>
                         {isSidebarOpen ? '<' : '>'}
@@ -148,14 +140,44 @@ export default function Sidebar({ isMobile }) {
 
                 </div>
 
-                <div role="presentation" className='map-mobile-box'>
+                <div role="presentation" className='map-mobile-search-box'>
                     <button className="map-mobile-menu-btn " onClick={() => setIsOpen((val) => !val)}>
                         <BiMenu />
                     </button>
 
                     <input type="text" placeholder="장소 검색" className="map-mobile-menu-input " onClick={handleSearchClick} />
-
                 </div>
+
+                {activeMenu != "mapSearch" && 
+                <div>
+                    {/* {activeMenu === 'mapSearch' && <MapSearch datas={datas} setActiveMenu={setActiveMenu}/>} */}
+                    {activeMenu === 'mapSave' && <MapSave />}
+                    {activeMenu === 'memoryInfo' && <div>추억 정보</div>}
+                    {activeMenu === 'memoryChange' && <MemoryChange closeEvent={handleMenuClick}/>}
+                </div>
+                }
+
+
+
+                {showMapSearch &&
+                    <MapSearch datas={datas} setShowMapSearch={setShowMapSearch} isMobile={true} />
+                }
+
+                {/* <div className="z-50 absolute bg-white w-full h-full flex flex-col gap-2 px-5 py-5">
+                    <div className='w-full flex h-14 gap-4'>
+                        <input type="text" placeholder="장소 검색" className="map-mobile-menu-input" onClick={handleSearchClick} />
+                        <button className='float-right' onClick={() => setShowMapSearch((val) => !val)}>
+                            <AiOutlineClose className='size-5' />
+                        </button>
+                    </div>
+
+                    <Scrollbars thumbSize={85}>
+                        {showMapSearch && <MapSearch datas={datas} />}
+                    </Scrollbars>
+
+                </div> */}
+
+
 
             </div>
 
@@ -182,39 +204,39 @@ export default function Sidebar({ isMobile }) {
 
                         <div className="map-mobile-menu-list">
 
-                            <button className="map-mobile-menu-item">
+                            <button className="map-mobile-menu-item" onClick={() => setIsOpen(false)}>
                                 <FiMapPin />
                                 지도
                             </button>
-                            <button className="map-mobile-menu-item">
+                            <button className="map-mobile-menu-item" onClick={() => handleMenuClick('mapSave')}>
                                 <GoStar />
                                 저장
                             </button>
-                            <button className="map-mobile-menu-item">
+                            <button className="map-mobile-menu-item" onClick={() => handleMenuClick('memoryInfo')}>
                                 <IoInformationCircleOutline />
                                 추억 정보
                             </button>
-                            <button className="map-mobile-menu-item">
+                            <button className="map-mobile-menu-item" onClick={() => handleMenuClick('memoryChange')}>
                                 <CiSettings />
                                 추억 변경
                             </button>
 
-                            {/* <Link to="/" className="map-mobile-menu-item  ">
+                            {/* <Navigate to="/" className="map-mobile-menu-item  ">
                                 <FiMapPin />
                                 지도
-                            </Link>
-                            <Link to="/" className="map-mobile-menu-item  ">
+                            </Navigate>
+                            <Navigate to="/" className="map-mobile-menu-item  ">
                                 <GoStar />
                                 저장
-                            </Link>
-                            <Link to="/" className="map-mobile-menu-item  ">
+                            </Navigate>
+                            <Navigate to="/" className="map-mobile-menu-item  ">
                                 <IoInformationCircleOutline />
                                 추억 정보
-                            </Link>
-                            <Link to="/" className="map-mobile-menu-item  ">
+                            </Navigate>
+                            <Navigate to="/" className="map-mobile-menu-item  ">
                                 <CiSettings />
                                 추억 변경
-                            </Link> */}
+                            </Navigate> */}
                         </div>
                     </div>
                     <div className="map-mobile-menu-box-bg" onClick={() => setIsOpen((val) => !val)}>
