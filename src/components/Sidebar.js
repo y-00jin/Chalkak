@@ -129,7 +129,7 @@ export default function Sidebar({ isMobile }) {
 
 
                     <div className={`map-sidebar-content ${!isSidebarOpen ? 'hidden' : ''}`}>
-                        {activeMenu === 'mapSearch' && <MapSearch datas={datas} isMobile={false}/>}
+                        {activeMenu === 'mapSearch' && <MapSearch datas={datas} />}
                         {activeMenu === 'mapSave' && <div>추억저장</div>}
                         {activeMenu === 'memoryInfo' && <div>추억정보</div>}
                         {activeMenu === 'memoryChange' && <MemoryChange/>}
@@ -157,8 +157,8 @@ export default function Sidebar({ isMobile }) {
                 </div>
                 }
 
-                {showMapSearch &&
-                    <MapSearch datas={datas} setShowMapSearch={setShowMapSearch} isMobile={true} />
+                {isMobile && showMapSearch &&
+                    <MapSearch datas={datas} setShowMapSearch={setShowMapSearch} />
                 }
 
             </div>

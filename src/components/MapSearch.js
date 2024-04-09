@@ -1,12 +1,11 @@
 import { Scrollbars } from 'react-custom-scrollbars';
 import { SiMaplibre } from "react-icons/si";
 import { AiOutlineClose } from "react-icons/ai";
-export default function MapSearch({ datas, setShowMapSearch, isMobile }) {
+export default function MapSearch({ datas, setShowMapSearch }) {
 
     return (
         <>
-            {!isMobile &&
-                <div className='map-search-box'>
+                <div className='map-content-box'>
                     <input type="text" placeholder="장소 검색" className="flex-grow rounded-full px-5 py-3 w-full border border-gray-300 focus:outline-none focus:border-[#96DBF4] shadow-lg" />
 
                     <div className='h-[90%] flex flex-col gap-2 my-5 px-5'>
@@ -24,8 +23,6 @@ export default function MapSearch({ datas, setShowMapSearch, isMobile }) {
                         </Scrollbars>
                     </div>
                 </div>
-            }
-            {isMobile &&
 
 
                 <div className='map-mobile-content'>
@@ -37,7 +34,7 @@ export default function MapSearch({ datas, setShowMapSearch, isMobile }) {
 
                     </div>
 
-                    <div className='h-[90%] flex flex-col gap-2 my-5 px-5'>
+                    <div className='h-full flex flex-col gap-2 my-5 px-5'>
                         <Scrollbars thumbSize={85}>
 
                             {datas.map(data => (
@@ -52,7 +49,6 @@ export default function MapSearch({ datas, setShowMapSearch, isMobile }) {
                         </Scrollbars>
                     </div>
                 </div>
-            }
 
 
 
