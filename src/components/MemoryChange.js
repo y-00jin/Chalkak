@@ -55,10 +55,9 @@ export default function MemoryChange({ closeEvent }) {
             {/* PC */}
             <div className='map-content-box px-2 py-5'>
                 <div className='flex flex-col pb-10 border-b border-gray-300'>
-                    <div className="flex text-2xl gap-2 items-center">
+                    <p className='text-2xl'>
                         {memoryNm}
-                        <button><FaPencilAlt /></button>
-                    </div>
+                    </p>
                     <p>
                         {memoryCode}
                     </p>
@@ -67,33 +66,33 @@ export default function MemoryChange({ closeEvent }) {
 
                 <div className=' my-10 h-full flex  flex-col'>
 
-                        <Scrollbars thumbSize={85}>
+                    <Scrollbars thumbSize={85}>
 
-                            {memoryList.map(data => (
-                                <div key={data.memorySeqNo} className='py-5 px-3 flex  justify-between items-center border-b-gray-200 border-b'>
-                                    <div>
-                                        <p>{data.memoryNm}</p>
-                                        <p>{data.memoryCode}</p>
-                                    </div>
-                                    <button>
-                                        <AiOutlineClose />
-                                    </button>
-
+                        {memoryList.map(data => (
+                            <div key={data.memorySeqNo} className='py-5 px-3 flex  justify-between items-center border-b-gray-200 border-b'>
+                                <div>
+                                    <p>{data.memoryNm}</p>
+                                    <p>{data.memoryCode}</p>
                                 </div>
+                                <button>
+                                    <AiOutlineClose />
+                                </button>
 
-                            ))}
-                        </Scrollbars>
+                            </div>
 
-                    </div>
+                        ))}
+                    </Scrollbars>
 
-                    <div className='flex flex-col justify-center py-5 items-center gap-5'>
-                        <button className='bg-[#96DBF4] w-32 h-12 rounded-full text-white '>변경</button>
+                </div>
 
-                        <Link to="/">
-                            <button>새 추억 연결</button>
-                        </Link>
+                <div className='flex flex-col justify-center py-5 items-center gap-5'>
+                    <button className='bg-[#96DBF4] w-32 h-12 rounded-full text-white '>변경</button>
 
-                    </div>
+                    <Link to="/">
+                        <button>새 추억 연결</button>
+                    </Link>
+
+                </div>
 
 
 
