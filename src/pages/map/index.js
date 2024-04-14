@@ -29,10 +29,10 @@ export default function MapHome() {
 
       {/* 지도서비스 기능 버튼 */}
       <div className={`absolute right-4 ${isMobile ? 'top-24' : 'top-4'} z-10 flex flex-col gap-4`}>
-        <button className='rounded-full bg-white text-black cursor-pointer p-2 z-20 shadow-lg text-3xl font-bold size-14 flex items-center justify-center'>
+        <button className='map-func-btn'>
           <GoStar />
         </button>
-        <button className='rounded-full bg-white text-black cursor-pointer p-4 z-20 shadow-lg text-3xl  size-14 flex items-center justify-center'>
+        <button className='map-func-btn'>
           <TfiPencilAlt />
         </button>
       </div>

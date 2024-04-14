@@ -103,84 +103,167 @@
 
 
 /* ### pages > map > index */
+.map-func-btn{
+  @apply rounded-full bg-white text-black cursor-pointer z-20 shadow-lg text-3xl size-14 flex items-center justify-center p-3; 
+}
+
+.map-container {
+  @apply flex flex-row h-screen;
+}
 
 /* 모바일 화면 */
 @media only screen and (max-width: 600px) {
   .map-container {
     @apply relative w-full h-screen;
   }
-
-  .map-mobile-search-box {
-    @apply absolute top-0 left-0 z-10 flex w-full p-4;
-  }
-
-  .map-mobile-menu-btn{
-    @apply rounded-full  bg-[#96DBF4] text-white cursor-pointer z-20 shadow-lg text-3xl font-bold size-14 flex items-center justify-center;
-  }
-  .map-mobile-menu-input{
-    @apply flex-grow ml-2 rounded-full px-5 py-1 border border-gray-300 focus:outline-none focus:border-[#96DBF4] shadow-lg;
-  }
-
-  /* 기존 PC 사이드바 제거 */
-  .map-sidebar-box, .map-content-box{
-    @apply hidden;
-  }
-
-  .map-mobile-menu-box{
-    @apply z-30 absolute w-[50%] right-0  h-screen bg-white p-5;
-  }
-
-  .map-mobile-menu-list{
-    @apply gap-4 flex flex-col;
-  }
-
-  .map-mobile-menu-item{
-    @apply flex items-center gap-2 cursor-pointer text-xl;
-  }
-
-  .map-mobile-menu-box-bg{
-    @apply z-30 absolute w-[50%] left-0 h-screen bg-gray-950 opacity-50;
-  }
-
-  /* 테스트용  */
-  .map-mobile-content{
-    @apply z-50 absolute bg-white w-full h-full flex flex-col gap-2 px-5 py-5
-  }
+}
+/* pages > map > index ### */
 
 
-  .map-search-mobile-header-box{
-    @apply w-full flex h-14 gap-4
-  }
+/* ### components > Sidebar */
 
+/* 메뉴 활성화 탭 */
+.map-menu-item-active{
+  @apply text-white bg-[#96DBF4]
 }
 
 /* 데스크톱 화면 */
 @media only screen and (min-width: 601px) {
-  .map-container {
-    @apply flex flex-row h-screen;
+
+  /* 모바일 스타일 제거 */
+  .map-mobile-menu-box, .map-mobile-search-box, .menu-mobile-content-box{
+    @apply hidden;
+  }
+
+  /* 메뉴 */
+  .map-menu-box{
+    @apply flex  top-0 left-0 h-full w-20 z-20 gap-3 flex-col pt-4 items-center;
+  }
+  .map-menu-item{
+    @apply flex flex-col cursor-pointer size-20 items-center justify-center;
+  }
+  .map-menu-item-bottom{
+    @apply absolute bottom-0;
   }
 
   /* 사이드 바 */
   .map-sidebar-content {
     @apply absolute top-0 p-5 left-20 h-full bg-white w-[380px] border-none z-10 shadow-lg ;
-    /* transition-all duration-200 */
   }
 
   /* 사이드 바 토글 버튼 */
   .map-sidebar-content-toggle{
     @apply absolute top-[50%] w-6 h-14 p-2 bg-white rounded-e-md border-none text-gray-800 cursor-pointer z-20 shadow-lg;
   }
+}
 
-  .map-mobile-menu-box, .map-mobile-search-box, .map-mobile-content, .map-mobile-close-btn{
+
+/* 모바일 화면 */
+@media only screen and (max-width: 600px) {
+  
+  /* PC 스타일 제거 */
+  .map-sidebar-box, .sidebar-content-box{
     @apply hidden;
   }
 
-  .map-content-box{
+  /* 모바일 장소 검색 박스 */
+  .map-mobile-search-box {
+    @apply absolute top-0 left-0 z-10 flex w-full p-4;
+  }
+  /* 모바일 장소 검색창 */
+  .map-mobile-search-input{
+    @apply flex-grow ml-2 rounded-full px-5 py-1 border border-gray-300 focus:outline-none focus:border-[#96DBF4] shadow-lg;
+  }
+  /* 모바일 메뉴 버튼 */
+  .map-mobile-menu-btn{
+    @apply rounded-full  bg-[#96DBF4] text-white cursor-pointer z-20 shadow-lg text-3xl font-bold size-14 flex items-center justify-center;
+  }
+  
+  /* 모바일 메뉴 박스 */
+  .map-mobile-menu-box{
+    @apply z-30 absolute w-[50%] right-0  h-screen bg-white p-5;
+  }
+  
+  /* 모바일 메뉴 - 프로필 */
+  .map-mobile-profile-box{
+    @apply  flex border-b-gray-300 pb-5 border-b mb-8;
+  }
+  
+  /* 모바일 메뉴 목록 */
+  .map-mobile-menu-list{
+    @apply gap-4 flex flex-col;
+  }
+  .map-mobile-menu-item{
+    @apply flex items-center gap-2 cursor-pointer text-xl;
+  }
+  .map-mobile-menu-box-bg{
+    @apply z-30 absolute w-[50%] left-0 h-screen bg-gray-950 opacity-50;
+  }
+}
+/* components > Sidebar ### */
+
+
+/* ### components > MapSearch, MemoryChange */
+
+.map-search-input{
+  @apply flex-grow rounded-full px-5 py-3 w-full border border-gray-300 focus:outline-none focus:border-[#96DBF4] shadow-lg;
+}
+.place-search-item{
+  @apply flex gap-3 items-center border-b-gray-200 py-5 border-b;
+}
+.menu-mobile-close-btn{
+  @apply float-right;
+}
+
+.memory-change-btn-box{
+  @apply flex flex-col justify-center py-5 items-center gap-5;
+}
+.memory-change-btn{
+  @apply bg-[#96DBF4] w-32 h-12 rounded-full text-white ;
+}
+
+/* 데스크톱 화면 */
+@media only screen and (min-width: 601px) {
+  .sidebar-content-box{
     @apply w-full h-full flex flex-col;
   }
 
+  .place-search-box{
+    @apply  h-[90%] flex flex-col gap-2 my-5 px-5;
+  }
+  .memory-change-box{
+    @apply my-10 h-full flex  flex-col;
+  }
+  .memory-change-item{
+    @apply py-5 px-3 flex  justify-between items-center border-b-gray-200 border-b;
+  }
+  .memory-change-info-box{
+    @apply flex flex-col pb-10 border-b border-gray-300;
+  }
+  
+
 }
 
-.map-sidebar-item-active{
-  @apply text-white bg-[#96DBF4]
+/* 모바일 화면 */
+@media only screen and (max-width: 600px) {
+  .menu-mobile-content-box{
+    @apply z-50 absolute bg-white w-full h-full flex flex-col gap-2 px-5 py-5
+  }
+  .place-search-mobile-header-box{
+    @apply w-full flex h-14 gap-4
+  }
+  .mobile-place-box{
+    @apply h-full flex flex-col gap-2 my-5 px-5;
+  }
+
+  .memory-change-mobile-info-box{
+    @apply  p-5 justify-center flex flex-col h-[90%];
+  }
+
+  .memory-change-mobile-box{
+    @apply border rounded-3xl my-10 h-64 flex  flex-col;
+  }
+  .memory-change-mobile-item{
+    @apply py-5 px-2 flex  justify-between items-center border-b-gray-200 mx-5 border-b;
+  }
 }
