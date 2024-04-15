@@ -269,7 +269,7 @@
   }
 
   .memory-change-mobile-box{
-    @apply border rounded-3xl my-10 min-h-64 flex  flex-col mx-5;
+    @apply border rounded-3xl my-10 min-h-80 flex  flex-col mx-5;
   }
   .memory-change-mobile-item{
     @apply py-5 px-2 flex justify-between items-center border-b-gray-200 mx-5 border-b;
