@@ -96,8 +96,5 @@ export default function MapSearch({ setShowMobileMapSearch }) {
 
         </>
 
-
-
-
     )
 }
