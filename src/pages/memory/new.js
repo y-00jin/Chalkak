@@ -14,11 +14,17 @@ export default function MemoryNew() {
                 />
 
                 <div className="new-btn-box">
-                    <button onClick={() => { navigate(`/memory/connection`) }}
-                    >상대방 코드로 연결하기</button>
+                    <button onClick={() => { navigate(`/map`) }}>
+                        활성화 된 추억으로 연결하기
+                    </button>
 
-                    <button onClick={() => { navigate(`/`) }}
-                    >로그아웃</button>
+                    <button onClick={() => { navigate(`/memory/connection`) }}>
+                        상대방 코드로 연결하기
+                    </button>
+
+                    <button onClick={() => { navigate(`/`) }}>
+                        로그아웃
+                    </button>
                 </div>
 
             </div>

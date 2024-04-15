@@ -142,9 +142,6 @@
   .map-menu-item{
     @apply flex flex-col cursor-pointer size-20 items-center justify-center;
   }
-  .map-menu-item-bottom{
-    @apply absolute bottom-0;
-  }
 
   /* 사이드 바 */
   .map-sidebar-content {
@@ -203,7 +200,7 @@
 /* components > Sidebar ### */
 
 
-/* ### components > MapSearch, MemoryChange */
+/* ### components > MapSearch, MemoryChange, MemoryInfo */
 
 .map-search-input{
   @apply flex-grow rounded-full px-5 py-3 w-full border border-gray-300 focus:outline-none focus:border-[#96DBF4] shadow-lg;
@@ -211,15 +208,22 @@
 .place-search-item{
   @apply flex gap-3 items-center border-b-gray-200 py-5 border-b;
 }
-.menu-mobile-close-btn{
-  @apply float-right;
+
+.menu-mobile-close-btn-wrapper{
+  @apply absolute top-5 right-4;
 }
+/* .menu-mobile-close-btn{
+  @apply float-right;
+} */
 
 .memory-change-btn-box{
   @apply flex flex-col justify-center py-5 items-center gap-5;
 }
 .memory-change-btn{
   @apply bg-[#96DBF4] w-32 h-12 rounded-full text-white ;
+}
+.memory-change-item-selected{
+  @apply text-[#96DBF4];
 }
 
 /* 데스크톱 화면 */
@@ -240,6 +244,10 @@
   .memory-change-info-box{
     @apply flex flex-col pb-10 border-b border-gray-300;
   }
+
+  .memory-info-item{
+    @apply py-5 px-3 gap-3 flex items-center border-b-gray-200 border-b;
+  }
   
 
 }
@@ -247,23 +255,71 @@
 /* 모바일 화면 */
 @media only screen and (max-width: 600px) {
   .menu-mobile-content-box{
-    @apply z-50 absolute bg-white w-full h-full flex flex-col gap-2 px-5 py-5
+    @apply z-50 absolute bg-white w-full h-full justify-center flex flex-col gap-2 px-7 py-5
   }
   .place-search-mobile-header-box{
-    @apply w-full flex h-14 gap-4
+    @apply w-full flex h-14 gap-4 px-4;
   }
   .mobile-place-box{
     @apply h-full flex flex-col gap-2 my-5 px-5;
   }
 
   .memory-change-mobile-info-box{
-    @apply  p-5 justify-center flex flex-col h-[90%];
+    @apply  p-5 justify-center flex flex-col ;
   }
 
   .memory-change-mobile-box{
-    @apply border rounded-3xl my-10 h-64 flex  flex-col;
+    @apply border rounded-3xl my-10 min-h-64 flex  flex-col mx-5;
   }
   .memory-change-mobile-item{
-    @apply py-5 px-2 flex  justify-between items-center border-b-gray-200 mx-5 border-b;
+    @apply py-5 px-2 flex justify-between items-center border-b-gray-200 mx-5 border-b;
   }
+
+  .memory-info-mobile-item{
+    @apply py-5 px-2 flex gap-3 items-center  border-b-gray-200 mx-5 border-b;
+  }
+}
+
+
+.user-color-0{
+  @apply text-[#FF7E7E];
+}
+.user-color-1{
+  @apply text-[#FFBB00];
+}
+.user-color-2{
+  @apply text-[#FFE400];
+}
+.user-color-3{
+  @apply text-[#BCE55C];
+}
+.user-color-4{
+  @apply text-[#B2CCFF];
+}
+.user-color-5{
+  @apply text-[#002266];
+}
+.user-color-6{
+  @apply text-[#E8D9FF];
+}
+.user-color-7{
+  @apply text-[#FFB2D9];
+}
+
+
+/* components > MapSearch, MemoryChange, MemoryInfo ### */
+.place-storage-tab-box{
+  @apply flex justify-between items-center text-center text-xl mb-8;
+}
+.place-storage-tab-item{
+  @apply w-[50%] pb-5  text-gray-400 border-b border-gray-400;
+}
+.place-storage-tab-item-active{
+  @apply text-[#96DBF4] border-b border-[#96DBF4];
+}
+.place-storage-box{
+  @apply flex flex-col min-h-[82%];
+}
+.place-storage-item{
+  @apply flex gap-3 items-center p-3 border-b-gray-200 py-5 border-b;
 }

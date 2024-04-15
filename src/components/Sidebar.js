@@ -6,10 +6,12 @@ import { HiUserCircle } from "react-icons/hi2";
 import { BiMenu } from "react-icons/bi";
 import { AiOutlineClose } from "react-icons/ai";
 import { FiMapPin } from "react-icons/fi";
-import { SiMaplibre } from "react-icons/si";
-import { Scrollbars } from 'react-custom-scrollbars';
+// import { SiMaplibre } from "react-icons/si";
+// import { Scrollbars } from 'react-custom-scrollbars';
 import MapSearch from './MapSearch';
 import MemoryChange from './MemoryChange';
+import MemoryInfo from './MemoryInfo';
+import PlaceStorage from './PlaceStorage';
 
 export default function Sidebar({ isMobile }) {
 
@@ -47,8 +49,8 @@ export default function Sidebar({ isMobile }) {
                             지도
                         </div>
 
-                        <div className={`map-menu-item ${activeMenu === 'mapSave' ? 'map-menu-item-active' : ''}  `}
-                            onClick={() => handleMenuClick('mapSave')}>
+                        <div className={`map-menu-item ${activeMenu === 'placeStorage' ? 'map-menu-item-active' : ''}  `}
+                            onClick={() => handleMenuClick('placeStorage')}>
                             <button>
                                 <GoStar className='size-7' />
                             </button>
@@ -70,21 +72,14 @@ export default function Sidebar({ isMobile }) {
                             </button>
                             추억 변경
                         </div>
-
-                        <div className='map-menu-item-bottom '>
-                            <button>
-                                <HiUserCircle className='size-16 p-2 text-gray-300' />
-                            </button>
-                        </div>
-
                     </div>
 
                     {/* 사이드바 내용 */}
                     <div className={`map-sidebar-content ${!isSidebarOpen ? 'hidden' : ''}`}>
                         {activeMenu === 'mapSearch' && <MapSearch />}
-                        {activeMenu === 'mapSave' && <div>추억저장</div>}
-                        {activeMenu === 'memoryInfo' && <div>추억정보</div>}
-                        {activeMenu === 'memoryChange' && <MemoryChange />}
+                        {activeMenu === 'placeStorage' && <PlaceStorage closeEvent={handleMenuClick} isMobile={isMobile}/>}
+                        {activeMenu === 'memoryInfo' && <MemoryInfo closeEvent={handleMenuClick} isMobile={isMobile}/>}
+                        {activeMenu === 'memoryChange' && <MemoryChange closeEvent={handleMenuClick} isMobile={isMobile} />}
                     </div>
                     {/* 사이드바 열림/닫힘 버튼 */}
                     <button className={`map-sidebar-content-toggle ${isSidebarOpen ? 'left-[460px]' : 'left-20'}`} onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
@@ -105,9 +100,9 @@ export default function Sidebar({ isMobile }) {
                 {/* 모바일 메뉴 내용 */}
                 {isMobile && activeMenu != "mapSearch" &&
                     <div>
-                        {activeMenu === 'mapSave' && <div>추억 저장</div>}
-                        {activeMenu === 'memoryInfo' && <div>추억 정보</div>}
-                        {activeMenu === 'memoryChange' && <MemoryChange closeEvent={handleMenuClick} />}
+                        {activeMenu === 'placeStorage' && <PlaceStorage closeEvent={handleMenuClick} isMobile={isMobile}/>}
+                        {activeMenu === 'memoryInfo' && <MemoryInfo closeEvent={handleMenuClick} isMobile={isMobile}/>}
+                        {activeMenu === 'memoryChange' && <MemoryChange closeEvent={handleMenuClick} isMobile={isMobile}/>}
                     </div>
                 }
 
@@ -142,7 +137,7 @@ export default function Sidebar({ isMobile }) {
                                 <FiMapPin />
                                 지도
                             </button>
-                            <button className="map-mobile-menu-item" onClick={() => handleMenuClick('mapSave')}>
+                            <button className="map-mobile-menu-item" onClick={() => handleMenuClick('placeStorage')}>
                                 <GoStar />
                                 저장
                             </button>
