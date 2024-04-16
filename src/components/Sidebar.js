@@ -12,6 +12,7 @@ import MapSearch from './MapSearch';
 import MemoryChange from './MemoryChange';
 import MemoryInfo from './MemoryInfo';
 import PlaceStorage from './PlaceStorage';
+import MobileHeader from './MoblieHeader';
 
 export default function Sidebar({ isMobile }) {
 
@@ -89,13 +90,21 @@ export default function Sidebar({ isMobile }) {
                 </div>
 
                 {/* 모바일 검색 박스 */}
-                <div role="presentation" className='map-mobile-search-box'>
+                
+
+                <MobileHeader isCloseBtn={true} closeEvent={handleMenuClick} setIsMobileMenubarOpen={setIsMobileMenubarOpen}/>
+                
+
+                {/* <div>
+                    <input type="text" placeholder="장소 검색" className="flex-grow rounded-2xl w-full px-5 py-2 border border-gray-300 focus:outline-none focus:border-[#96DBF4] shadow-lg;" onClick={() => setShowMobileMapSearch(true)} /> 
+                </div> */}
+                {/* <div role="presentation" className='map-mobile-search-box'>
                     <button className="map-mobile-menu-btn " onClick={() => setIsMobileMenubarOpen((val) => !val)}>
                         <BiMenu />
                     </button>
 
-                    <input type="text" placeholder="장소 검색" className="map-mobile-search-input" onClick={() => setShowMobileMapSearch(true)} />   {/* 클릭 시에 MapSearch 컴포넌트를 보이도록 상태 업데이트 */}
-                </div>
+                    <input type="text" placeholder="장소 검색" className="map-mobile-search-input" onClick={() => setShowMobileMapSearch(true)} /> 
+                </div> */}
 
                 {/* 모바일 메뉴 내용 */}
                 {isMobile && activeMenu != "mapSearch" &&

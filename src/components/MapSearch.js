@@ -44,6 +44,16 @@ export default function MapSearch({ setShowMobileMapSearch }) {
         }
     ]);
 
+    const [selectedData, setSelectedData] = useState(null);
+
+    const handlePlaceDataClick = (data) => {
+        setSelectedData(data);
+
+        setShowMobileMapSearch((val) => !val);
+
+        console.log(data);
+    };
+
     return (
         <>
             <div className='sidebar-content-box'>
@@ -53,7 +63,7 @@ export default function MapSearch({ setShowMobileMapSearch }) {
                     <Scrollbars thumbSize={85}>
 
                         {datas.map(data => (
-                            <div key={data.id} className='place-search-item'>
+                            <div key={data.id} className='place-search-item' onClick={() => handlePlaceDataClick(data)}>
                                 <SiMaplibre className='size-10 text-slate-300' />
                                 <div>
                                     <p>{data.location_nm}</p>
@@ -79,7 +89,7 @@ export default function MapSearch({ setShowMobileMapSearch }) {
                     <Scrollbars thumbSize={85}>
 
                         {datas.map(data => (
-                            <div key={data.id} className='place-search-item'>
+                            <div key={data.id} className='place-search-item' onClick={() => handlePlaceDataClick(data)}>
                                 <SiMaplibre className='size-10 text-slate-300' />
                                 <div>
                                     <p>{data.location_nm}</p>
