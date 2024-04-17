@@ -131,7 +131,7 @@
 @media only screen and (min-width: 601px) {
 
   /* 모바일 스타일 제거 */
-  .map-mobile-menu-box, .map-mobile-search-box, .menu-mobile-content-box{
+  .map-mobile-menu-box, .map-mobile-search-box, .menu-mobile-content-box, .map-search-mobile-content-box{
     @apply hidden;
   }
 
@@ -165,11 +165,11 @@
 
   /* 모바일 장소 검색 박스 */
   .map-mobile-search-box {
-    @apply absolute top-0 left-0 z-10 flex w-full p-4;
+    @apply absolute top-0 left-0 z-30 flex gap-2 h-24 w-full px-6 py-5 items-center;
   }
   /* 모바일 장소 검색창 */
   .map-mobile-search-input{
-    @apply flex-grow ml-2 rounded-full px-5 py-1 border border-gray-300 focus:outline-none focus:border-[#96DBF4] shadow-lg;
+    @apply flex-grow mx-2 rounded-full px-5 py-1 border border-gray-300 focus:outline-none focus:border-[#96DBF4] shadow-lg;
   }
   /* 모바일 메뉴 버튼 */
   .map-mobile-menu-btn{
@@ -206,7 +206,7 @@
   @apply flex-grow rounded-full px-5 py-3 w-full border border-gray-300 focus:outline-none focus:border-[#96DBF4] shadow-lg;
 }
 .place-search-item{
-  @apply flex gap-3 items-center border-b-gray-200 py-5 border-b;
+  @apply flex gap-3 items-center ;
 }
 
 .menu-mobile-close-btn-wrapper{
@@ -257,11 +257,17 @@
   .menu-mobile-content-box{
     @apply z-50 absolute bg-white w-full h-full justify-center flex flex-col gap-2 px-7 py-5
   }
+  .map-search-mobile-content-box{
+    /* @apply z-20 absolute bg-white w-full h-full justify-center flex flex-col gap-2 px-7 pt-20; */
+    @apply z-20 absolute bg-white w-full top-[96px] justify-center flex flex-col gap-2 px-7;
+
+    height: calc(100% - 96px);
+  }
   .place-search-mobile-header-box{
     @apply w-full flex h-14 gap-4 px-4;
   }
   .mobile-place-box{
-    @apply h-full flex flex-col gap-2 my-5 px-5;
+    @apply h-full flex flex-col gap-2 px-5;
   }
 
   .memory-change-mobile-info-box{

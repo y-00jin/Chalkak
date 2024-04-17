@@ -1,8 +1,11 @@
 import { Scrollbars } from 'react-custom-scrollbars';
 import { SiMaplibre } from "react-icons/si";
 import { AiOutlineClose } from "react-icons/ai";
+import { RiRoadMapFill } from "react-icons/ri";
+import { FaRegStar } from "react-icons/fa";
+
 import React, { useState } from 'react';
-export default function MapSearch({ setShowMobileMapSearch }) {
+export default function MapSearch({ closeEvent }) {
 
     // 임시 데이터
     const [datas, setDatas] = useState([
@@ -45,17 +48,18 @@ export default function MapSearch({ setShowMobileMapSearch }) {
     ]);
 
     const [selectedData, setSelectedData] = useState(null);
+    const [showMobileMapList, setShowMobileMapList] = useState(false);      // 검색 목록 여부
+    const [showMobileMapSearch, setShowMobileMapSearch] = useState(false);  // 검색창 여부
 
     const handlePlaceDataClick = (data) => {
         setSelectedData(data);
-
-        setShowMobileMapSearch((val) => !val);
-
+        setShowMobileMapList(false);
         console.log(data);
     };
 
     return (
         <>
+            {/* PC */}
             <div className='sidebar-content-box'>
                 <input type="text" placeholder="장소 검색" className="map-search-input" />
 
@@ -63,47 +67,91 @@ export default function MapSearch({ setShowMobileMapSearch }) {
                     <Scrollbars thumbSize={85}>
 
                         {datas.map(data => (
-                            <div key={data.id} className='place-search-item' onClick={() => handlePlaceDataClick(data)}>
-                                <SiMaplibre className='size-10 text-slate-300' />
-                                <div>
+                            <div key={data.id} className='border-b-gray-200 py-5 border-b ' onClick={() => handlePlaceDataClick(data)}>
+                                <div className='place-search-item'>
+                                    <SiMaplibre className='size-10 text-slate-300' />
+                                    <div className='flex-1'>
+                                        <p>{data.location_nm}</p>
+                                        <p>{data.address}</p>
+                                    </div>
+                                </div>
+                                <button className='flex items-center gap-1 ml-5'>
+                                    <FaRegStar/>저장
+                                    </button>
+                                {/* <SiMaplibre className='size-10 text-slate-300' />
+                                <div className='flex-1'>
                                     <p>{data.location_nm}</p>
                                     <p>{data.address}</p>
-                                </div>
+                                </div> */}
                             </div>
                         ))}
                     </Scrollbars>
                 </div>
             </div>
 
+            {/* Mobile */}
+            {/* 검색창 */}
+            <div role="presentation" className={`map-mobile-search-box ${showMobileMapSearch ? 'bg-white' : ''}`}>
+                {showMobileMapSearch &&
+                    <button>
+                        <RiRoadMapFill className='size-7 text-[#96DBF4]' onClick={()=> setShowMobileMapList((val) => !val)}/>
+                    </button>
+                }
 
-            <div className='menu-mobile-content-box'>
-                <div className='place-search-mobile-header-box'>
+                <input type="text" placeholder="장소 검색" className="map-mobile-search-input h-full " onClick={() => { setShowMobileMapList(true); setShowMobileMapSearch(true); }} />
+                
+                {showMobileMapSearch &&
+                    <button onClick={() => {setShowMobileMapSearch(false); setShowMobileMapList(false);}}>
+                        <AiOutlineClose className='size-5' />
+                    </button>
+                }
+            </div>
+            
+            {/* 검색 목록 */}
+            {showMobileMapList &&
+                <div className='map-search-mobile-content-box'>
+                    {/* <div className='place-search-mobile-header-box'>
                     <input type="text" placeholder="장소 검색" className="map-search-input" />
                     <button className='menu-mobile-close-btn' onClick={() => setShowMobileMapSearch((val) => !val)}>
                         <AiOutlineClose className='size-5' />
                     </button>
 
-                </div>
+                </div> */}
 
-                <div className='mobile-place-box'>
-                    <Scrollbars thumbSize={85}>
+                    <div className='mobile-place-box'>
+                        <Scrollbars thumbSize={85}>
 
-                        {datas.map(data => (
-                            <div key={data.id} className='place-search-item' onClick={() => handlePlaceDataClick(data)}>
-                                <SiMaplibre className='size-10 text-slate-300' />
-                                <div>
-                                    <p>{data.location_nm}</p>
-                                    <p>{data.address}</p>
+                            {datas.map(data => (
+
+                                <div key={data.id} className='border-b-gray-200 py-5 border-b ' onClick={() => handlePlaceDataClick(data)}>
+                                <div className='place-search-item'>
+                                    <SiMaplibre className='size-10 text-slate-300' />
+                                    <div className='flex-1'>
+                                        <p>{data.location_nm}</p>
+                                        <p>{data.address}</p>
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
-                    </Scrollbars>
+                                <button className='flex items-center gap-1 ml-5'>
+                                    <FaRegStar/>저장
+                                    </button>
+                                </div>
+
+
+                                // <div key={data.id} className='place-search-item' onClick={() => handlePlaceDataClick(data)}>
+                                //     <SiMaplibre className='size-10 text-slate-300' />
+                                //     <div className='flex-1'>
+                                //         <p>{data.location_nm}</p>
+                                //         <p className='text-gray-600'>{data.address}</p>
+                                //     </div>
+                                // </div>
+
+                                
+                            ))}
+                        </Scrollbars>
+                    </div>
                 </div>
-            </div>
 
-
-
-
+            }
         </>
 
     )

@@ -20,14 +20,19 @@ export default function Sidebar({ isMobile }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);   // pc 사이드바 펼침 상태
 
     const [isMobileMenubarOpen, setIsMobileMenubarOpen] = useState(false);  // 모바일 메뉴바 펼침 상태
-    const [showMobileMapSearch, setShowMobileMapSearch] = useState(false);  // 모바일 지도 검색 펼침 상태
+    // const [showMobileMapSearch, setShowMobileMapSearch] = useState(false);  // 모바일 지도 검색 펼침 상태
 
     // 메뉴 클릭 이벤트
     const handleMenuClick = (target) => {
-        setShowMobileMapSearch(false);    // 모바일 지도 검색 false
+        // setShowMobileMapSearch(false);    // 모바일 지도 검색 false
         setIsMobileMenubarOpen(false);   // 모바일 메뉴 바 상태 false
         setActiveMenu(target);          // 클릭한 메뉴로 설정
     };
+
+    // const handleMenubarClick = () => {
+    //     setIsMobileMenubarOpen((val) => !val);
+    //     setShowMobileMapSearch(false);    // 모바일 지도 검색 false
+    // }
 
     return (
 
@@ -89,22 +94,29 @@ export default function Sidebar({ isMobile }) {
 
                 </div>
 
-                {/* 모바일 검색 박스 */}
-                
+                { /** 모바일 메뉴바 */
+                    isMobile && <div className='absolute z-10 right-4 bottom-4'>
+                        <button className="map-mobile-menu-btn " onClick={() => setIsMobileMenubarOpen((val) => !val)}>
+                            <BiMenu />
+                        </button>
+                    </div>
+                }
 
-                <MobileHeader isCloseBtn={true} closeEvent={handleMenuClick} setIsMobileMenubarOpen={setIsMobileMenubarOpen}/>
-                
-
-                {/* <div>
-                    <input type="text" placeholder="장소 검색" className="flex-grow rounded-2xl w-full px-5 py-2 border border-gray-300 focus:outline-none focus:border-[#96DBF4] shadow-lg;" onClick={() => setShowMobileMapSearch(true)} /> 
+                {/* <div role="presentation" className={`map-mobile-search-box ${showMobileMapSearch ? 'bg-white' :''}`}>
+                    {showMobileMapSearch && 
+                        <button>
+                        <CiSettings className='size-7' />
+                        </button>
+                    }
+                    
+                    <input type="text" placeholder="장소 검색" className="map-mobile-search-input h-full " onClick={() => setShowMobileMapSearch(true)} /> 
+                    {showMobileMapSearch && 
+                        <button onClick={() => handleMenuClick('mapSearch')}>
+                            <AiOutlineClose className='size-5' />
+                        </button>
+                    }
                 </div> */}
-                {/* <div role="presentation" className='map-mobile-search-box'>
-                    <button className="map-mobile-menu-btn " onClick={() => setIsMobileMenubarOpen((val) => !val)}>
-                        <BiMenu />
-                    </button>
 
-                    <input type="text" placeholder="장소 검색" className="map-mobile-search-input" onClick={() => setShowMobileMapSearch(true)} /> 
-                </div> */}
 
                 {/* 모바일 메뉴 내용 */}
                 {isMobile && activeMenu != "mapSearch" &&
@@ -116,8 +128,8 @@ export default function Sidebar({ isMobile }) {
                 }
 
                 {/* 장소 검색 */}
-                {isMobile && showMobileMapSearch &&
-                    <MapSearch setShowMobileMapSearch={setShowMobileMapSearch} />
+                {isMobile && 
+                    <MapSearch closeEvent={handleMenuClick} />
                 }
 
             </div>
