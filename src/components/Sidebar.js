@@ -12,7 +12,6 @@ import MapSearch from './MapSearch';
 import MemoryChange from './MemoryChange';
 import MemoryInfo from './MemoryInfo';
 import PlaceStorage from './PlaceStorage';
-import MobileHeader from './MoblieHeader';
 import useMobile from 'components/UseMobile';
 
 
@@ -38,6 +37,12 @@ export default function Sidebar() {
             {/* PC 환경 - 사이드바와 지도 */}
             <div>
                 <div className='map-sidebar-box'>
+
+                    {/* 사이드바 열림/닫힘 버튼 */}
+                    <button className={`map-sidebar-content-toggle ${isSidebarOpen ? 'left-[460px]' : 'left-20'}`} onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+                        {isSidebarOpen ? '<' : '>'}
+                    </button>
+
                     <div className='map-menu-box'>
 
                         <div>
@@ -78,6 +83,7 @@ export default function Sidebar() {
                         </div>
                     </div>
 
+                    
                     {/* 사이드바 내용 */}
                     <div className={`map-sidebar-content ${!isSidebarOpen ? 'hidden' : ''}`}>
                         {activeMenu === 'mapSearch' && <MapSearch />}
@@ -85,10 +91,7 @@ export default function Sidebar() {
                         {activeMenu === 'memoryInfo' && <MemoryInfo closeEvent={handleMenuClick} />}
                         {activeMenu === 'memoryChange' && <MemoryChange closeEvent={handleMenuClick}  />}
                     </div>
-                    {/* 사이드바 열림/닫힘 버튼 */}
-                    <button className={`map-sidebar-content-toggle ${isSidebarOpen ? 'left-[460px]' : 'left-20'}`} onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
-                        {isSidebarOpen ? '<' : '>'}
-                    </button>
+
 
                 </div>
 

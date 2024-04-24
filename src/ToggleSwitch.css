@@ -1,0 +1,29 @@
+.toggle-track {
+    position: relative;
+    width: 50px; /* 토글 스위치의 너비 */
+    height: 30px; /* 토글 스위치의 높이 */
+    background-color: #fff; /* 토글 스위치의 배경 색상 */
+    border: 1px solid #96DBF4; 
+    border-radius: 25px; /* 토글 스위치의 모양을 둥글게 만듭니다. */
+  }
+  
+  .toggle-thumb {
+    position: absolute;
+    top: 50%;
+    left: 5px; /* 토글 스위치의 원의 왼쪽 여백 */
+    width: 17px; /* 토글 스위치의 원의 너비 */
+    height: 17px; /* 토글 스위치의 원의 높이 */
+    background-color: #96DBF4; /* 토글 스위치의 원의 배경 색상 */
+    border-radius: 50%; /* 토글 스위치의 원의 모양을 둥글게 만듭니다. */
+    transition: left 0.2s ease-in-out; /* 원이 이동하는 애니메이션을 추가합니다. */
+    transform: translateY(-50%); /* 수직 정렬 */
+  }
+  
+  .toggle-track-on{
+    background-color: #96DBF4;
+  }
+  .toggle-thumb-on {
+    left: calc(100% - 22px); /* 토글이 ON일 때 원의 위치를 오른쪽 끝으로 이동시킵니다. */
+    background-color: #fff; /* 토글 스위치의 원이 ON일 때의 배경 색상 */
+  }
+  

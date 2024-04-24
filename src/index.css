@@ -150,7 +150,7 @@
 
   /* 사이드 바 토글 버튼 */
   .map-sidebar-content-toggle{
-    @apply absolute top-[50%] w-6 h-14 p-2 bg-white rounded-e-md border-none text-gray-800 cursor-pointer z-20 shadow-lg;
+    @apply absolute top-[50%] w-6 h-14 p-2 bg-white rounded-e-md border-none text-gray-800 cursor-pointer z-10 shadow-lg;
   }
 }
 
@@ -165,7 +165,7 @@
 
   /* 모바일 장소 검색 박스 */
   .map-mobile-search-box {
-    @apply absolute top-0 left-0 z-30 flex gap-2 h-24 w-full px-6 py-5 items-center;
+    @apply absolute top-0 left-0 z-20 flex gap-2 h-24 w-full px-6 py-5 items-center;
   }
   /* 모바일 장소 검색창 */
   .map-mobile-search-input{
@@ -329,3 +329,24 @@
 .place-storage-item{
   @apply flex gap-3 items-center p-3 border-b-gray-200 py-5 border-b;
 }
+
+
+/* 라디오 버튼 css */
+input[type='radio'] {
+  -webkit-appearance: none;
+  -moz-appearance: none; 
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #ccc; 
+  border-radius: 50%;
+  outline: none; 
+  cursor: pointer;
+}
+input[type='radio']:checked {
+  background-color: #96DBF4; 
+  border: 3px solid white;
+  box-shadow: 0 0 0 1.6px #96DBF4;
+}
+
+

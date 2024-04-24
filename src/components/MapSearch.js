@@ -58,6 +58,7 @@ export default function MapSearch({ closeEvent }) {
     const handlePlaceDataClick = (data) => {
         setSelectedData(data);
         setShowMobileMapList(false);
+        alert(data.location_nm)
     };
 
     return (
@@ -70,8 +71,8 @@ export default function MapSearch({ closeEvent }) {
                     <Scrollbars thumbSize={85}>
 
                         {datas.map(data => (
-                            <div key={data.id} className='border-b-gray-200 py-5 border-b ' onClick={() => handlePlaceDataClick(data)}>
-                                <div className='place-search-item'>
+                            <div key={data.id} className='border-b-gray-200 py-5 border-b '>
+                                <div className='place-search-item'  onClick={() => handlePlaceDataClick(data)}>
                                     <SiMaplibre className='size-10 text-slate-300' />
                                     <div className='flex-1'>
                                         <p>{data.location_nm}</p>
