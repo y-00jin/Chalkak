@@ -6,7 +6,7 @@ import { FaRegStar } from "react-icons/fa";
 import { FaListUl } from "react-icons/fa6";
 
 import React, { useState } from 'react';
-import MapSave from './MapSave';
+import PlaceSave from './PlaceSave';
 export default function MapSearch({ closeEvent }) {
 
     // 임시 데이터
@@ -53,7 +53,7 @@ export default function MapSearch({ closeEvent }) {
     const [showMobileMapList, setShowMobileMapList] = useState(false);      // 검색 목록 여부
     const [showMobileMapSearch, setShowMobileMapSearch] = useState(false);  // 검색창 여부
 
-    const [showMapSave, setShowMapSave] = useState(false);  // 저장
+    const [showPlaceSave, setShowPlaceSave] = useState(false);  // 저장
 
     const handlePlaceDataClick = (data) => {
         setSelectedData(data);
@@ -80,7 +80,7 @@ export default function MapSearch({ closeEvent }) {
                                     </div>
                                 </div>
 
-                                <button className='flex items-center gap-1 ml-12 mt-2' onClick={()=>setShowMapSave(true)}>
+                                <button className='flex items-center gap-1 ml-12 mt-2' onClick={()=>setShowPlaceSave(true)}>
                                     <FaRegStar/>저장
                                 </button>
                             </div>
@@ -127,7 +127,7 @@ export default function MapSearch({ closeEvent }) {
                                         <p>{data.address}</p>
                                     </div>
                                 </div>
-                                <button className='flex items-center gap-1 ml-12 mt-2 ' onClick={()=>setShowMapSave(true)}>
+                                <button className='flex items-center gap-1 ml-12 mt-2 ' onClick={()=>setShowPlaceSave(true)}>
                                     <FaRegStar/>저장
                                     </button>
                                 </div>
@@ -139,7 +139,7 @@ export default function MapSearch({ closeEvent }) {
             }
 
 
-            { showMapSave && <MapSave onClose={()=>setShowMapSave(false)}/>}
+            { showPlaceSave && <PlaceSave onClose={()=>setShowPlaceSave(false)}/>}
 
         </>
 

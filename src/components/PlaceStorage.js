@@ -91,7 +91,10 @@ export default function PlaceStorage({ closeEvent }) {
                                 </div>
                                 
                                 <div className='flex gap-3 float-right text-gray-400'>
-                                    <FaPencilAlt/>
+                                    <button>
+                                        <FaPencilAlt/>
+                                    </button>
+                                    
                                     <AiOutlineClose/>
                                 </div>
 
