@@ -13,26 +13,24 @@ import MemoryChange from './MemoryChange';
 import MemoryInfo from './MemoryInfo';
 import PlaceStorage from './PlaceStorage';
 import MobileHeader from './MoblieHeader';
+import useMobile from 'components/UseMobile';
 
-export default function Sidebar({ isMobile }) {
+
+export default function Sidebar() {
+
+    const isMobile = useMobile();
 
     const [activeMenu, setActiveMenu] = useState('mapSearch');  // 활성화 메뉴
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);   // pc 사이드바 펼침 상태
 
     const [isMobileMenubarOpen, setIsMobileMenubarOpen] = useState(false);  // 모바일 메뉴바 펼침 상태
-    // const [showMobileMapSearch, setShowMobileMapSearch] = useState(false);  // 모바일 지도 검색 펼침 상태
 
     // 메뉴 클릭 이벤트
     const handleMenuClick = (target) => {
-        // setShowMobileMapSearch(false);    // 모바일 지도 검색 false
         setIsMobileMenubarOpen(false);   // 모바일 메뉴 바 상태 false
         setActiveMenu(target);          // 클릭한 메뉴로 설정
     };
 
-    // const handleMenubarClick = () => {
-    //     setIsMobileMenubarOpen((val) => !val);
-    //     setShowMobileMapSearch(false);    // 모바일 지도 검색 false
-    // }
 
     return (
 
@@ -83,9 +81,9 @@ export default function Sidebar({ isMobile }) {
                     {/* 사이드바 내용 */}
                     <div className={`map-sidebar-content ${!isSidebarOpen ? 'hidden' : ''}`}>
                         {activeMenu === 'mapSearch' && <MapSearch />}
-                        {activeMenu === 'placeStorage' && <PlaceStorage closeEvent={handleMenuClick} isMobile={isMobile}/>}
-                        {activeMenu === 'memoryInfo' && <MemoryInfo closeEvent={handleMenuClick} isMobile={isMobile}/>}
-                        {activeMenu === 'memoryChange' && <MemoryChange closeEvent={handleMenuClick} isMobile={isMobile} />}
+                        {activeMenu === 'placeStorage' && <PlaceStorage closeEvent={handleMenuClick} />}
+                        {activeMenu === 'memoryInfo' && <MemoryInfo closeEvent={handleMenuClick} />}
+                        {activeMenu === 'memoryChange' && <MemoryChange closeEvent={handleMenuClick}  />}
                     </div>
                     {/* 사이드바 열림/닫힘 버튼 */}
                     <button className={`map-sidebar-content-toggle ${isSidebarOpen ? 'left-[460px]' : 'left-20'}`} onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
@@ -102,28 +100,12 @@ export default function Sidebar({ isMobile }) {
                     </div>
                 }
 
-                {/* <div role="presentation" className={`map-mobile-search-box ${showMobileMapSearch ? 'bg-white' :''}`}>
-                    {showMobileMapSearch && 
-                        <button>
-                        <CiSettings className='size-7' />
-                        </button>
-                    }
-                    
-                    <input type="text" placeholder="장소 검색" className="map-mobile-search-input h-full " onClick={() => setShowMobileMapSearch(true)} /> 
-                    {showMobileMapSearch && 
-                        <button onClick={() => handleMenuClick('mapSearch')}>
-                            <AiOutlineClose className='size-5' />
-                        </button>
-                    }
-                </div> */}
-
-
                 {/* 모바일 메뉴 내용 */}
                 {isMobile && activeMenu != "mapSearch" &&
                     <div>
-                        {activeMenu === 'placeStorage' && <PlaceStorage closeEvent={handleMenuClick} isMobile={isMobile}/>}
-                        {activeMenu === 'memoryInfo' && <MemoryInfo closeEvent={handleMenuClick} isMobile={isMobile}/>}
-                        {activeMenu === 'memoryChange' && <MemoryChange closeEvent={handleMenuClick} isMobile={isMobile}/>}
+                        {activeMenu === 'placeStorage' && <PlaceStorage closeEvent={handleMenuClick}/>}
+                        {activeMenu === 'memoryInfo' && <MemoryInfo closeEvent={handleMenuClick}/>}
+                        {activeMenu === 'memoryChange' && <MemoryChange closeEvent={handleMenuClick}/>}
                     </div>
                 }
 

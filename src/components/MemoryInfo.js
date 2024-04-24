@@ -3,9 +3,11 @@ import { AiOutlineClose } from "react-icons/ai";
 import { Scrollbars } from 'react-custom-scrollbars';
 import { FaPencilAlt } from "react-icons/fa";
 import { BsEmojiSmileFill } from "react-icons/bs";
+import useMobile from 'components/UseMobile.js';
 
-export default function MemoryInfo({ closeEvent, isMobile }) {
+export default function MemoryInfo({ closeEvent }) {
 
+    const isMobile = useMobile();
     const [memoryNm, setMemoryNm] = useState('강릉 여행');
     const [memoryCode, setMemoryCode] = useState('P2RF6Z');
 

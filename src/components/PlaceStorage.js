@@ -3,9 +3,11 @@ import { AiOutlineClose } from "react-icons/ai";
 import { Scrollbars } from 'react-custom-scrollbars';
 import { SiMaplibre } from "react-icons/si";
 import { FaPencilAlt } from "react-icons/fa";
+import useMobile from 'components/UseMobile.js';
 
-export default function PlaceStorage({ closeEvent, isMobile }) {
-
+export default function PlaceStorage({ closeEvent }) {
+    
+    const isMobile = useMobile();
     const [activeTab, setActiveTab] = useState('save');
 
     const [placeList, setPlaceList] = useState([
