@@ -27,7 +27,7 @@ export default function PlaceSave({ onClose }) {
         <>
         <div className='fixed top-0 left-0 z-20 w-full h-screen bg-gray-950 opacity-50' onClick={onClose} />
 
-        <div className={`rounded-[30px] bg-white border-gray-300 z-[30] p-5 shadow-lg ${isMobile ? 'absolute bottom-0 border-t w-full h-[45%]':'border top-1/2 left-1/2  transform -translate-x-1/2 -translate-y-1/2 fixed w-[42%] h-[40%]' } `}>
+        <div className={`min-h-80 bg-white border-gray-300 z-[30] p-5 shadow-lg ${isMobile ? 'rounded-t-[30px] absolute bottom-0 border-t w-full h-[45%]':'rounded-[30px] border top-1/2 left-1/2  transform -translate-x-1/2 -translate-y-1/2 fixed w-[35%] h-[45%]' } `}>
             <div className="relative">
                 <button className="absolute right-0 top-0 " onClick={onClose}><AiOutlineClose /></button>
                 <div className='flex flex-col gap-5 pt-8 px-8'>
@@ -75,6 +75,7 @@ export default function PlaceSave({ onClose }) {
                         <CustomToggleSwitch checked={editRestrict} onChange={handleEditRestrict} toggleText={'나만 수정'}/>
                     </div>
                     <button className="bg-[#96DBF4] w-[50%] mx-auto mt-5 py-2 rounded-full text-white " onClick={()=>alert('a')}>저장</button>
+                    
                 </div>
             </div>
         </div>
