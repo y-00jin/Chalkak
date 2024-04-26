@@ -51,7 +51,7 @@ app.get('*', (req, res) => {
 
 // 서버 확인
 app.listen(port, ()=>{
-  console.log('server is running on ' + port);
+  console.log('노드 연결 쌉가능 :' + port);
 });
 
   
