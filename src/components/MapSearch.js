@@ -1,4 +1,4 @@
-import { Scrollbars } from 'react-custom-scrollbars';
+import { Scrollbars } from 'react-custom-scrollbars-2';
 import { SiMaplibre } from "react-icons/si";
 import { AiOutlineClose } from "react-icons/ai";
 import { RiRoadMapFill } from "react-icons/ri";

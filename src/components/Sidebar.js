@@ -7,13 +7,13 @@ import { BiMenu } from "react-icons/bi";
 import { AiOutlineClose } from "react-icons/ai";
 import { FiMapPin } from "react-icons/fi";
 // import { SiMaplibre } from "react-icons/si";
-// import { Scrollbars } from 'react-custom-scrollbars';
+// import { Scrollbars } from 'react-custom-scrollbars-2';
 import MapSearch from './MapSearch';
 import MemoryChange from './MemoryChange';
 import MemoryInfo from './MemoryInfo';
 import PlaceStorage from './PlaceStorage';
 import useMobile from 'components/UseMobile';
-
+import { IoExitOutline } from "react-icons/io5";
 
 export default function Sidebar() {
 
@@ -81,6 +81,13 @@ export default function Sidebar() {
                             </button>
                             추억 변경
                         </div>
+
+                        <div className='map-menu-item'>
+                            <button>
+                                <IoExitOutline className='size-7' />
+                            </button>
+                            로그아웃
+                        </div>
                     </div>
 
                     
@@ -104,7 +111,7 @@ export default function Sidebar() {
                 }
 
                 {/* 모바일 메뉴 내용 */}
-                {isMobile && activeMenu != "mapSearch" &&
+                {isMobile && activeMenu !== "mapSearch" &&
                     <div>
                         {activeMenu === 'placeStorage' && <PlaceStorage closeEvent={handleMenuClick}/>}
                         {activeMenu === 'memoryInfo' && <MemoryInfo closeEvent={handleMenuClick}/>}
@@ -154,6 +161,9 @@ export default function Sidebar() {
                             <button className="map-mobile-menu-item" onClick={() => handleMenuClick('memoryChange')}>
                                 <CiSettings />
                                 추억 변경
+                            </button>
+                            <button className="map-mobile-menu-item">
+                                로그아웃
                             </button>
                         </div>
                     </div>

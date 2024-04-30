@@ -143,6 +143,9 @@
     @apply flex flex-col cursor-pointer size-20 items-center justify-center;
   }
 
+  .map-menu-item:last-child {
+    @apply absolute bottom-2 text-gray-600;
+  }
   /* 사이드 바 */
   .map-sidebar-content {
     @apply absolute top-0 p-5 left-20 h-full bg-white w-[380px] border-none z-10 shadow-lg ;
@@ -192,6 +195,9 @@
   }
   .map-mobile-menu-item{
     @apply flex items-center gap-2 cursor-pointer text-xl;
+  }
+  .map-mobile-menu-item:last-child {
+    @apply absolute bottom-5 left-1/3 translate-x-1/3 text-gray-400 text-lg;
   }
   .map-mobile-menu-box-bg{
     @apply z-30 absolute w-[50%] left-0 h-screen bg-gray-950 opacity-50;

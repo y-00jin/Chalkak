@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { AiOutlineClose } from "react-icons/ai";
-import { Scrollbars } from 'react-custom-scrollbars';
+import { Scrollbars } from 'react-custom-scrollbars-2';
 import { FaPencilAlt } from "react-icons/fa";
 import { BsEmojiSmileFill } from "react-icons/bs";
 import useMobile from 'components/UseMobile.js';

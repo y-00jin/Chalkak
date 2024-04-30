@@ -3,12 +3,15 @@ import MemoryConnection from 'pages/memory/connection';
 import MemoryLogin from 'pages/memory/login';
 import MemoryNew from 'pages/memory/new';
 import MyPageHome from 'pages/place/myPage';
+import Test from 'pages/test/Test';
 import { Route, Routes, Navigate } from 'react-router';
 export default function Router() {
     return (
         <>
             {/** 경로 설정 */}
             <Routes>
+
+                <Route path="/tests" element={<Test/>} />
 
                 {/** 추억 관리 */}
                 <Route path="/" element={<MemoryLogin />} />
