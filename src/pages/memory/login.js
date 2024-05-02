@@ -2,6 +2,12 @@ import { RiKakaoTalkFill } from "react-icons/ri";
 import { useNavigate } from 'react-router-dom'; 
 
 export default function MemoryLogin() {
+
+    const REST_API_KEY = `${process.env.REACT_APP_KAKAO_CLIENT_ID}`;
+    const REDIRECT_URI = 'http://localhost:3000/api/auth/kakao';
+
+
+
     const navigate = useNavigate();
     return (
        
@@ -22,7 +28,7 @@ export default function MemoryLogin() {
                 <button
                     type="button"
                     className="login-btn login-btn-kakao"
-                    onClick={() => window.location.href=`https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_KAKAO_CLIENT_ID}&redirect_uri=http://localhost:3000/api/auth/kakao&response_type=code`}
+                    onClick={() => window.location.href=`https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`}
                 >
                     <RiKakaoTalkFill className="w-6 h-6 " />
                     Sign in with Kakao
