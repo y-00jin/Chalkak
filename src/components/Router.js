@@ -25,7 +25,7 @@ export default function Router() {
                 <Route path="/mypage" element={<MyPageHome/>} />
 
                 {/** 설정된 경로를 제외한 나머지 경로로 접속한 경우 루트 페이지로 이동 */}
-                <Route path="*" element={<Navigate replace to="/" />} />
+                {/* <Route path="*" element={<Navigate replace to="/" />} /> */}
             </Routes>
         </>
     );

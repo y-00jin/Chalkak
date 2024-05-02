@@ -6,7 +6,8 @@
 /* 오뮤 다예쁨체 */
 @font-face {
   font-family: 'omyu_pretty';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-01@1.0/omyu_pretty.woff2') format('woff2');
+  /* src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-01@1.0/omyu_pretty.woff2') format('woff2'); */
+  src:url("./font/omyu_pretty.ttf");
   font-weight: normal;
   font-style: normal;
 }
@@ -85,7 +86,7 @@
   @apply h-full flex flex-col justify-center;
 }
 .new-btn-box, .connection-btn-box{
- @apply mx-auto max-w-sm flex flex-col justify-center items-center mt-5 gap-4 text-gray-500;
+ @apply mx-auto max-w-sm flex flex-col justify-center items-center mt-5 gap-1 text-gray-500;
 }
 /* pages > memory > new & connection ### */
 

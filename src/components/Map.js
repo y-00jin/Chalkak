@@ -27,7 +27,7 @@ export default function Map({ setMap }) {
     // 컴포넌트 마운트 시 실행
     useEffect(() => {
         const script = document.createElement('script');
-        script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.REACT_APP_KAKAO_API_KEY}&autoload=false`;
+        script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.REACT_APP_KAKAO_API_JS_KEY}&autoload=false`;
         script.async = true;
         script.onload = loadKaKaoMap;
         document.head.appendChild(script);
