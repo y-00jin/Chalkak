@@ -1,3 +1,4 @@
+import KakaoCallback from 'pages/api/KakaoCallback';
 import MapHome from 'pages/map';
 import MemoryConnection from 'pages/memory/connection';
 import MemoryLogin from 'pages/memory/login';
@@ -5,7 +6,6 @@ import MemoryNew from 'pages/memory/new';
 import MyPageHome from 'pages/place/myPage';
 import Test from 'pages/test/Test';
 import { Route, Routes, Navigate } from 'react-router';
-import ApiAuth from './ApiAuth';
 
 
 
@@ -16,8 +16,6 @@ export default function Router() {
             <Routes>
 
                 <Route path="/tests" element={<Test/>} />
-
-                <Route exact path='/api/auth/kakao' element={<ApiAuth />} />
 
                 {/** 추억 관리 */}
                 <Route path="/" element={<MemoryLogin />} />
@@ -30,8 +28,10 @@ export default function Router() {
                 {/* 장소 관리 */}
                 <Route path="/mypage" element={<MyPageHome/>} />
 
+                <Route path="/api/auth/kakao" element={<KakaoCallback/>}/>
+
                 {/** 설정된 경로를 제외한 나머지 경로로 접속한 경우 루트 페이지로 이동 */}
-                <Route path="*" element={<Navigate replace to="/" />} />
+                {/* <Route path="*" element={<Navigate replace to="/" />} /> */}
             </Routes>
         </>
     );

@@ -3,7 +3,7 @@ const queries = require('../queries');
 
 const router = express.Router();
 
-router.get('/tests', async (req, res) => {
+router.get('/', async (req, res) => {
     try {
         const tests = await queries.getTests(); // queries 객체를 통해 getUsers 함수를 호출하여 사용자 목록을 가져옴
         res.json(tests); // 사용자 목록을 JSON 형식으로 응답
@@ -13,7 +13,7 @@ router.get('/tests', async (req, res) => {
     }
 });
 
-router.post('/tests/add', async (req, res) => {
+router.post('/add', async (req, res) => {
     const testName = req.body.testName; // POST 요청에서 testName 파라미터를 가져옴
     try {
         const result = await queries.createTest(testName); // createTest 함수를 호출하여 테스트를 생성함

@@ -1,15 +1,62 @@
+
 const express = require('express');
 const queries = require('../queries');
+const axios = require('axios');
+require('dotenv').config(); // dotenv를 사용하여 환경 변수 로드
 
 const router = express.Router();
 
-router.get('/api', async (req, res) => {
+router.get('/auth/kakao', async (req, res) => {
+
     try {
 
-        console.log('a');
+        // # 토큰
+        const { code } = req.query;
+
+        // 토큰 요청 데이터
+        const tokenReqData = {
+            grant_type: 'authorization_code',
+            client_id: process.env.REACT_APP_KAKAO_CLIENT_ID,
+            client_secret: process.env.REACT_APP_KAKAO_CLIENT_SECRET,
+            redirect_uri: 'http://192.168.0.245:3000/api/auth/kakao',
+            code: code
+        };
+
+        // 토큰 요청 헤더 설정
+        const tokenReqHeaders = {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
+        };
+
+        // 액세스 토큰 요청
+        const tokenResponse = await axios.post(
+            'https://kauth.kakao.com/oauth/token',
+            tokenReqData,
+            {
+                headers:tokenReqHeaders
+            }
+        );
+
+        const resAccessToken = tokenResponse.data.access_token; // 엑세스 토큰
+
+        // 사용자 정보 요청 헤더
+        const infoReqHeaders = {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+            'Authorization': `Bearer ${resAccessToken}`
+        }
+
+        // 액세스 토큰을 사용하여 사용자 정보 요청
+        const userInfoResponse = await axios.get(
+            'https://kapi.kakao.com/v2/user/me',
+            {
+                headers: infoReqHeaders
+            }
+        );
+
+        const userInfo = userInfoResponse.data;
+        res.status(200).json({ result: true, userInfo: userInfo });
+
     } catch (error) {
-        console.error('Error handling request:', error);
-        res.status(500).json({ error: 'Internal server error' }); // 오류 발생 시 500 에러 응답
+        res.status(500).json({ result:false, userInfo: null }); // 오류 발생 시 500 에러 응답
     }
 });
 
