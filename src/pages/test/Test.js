@@ -2,19 +2,16 @@ import { useEffect, useState } from 'react';
 
 export default function Test() {
 
-    const path = "http://192.168.0.245:8088";
+    // const path = "http://192.168.0.245:8088";
+    // const path = "http://localhost:8088";
 
+        
     const [tests, setTests] = useState(['test000']);
 
     useEffect(() => {
 
-        fetch(`${path}/tests`)
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error('서버 응답이 정상이 아닙니다.');
-                }
-                return res.json();
-            })
+        fetch(`/api/tests`)
+            .then(res => res.json())
             .then(data => {
                 const newItem = data.map(element => element.test_nm);
                 setTests(prevTests => [...prevTests, ...newItem]);

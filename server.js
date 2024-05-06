@@ -1,6 +1,9 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const path = require('path');
 const app = express();
+const queries = require('./src/db/queries');
+
 
 const testRouter = require('./src/db/routes/testRouter');
 const apiRouter = require('./src/db/routes/apiRouter');
@@ -15,9 +18,15 @@ const corsOption = {
 };
 app.use(cors(corsOption));
 app.use(express.json());
+// app.use(bodyParser.json());
 
-app.use('/tests', testRouter); // '/tests' 경로에 대한 요청은 testRouter.js 파일에서 처리
-app.use('/api', apiRouter);
+
+app.use('/api/tests', testRouter); // '/tests' 경로에 대한 요청은 testRouter.js 파일에서 처리
+app.use('/api/auth', apiRouter);  // auth
+
+
+
+
 
 
 // 정적 파일 미들웨어 설정

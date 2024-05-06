@@ -5,7 +5,7 @@ export default function MemoryLogin() {
 
     const REST_API_KEY = `${process.env.REACT_APP_KAKAO_CLIENT_ID}`;
     // const REDIRECT_URI = `${process.env.REACT_APP_SERVER_IP}${process.env.REACT_APP_KAKAO_REDIRECT_URI}`;
-    const REDIRECT_URI = 'http://192.168.0.245:3000/api/auth/kakao';
+    const REDIRECT_URI = 'http://localhost:3000/api/auth/kakao';
 
 
 

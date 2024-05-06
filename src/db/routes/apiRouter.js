@@ -6,7 +6,7 @@ require('dotenv').config(); // dotenv를 사용하여 환경 변수 로드
 
 const router = express.Router();
 
-router.get('/auth/kakao', async (req, res) => {
+router.get('/kakao', async (req, res) => {
 
     try {
 
@@ -18,7 +18,7 @@ router.get('/auth/kakao', async (req, res) => {
             grant_type: 'authorization_code',
             client_id: process.env.REACT_APP_KAKAO_CLIENT_ID,
             client_secret: process.env.REACT_APP_KAKAO_CLIENT_SECRET,
-            redirect_uri: 'http://192.168.0.245:3000/api/auth/kakao',
+            redirect_uri: 'http://localhost.0.245:3000/api/auth/kakao',
             code: code
         };
 
