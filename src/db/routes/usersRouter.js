@@ -28,19 +28,19 @@ router.post('/login', async (req, res) => {
     } 
 });
 
+// 로그아웃
 router.get('/logout', async (req, res) => {
-    console.log(req.session.loginUser);
     delete req.session.loginUser;
-
-    console.log(req.session.loginUser);
     res.status(200).json({ result: true, redirectUrl: '/' });
 });
 
-
+// 로그인 확인
 router.post('/login/check', async (req, res) => {
     const loginUser = req.session.loginUser;
-console.log(loginUser);
-
+    res.json({
+        result: loginUser === undefined? false:true,
+        loginUser: loginUser
+    })
 });
 
 

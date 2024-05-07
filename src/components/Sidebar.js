@@ -14,8 +14,12 @@ import MemoryInfo from './MemoryInfo';
 import PlaceStorage from './PlaceStorage';
 import useMobile from 'components/UseMobile';
 import { IoExitOutline } from "react-icons/io5";
+import { useNavigate } from 'react-router-dom';
+import axios from "axios";
+
 
 export default function Sidebar() {
+    const navigate = useNavigate();
 
     const isMobile = useMobile();
 
@@ -28,6 +32,22 @@ export default function Sidebar() {
     const handleMenuClick = (target) => {
         setIsMobileMenubarOpen(false);   // 모바일 메뉴 바 상태 false
         setActiveMenu(target);          // 클릭한 메뉴로 설정
+    };
+
+    // 로그아웃 이벤트
+    const handleLogout = async () => {
+
+        const logoutErrorMsg = '로그아웃 중 문제가 발생했습니다. 다시 시도해주세요.';
+        try {
+            const response = await axios.get('/api/users/logout', { withCredentials: true });
+            if (response.status === 200) {
+                navigate(`/`);
+            } else {
+                alert(logoutErrorMsg);
+            }
+        } catch (error) {
+            alert(logoutErrorMsg);
+        }
     };
 
 
@@ -82,7 +102,7 @@ export default function Sidebar() {
                             추억 변경
                         </div>
 
-                        <div className='map-menu-item'>
+                        <div className='map-menu-item' onClick={handleLogout}>
                             <button>
                                 <IoExitOutline className='size-7' />
                             </button>
@@ -162,7 +182,7 @@ export default function Sidebar() {
                                 <CiSettings />
                                 추억 변경
                             </button>
-                            <button className="map-mobile-menu-item">
+                            <button className="map-mobile-menu-item" onClick={handleLogout}>
                                 로그아웃
                             </button>
                         </div>

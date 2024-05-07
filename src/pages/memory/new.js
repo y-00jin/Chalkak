@@ -1,13 +1,15 @@
 import MemoryWrite from "components/MemoryWrite";
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from "axios"
+import axios from "axios";
 
 
 export default function MemoryNew() {
 
     const navigate = useNavigate();
 
+
+    // 로그아웃 이벤트
     const handleLogout = async () => {
 
         const logoutErrorMsg = '로그아웃 중 문제가 발생했습니다. 다시 시도해주세요.';

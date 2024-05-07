@@ -5,10 +5,11 @@ import MemoryLogin from 'pages/memory/login';
 import MemoryNew from 'pages/memory/new';
 import Test from 'pages/test/Test';
 import { Route, Routes, Navigate } from 'react-router';
-
-
+import { useEffect, useState } from 'react';
+import axios from "axios";
 
 export default function Router() {
+
     return (
         <>
             {/** 경로 설정 */}
