@@ -6,19 +6,17 @@ require('dotenv').config(); // dotenv를 사용하여 환경 변수 로드
 
 const router = express.Router();
 
-router.get('/kakao', async (req, res) => {
+router.post('/kakao', async (req, res) => {
 
     try {
 
         // # 토큰
-        const { code } = req.query;
-
+        const { code } = req.body;
         // 토큰 요청 데이터
         const tokenReqData = {
             grant_type: 'authorization_code',
             client_id: process.env.REACT_APP_KAKAO_CLIENT_ID,
             client_secret: process.env.REACT_APP_KAKAO_CLIENT_SECRET,
-            redirect_uri: 'http://localhost.0.245:3000/api/auth/kakao',
             code: code
         };
 
@@ -35,7 +33,6 @@ router.get('/kakao', async (req, res) => {
                 headers:tokenReqHeaders
             }
         );
-
         const resAccessToken = tokenResponse.data.access_token; // 엑세스 토큰
 
         // 사용자 정보 요청 헤더
@@ -51,9 +48,15 @@ router.get('/kakao', async (req, res) => {
                 headers: infoReqHeaders
             }
         );
-
         const userInfo = userInfoResponse.data;
-        res.status(200).json({ result: true, userInfo: userInfo });
+        
+        const newUserInfo = {
+            email : userInfo.kakao_account.email,
+            user_name: userInfo.properties.nickname,
+            social_type: 'kakao',
+            social_id: userInfo.id + ''
+        }
+        res.status(200).json({ result: true, userInfo: newUserInfo });
 
     } catch (error) {
         res.status(500).json({ result:false, userInfo: null }); // 오류 발생 시 500 에러 응답

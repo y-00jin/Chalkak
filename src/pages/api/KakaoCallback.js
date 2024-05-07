@@ -5,59 +5,60 @@ import axios from "axios"
 export default function KakaoCallback() {
 
     const navigate = useNavigate();
-    const serverIp = `${process.env.REACT_APP_SERVER_IP}`;
-    const redirectUri = `${process.env.REACT_APP_KAKAO_REDIRECT_URI}`;
-    const [ userInfo, setUserInfo ] = useState([]);
+    const [userInfo, setUserInfo] = useState([]);
+    const errorMsg = '로그인 중 문제가 발생했습니다. 다시 시도해주세요.';
 
     useEffect(() => {
-        // URL에서 인증 코드를 가져옵니다.
-        const code = new URL(window.location.href).searchParams.get("code");
+        const code = new URL(window.location.href).searchParams.get("code");    // 인증 코드 가져옴
 
-        // 인증 코드를 사용하여 백엔드 서버로 POST 요청을 보냅니다.
-        axios.get(serverIp + redirectUri +'?code=' + code)
-            .then(response => {
-                const data = response.data;
-                console.log(data);
+        const reqData = {
+            code: code
+        };
+
+        // 인증 코드를 사용하여 백엔드 서버로 요청
+        axios.post('/api/auth/kakao', reqData)
+            .then(res => {
+                const data = res.data;
                 if (!data.result) {
-                    alert('이미 만료된 로그인입니다.');
-                    // navigate('/');
-                } else{
+                    alert(errorMsg);
+                    navigate('/');
+                } else {
                     setUserInfo(data.userInfo);
                 }
             })
             .catch(error => {
-                console.error('오류 발생:', error);
+                alert(errorMsg);
+                navigate('/');
             });
-
-
-        // 인증 코드를 사용하여 백엔드 서버로 POST 요청을 보냅니다.
-        // fetch('http://192.168.0.245:8088/api/auth/kakao?code=' + code)
-        //     .then(res => res.json())
-        //     .then(data => {
-        //         if (!data.result) {
-        //             alert('이미 만료된 로그인입니다.');
-        //             navigate('/');
-        //             return;
-        //         }
-        //         alert('a')
-        //     })
     }, []);
 
 
-    // 사용자 정보 update
+    // 사용자 정보 update -> 로그인 처리
     useEffect(() => {
-        if (userInfo.length !== 0) {
-
-
-
-
-
-
-
-
-            console.log(userInfo)
+        if (userInfo.length == 0) {
+            return;
         }
-    },[userInfo]);
+
+        const reqData = {
+            userInfo: userInfo
+        };
+
+
+        // 인증 코드를 사용하여 백엔드 서버로 요청
+        axios.post('/api/users/login', reqData)
+            .then(res => {
+                const data = res.data;
+                if(!data.result){
+                    alert(errorMsg);
+                }
+                navigate(data.redirectUrl);
+            })
+            .catch(error => {
+                alert(errorMsg);
+                navigate('/');
+            });
+
+    }, [userInfo]);
 
 
     return <></>;

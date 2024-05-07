@@ -3,7 +3,6 @@ import MapHome from 'pages/map';
 import MemoryConnection from 'pages/memory/connection';
 import MemoryLogin from 'pages/memory/login';
 import MemoryNew from 'pages/memory/new';
-import MyPageHome from 'pages/place/myPage';
 import Test from 'pages/test/Test';
 import { Route, Routes, Navigate } from 'react-router';
 
@@ -25,13 +24,10 @@ export default function Router() {
                 {/** 지도서비스 */}
                 <Route path="/map" element={<MapHome/>} />
 
-                {/* 장소 관리 */}
-                <Route path="/mypage" element={<MyPageHome/>} />
-
-                <Route path="/api/auth/kakao" element={<KakaoCallback/>}/>
+                <Route path="/auth/kakao" element={<KakaoCallback/>}/>
 
                 {/** 설정된 경로를 제외한 나머지 경로로 접속한 경우 루트 페이지로 이동 */}
-                {/* <Route path="*" element={<Navigate replace to="/" />} /> */}
+                <Route path="*" element={<Navigate replace to="/" />} />
             </Routes>
         </>
     );

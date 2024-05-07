@@ -1,12 +1,22 @@
 const express = require('express');
-const bodyParser = require('body-parser');
+const session = require('express-session');
 const path = require('path');
 const app = express();
-const queries = require('./src/db/queries');
 
+
+require('dotenv').config(); // dotenv를 사용하여 환경 변수 로드
+
+// 세션 설정
+app.use(session({
+  secret: process.env.REACT_APP_SESSION_SECRET_KEY, // 세션 암호화를 위한 비밀키
+  resave: false, // 변경 사항이 없더라도 세션을 다시 저장할지 여부
+  saveUninitialized: false, // 초기화되지 않은 세션을 저장할지 여부
+  cookie: { secure: false } // 쿠키 설정, HTTPS가 아닌 환경에서도 사용하려면 false로 설정
+}));
 
 const testRouter = require('./src/db/routes/testRouter');
-const apiRouter = require('./src/db/routes/apiRouter');
+const authRouter = require('./src/db/routes/authRouter');
+const usersRouter = require('./src/db/routes/usersRouter');
 
 const port = process.env.PORT || 8088; // 포트 설정
 
@@ -18,15 +28,10 @@ const corsOption = {
 };
 app.use(cors(corsOption));
 app.use(express.json());
-// app.use(bodyParser.json());
-
 
 app.use('/api/tests', testRouter); // '/tests' 경로에 대한 요청은 testRouter.js 파일에서 처리
-app.use('/api/auth', apiRouter);  // auth
-
-
-
-
+app.use('/api/auth', authRouter);  // auth
+app.use('/api/users', usersRouter);  // users
 
 
 // 정적 파일 미들웨어 설정
