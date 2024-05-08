@@ -34,21 +34,11 @@ const getUsers = async (user_seq_no, email, user_name, social_type, social_id) =
     let queryText = 'SELECT * FROM users WHERE 1 = 1';
 
     // 매개변수가 주어진 경우에만 해당 조건을 추가
-    if (user_seq_no !== undefined) {
-      queryText += ` AND user_seq_no = $1`;
-    }
-    if (email !== undefined) {
-      queryText += ` AND email = $${queryText.split('$').length}`;
-    }
-    if (user_name !== undefined) {
-      queryText += ` AND user_name = $${queryText.split('$').length}`;
-    }
-    if (social_type !== undefined) {
-      queryText += ` AND social_type = $${queryText.split('$').length}`;
-    }
-    if (social_id !== undefined) {
-      queryText += ` AND social_id = $${queryText.split('$').length}`;
-    }
+    if (user_seq_no !== undefined) { queryText += ` AND user_seq_no = $1`; }
+    if (email !== undefined) { queryText += ` AND email = $${queryText.split('$').length}`; }
+    if (user_name !== undefined) { queryText += ` AND user_name = $${queryText.split('$').length}`; }
+    if (social_type !== undefined) { queryText += ` AND social_type = $${queryText.split('$').length}`; }
+    if (social_id !== undefined) { queryText += ` AND social_id = $${queryText.split('$').length}`; }
 
     // 쿼리 실행
     const result = await pool.query(queryText, [user_seq_no, email, user_name, social_type, social_id].filter(param => param !== undefined));

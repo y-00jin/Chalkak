@@ -7,8 +7,6 @@ const router = express.Router();
 // 로그인 및 회원가입
 router.post('/login', async (req, res) => {
     try {
-
-
         const { userInfo } = req.body;
         const resUsers = await queries.getUsers(undefined, undefined, undefined, undefined, userInfo.social_id);    // 사용자 조회
         const isUserExists = resUsers.length > 0;

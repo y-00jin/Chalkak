@@ -1,11 +1,11 @@
 import { RiKakaoTalkFill } from "react-icons/ri";
-import { useNavigate } from 'react-router-dom'; 
+// import { useNavigate } from 'react-router-dom'; 
 
 export default function MemoryLogin() {
 
     const REST_API_KEY = `${process.env.REACT_APP_KAKAO_CLIENT_ID}`;
 
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     return (
        
         <div className="login-box" >

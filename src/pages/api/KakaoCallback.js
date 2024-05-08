@@ -38,11 +38,9 @@ export default function KakaoCallback() {
         if (userInfo.length == 0) {
             return;
         }
-
         const reqData = {
             userInfo: userInfo
         };
-
 
         // 인증 코드를 사용하여 백엔드 서버로 요청
         axios.post('/api/users/login', reqData)
