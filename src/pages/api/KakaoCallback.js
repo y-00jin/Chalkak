@@ -18,12 +18,11 @@ export default function KakaoCallback() {
         // 인증 코드를 사용하여 백엔드 서버로 요청
         axios.post('/api/auth/kakao', reqData)
             .then(res => {
-                const data = res.data;
-                if (!data.result) {
+                if (res.status !== 200) {
                     alert(errorMsg);
                     navigate('/');
                 } else {
-                    setUserInfo(data.userInfo);
+                    setUserInfo(res.data.userInfo);
                 }
             })
             .catch(error => {
@@ -45,11 +44,10 @@ export default function KakaoCallback() {
         // 인증 코드를 사용하여 백엔드 서버로 요청
         axios.post('/api/users/login', reqData)
             .then(res => {
-                const data = res.data;
-                if(!data.result){
+                if (res.status !== 200) {
                     alert(errorMsg);
                 }
-                navigate(data.redirectUrl);
+                navigate(res.data.redirectUrl);
             })
             .catch(error => {
                 alert(errorMsg);

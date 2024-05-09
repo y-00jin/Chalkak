@@ -52,14 +52,14 @@ router.post('/kakao', async (req, res) => {
         
         const newUserInfo = {
             email : userInfo.kakao_account.email,
-            user_name: userInfo.properties.nickname,
+            user_nm: userInfo.properties.nickname,
             social_type: 'kakao',
             social_id: userInfo.id + ''
         }
-        res.status(200).json({ result: true, userInfo: newUserInfo });
+        res.status(200).json({ userInfo: newUserInfo });
 
     } catch (error) {
-        res.status(500).json({ result:false, userInfo: null }); // 오류 발생 시 500 에러 응답
+        res.status(500).json({ userInfo: null }); // 오류 발생 시 500 에러 응답
     }
 });
 
