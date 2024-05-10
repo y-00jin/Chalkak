@@ -45,12 +45,12 @@ export default function KakaoCallback() {
         axios.post('/api/users/login', reqData)
             .then(res => {
                 if (res.status !== 200) {
-                    alert(errorMsg);
+                    alert(res.data.resultMsg);
                 }
                 navigate(res.data.redirectUrl);
             })
             .catch(error => {
-                alert(errorMsg);
+                alert(error.response.data.resultMsg);
                 navigate('/');
             });
 

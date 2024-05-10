@@ -1,4 +1,4 @@
-export default function MemoryWrite( {title, buttonText, onSubmit}) {
+export default function MemoryWrite( {title, buttonText, value, onChange,onSubmit}) {
 
 
     return(
@@ -8,7 +8,7 @@ export default function MemoryWrite( {title, buttonText, onSubmit}) {
                     { title }
                 </div>
                 <div className="memory-write-input-box">
-                    <input className="memory-write-input" type="text"  aria-label="title" />
+                    <input className="memory-write-input" type="text"  aria-label="title" value={value} onChange={onChange}/>
                 </div>
             </div>
             
@@ -16,7 +16,7 @@ export default function MemoryWrite( {title, buttonText, onSubmit}) {
                 <button
                     type="button"
                     className="cloud-button" 
-                    onClick={() => onSubmit()}
+                    onClick={onSubmit}
                 >
                     {buttonText}
                 </button>

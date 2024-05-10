@@ -7,45 +7,34 @@ import axios from "axios";
 export default function MemoryNew() {
 
     const navigate = useNavigate();
+    const [memoryNm, setMemoryNm] = useState(""); // 입력된 추억 이름을 상태로 관리합니다.
 
+    // 추억 생성 이벤트
+    const handleCreateMemory = async () => {
 
-    // 로그아웃 이벤트
-    const handleLogout = async () => {
+        if(memoryNm.trim() === '') {
+            alert('생성할 추억 이름을 입력하세요.');
+            setMemoryNm("");
+            return;
+        }
 
-        const logoutErrorMsg = '로그아웃 중 문제가 발생했습니다. 다시 시도해주세요.';
+        const reqData = {
+            memoryNm: memoryNm
+        };
 
-        await axios.get('/api/users/logout', { withCredentials: true })
+        axios.post('/api/memories/new', reqData)
             .then(res => {
-                if (res.status === 200) {
-                    navigate(`/`);
+                if (res.status == 200) {
+                    navigate('/map');
                 } else {
-                    alert(logoutErrorMsg);
+                    alert(res.data.resultMsg);
                 }
             })
             .catch(error => {
-                alert(logoutErrorMsg);
-                navigate('/');
+                alert(error.response.data.resultMsg);
             });
+
     };
-
-    // 활성화 된 추억으로 연결
-    const handleActiveConnect = async () => {
-
-        await axios.get('/api/memories/active')
-            .then(res => {
-                if (res.status === 200) {
-                    if (res.data.resultMsg === null || res.data.resultMsg === undefined) {
-                        navigate('/');
-                    } else {
-                        alert(res.data.resultMsg);
-                    }
-                }
-            })
-            .catch(error => {
-                alert('추억 연결 중 문제가 발생했습니다. 다시 시도해주세요.');
-            });
-
-    }
 
 
     return (
@@ -53,22 +42,17 @@ export default function MemoryNew() {
             <div className="new-box">
                 <MemoryWrite
                     title='"생성할 추억 이름을 입력하세요"'
-                    buttonText="START"
-                    onSubmit={() => { navigate(`/map`) }}
+                    buttonText="추억 생성"
+                    value={memoryNm} // 입력된 값의 상태를 전달합니다.
+                    onChange={(e) => setMemoryNm(e.target.value)} // 입력 값이 변경될 때마다 상태를 업데이트합니다.
+                    onSubmit={handleCreateMemory}
                 />
 
                 <div className="new-btn-box">
-                    <button onClick={handleActiveConnect}>
-                        활성화 된 추억으로 연결하기
-                    </button>
-
-                    <button onClick={() => { navigate(`/memory/connection`) }}>
-                        상대방 코드로 연결하기
-                    </button>
-
-                    <button onClick={handleLogout}>
-                        로그아웃
-                    </button>
+                    <div className="connection-btn-box">
+                        <button onClick={() => { navigate(`/memory/connection`) }}
+                        >돌아가기</button>
+                    </div>
                 </div>
 
             </div>

@@ -6,6 +6,7 @@
   "paths": {
     "pages/*": ["pages/*"],
     "components/*": ["components/*"],
-    "db/*":["db/*"]
+    "db/*":["db/*"],
+    "utils/*":["utils/*"]
   }
 }
