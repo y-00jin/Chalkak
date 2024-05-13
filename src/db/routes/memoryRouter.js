@@ -74,7 +74,7 @@ router.post('/new', async (req, res) => {
 
 
         // 활성화 된 추억 비활성화로 수정
-        const updateMemoryActiveRes = await queries.updateMemoryActiveNotThis(insertMemoryRes.memoryInfo.memory_seq_no);
+        const updateMemoryActiveRes = await queries.updateMemoryActiveNotThis(insertMemoryRes.memoryInfo.memory_seq_no, loginUser.user_seq_no);
         if(!updateMemoryActiveRes.result){  // 수정 실패
             throw new Error(resultMsg);
         } 

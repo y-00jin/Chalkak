@@ -103,7 +103,6 @@ const getMemory = async (memory_seq_no, memory_code_seq_no, user_seq_no, memory_
 const insertMemory = async (memory_code_seq_no, user_seq_no, memory_nm, symbol_color_code, is_active) => {
   try {
 
-    // INSERT 쿼리 텍스트
     const queryText = `INSERT INTO memory (memory_seq_no, memory_code_seq_no, user_seq_no, memory_nm, symbol_color_code, is_active) VALUES (NEXTVAL('sq_memory'), $1, $2, $3, $4, $5) RETURNING *`;
     // 쿼리 실행
     const memoryInfo = await pool.query(queryText, [memory_code_seq_no, user_seq_no, memory_nm, symbol_color_code, is_active ]);
@@ -115,13 +114,12 @@ const insertMemory = async (memory_code_seq_no, user_seq_no, memory_nm, symbol_c
 };
 
 // 추억 활성화 여부 수정 (자기 자신이 아닌 경우)
-const updateMemoryActiveNotThis = async (memory_seq_no) => {
+const updateMemoryActiveNotThis = async (memory_seq_no, user_seq_no) => {
   try {
 
-    // INSERT 쿼리 텍스트
-    const queryText = `UPDATE memory SET is_active = false WHERE memory_seq_no !=$1 and is_active = true`;
+    const queryText = `UPDATE memory SET is_active = false WHERE memory_seq_no !=$1 and user_seq_no = $2 and is_active = true`;
     // 쿼리 실행
-    await pool.query(queryText, [memory_seq_no]);
+    await pool.query(queryText, [memory_seq_no, user_seq_no]);
 
     return { result: true };
   } catch (error) {
