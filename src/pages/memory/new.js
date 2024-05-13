@@ -2,12 +2,25 @@ import MemoryWrite from "components/MemoryWrite";
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
-
+import { loginCheck } from 'utils/commonFunctionsReact';
 
 export default function MemoryNew() {
 
     const navigate = useNavigate();
     const [memoryNm, setMemoryNm] = useState(""); // 입력된 추억 이름을 상태로 관리합니다.
+
+
+    // ## 페이지 제한
+    const [isLoading, setIsLoading] = useState(true); // 로딩 상태
+    useEffect(() => {
+        loginCheck().then(() => setIsLoading(false)); // 로그인 체크 후 로딩 상태 변경
+    }, [])
+    if (isLoading) {
+        return null; // 로딩 중에는 아무것도 렌더링하지 않음
+    }
+    // 페이지 제한 ##
+
+
 
     // 추억 생성 이벤트
     const handleCreateMemory = async () => {
@@ -50,7 +63,7 @@ export default function MemoryNew() {
 
                 <div className="new-btn-box">
                     <div className="connection-btn-box">
-                        <button onClick={() => { navigate(`/memory/connection`) }}
+                        <button onClick={() => { window.history.back(); }}
                         >돌아가기</button>
                     </div>
                 </div>

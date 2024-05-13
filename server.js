@@ -3,7 +3,6 @@ const session = require('express-session');
 const path = require('path');
 const app = express();
 
-
 require('dotenv').config(); // dotenv를 사용하여 환경 변수 로드
 
 // 세션 설정
