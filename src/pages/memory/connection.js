@@ -102,7 +102,7 @@ export default function MemoryConnection() {
                         활성화 된 추억으로 연결하기
                     </button>
 
-                    <button onClick={() => { navigate(`/memory/new`) }}>
+                    <button onClick={() => { navigate(`/memories/new`) }}>
                         추억 생성하기
                     </button>
 

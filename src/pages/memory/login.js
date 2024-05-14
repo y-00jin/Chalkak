@@ -16,7 +16,7 @@ export default function MemoryLogin() {
     //     axios.post('/api/users/login/check')
     //         .then(response => {
     //             if(response.data.result){
-    //                 navigate('/memory/connection');
+    //                 navigate('/memories/connection');
     //             }else{
     //                 navigate('/');
     //             }

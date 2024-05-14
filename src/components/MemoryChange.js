@@ -98,7 +98,7 @@ export default function MemoryChange({ closeEvent }) {
 
                 <div className='memory-change-btn-box '>
                     <button className='memory-change-btn' onClick={() => alert(selectedItemIndex)}>변경</button>
-                    <button onClick={() => navigate('/memory/new')}>새 추억 연결</button>
+                    <button onClick={() => navigate('/memories/new')}>새 추억 연결</button>
                 </div>
 
             </div>

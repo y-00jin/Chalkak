@@ -19,8 +19,8 @@ export default function Router() {
 
                 {/** 추억 관리 */}
                 <Route path="/" element={<MemoryLogin />} />
-                <Route path="/memory/new" element={<MemoryNew />} />
-                <Route path="/memory/connection" element={<MemoryConnection />} />
+                <Route path="/memories/new" element={<MemoryNew />} />
+                <Route path="/memories/connection" element={<MemoryConnection />} />
 
                 {/** 지도서비스 */}
                 <Route path="/map" element={<MapHome/>} />

@@ -32,16 +32,28 @@ const insertTest = async (test_nm) => {
 const getUsers = async (user_seq_no, email, user_nm, social_type, social_id) => {
   try {
     let queryText = 'SELECT * FROM users WHERE 1 = 1';
+    const queryParams = [];
 
-    // 매개변수가 주어진 경우에만 해당 조건을 추가
-    if (user_seq_no !== undefined) { queryText += ` AND user_seq_no = $1`; }
-    if (email !== undefined) { queryText += ` AND email = $${queryText.split('$').length}`; }
-    if (user_nm !== undefined) { queryText += ` AND user_nm = $${queryText.split('$').length}`; }
-    if (social_type !== undefined) { queryText += ` AND social_type = $${queryText.split('$').length}`; }
-    if (social_id !== undefined) { queryText += ` AND social_id = $${queryText.split('$').length}`; }
+    // 매개변수가 주어진 경우에만 해당 조건을 추가하고, 쿼리파라미터 배열에 추가
+    if (user_seq_no !== undefined) { 
+      queryText += ` AND user_seq_no = $${queryParams.push(user_seq_no)}`; 
+    }
+    if (email !== undefined) { 
+      queryText += ` AND email = $${queryParams.push(email)}`; 
+    }
+    if (user_nm !== undefined) { 
+      queryText += ` AND user_nm = $${queryParams.push(user_nm)}`; 
+    }
+    if (social_type !== undefined) { 
+      queryText += ` AND social_type = $${queryParams.push(social_type)}`; 
+    }
+    if (social_id !== undefined) { 
+      queryText += ` AND social_id = $${queryParams.push(social_id)}`; 
+    }
+    queryText += ' ORDER BY user_seq_no ASC';
 
     // 쿼리 실행
-    const result = await pool.query(queryText, [user_seq_no, email, user_nm, social_type, social_id].filter(param => param !== undefined));
+    const result = await pool.query(queryText, queryParams);
 
     // 결과 반환
     return result.rows;
@@ -49,6 +61,8 @@ const getUsers = async (user_seq_no, email, user_nm, social_type, social_id) => 
     return null;
   }
 };
+
+
 
 // 사용자 등록
 const insertUser = async (email, user_nm, social_type, social_id) => {
@@ -73,16 +87,27 @@ const insertUser = async (email, user_nm, social_type, social_id) => {
 const getMemory = async (memory_seq_no, memory_code_seq_no, user_seq_no, symbol_color_code, is_active) => {
   try {
     let queryText = 'SELECT * FROM memory WHERE 1 = 1';
+    const queryParams = [];
 
-    // 매개변수가 주어진 경우에만 해당 조건을 추가
-    if (memory_seq_no !== undefined) { queryText += ` AND memory_seq_no = $1`; }
-    if (memory_code_seq_no !== undefined) { queryText += ` AND memory_code_seq_no = $${queryText.split('$').length}`; }
-    if (user_seq_no !== undefined) { queryText += ` AND user_seq_no = $${queryText.split('$').length}`; }
-    if (symbol_color_code !== undefined) { queryText += ` AND symbol_color_code = $${queryText.split('$').length}`; }
-    if (is_active !== undefined) { queryText += ` AND is_active = $${queryText.split('$').length}`; }
+    // 매개변수가 주어진 경우에만 해당 조건을 추가하고, 쿼리파라미터 배열에 추가
+    if (memory_seq_no !== undefined) { 
+      queryText += ` AND memory_seq_no = $${queryParams.push(memory_seq_no)}`; 
+    }
+    if (memory_code_seq_no !== undefined) { 
+      queryText += ` AND memory_code_seq_no = $${queryParams.push(memory_code_seq_no)}`; 
+    }
+    if (user_seq_no !== undefined) { 
+      queryText += ` AND user_seq_no = $${queryParams.push(user_seq_no)}`; 
+    }
+    if (symbol_color_code !== undefined) { 
+      queryText += ` AND symbol_color_code = $${queryParams.push(symbol_color_code)}`; 
+    }
+    if (is_active !== undefined) { 
+      queryText += ` AND is_active = $${queryParams.push(is_active)}`; 
+    }
 
     // 쿼리 실행
-    const result = await pool.query(queryText, [memory_seq_no, memory_code_seq_no, user_seq_no, symbol_color_code, is_active].filter(param => param !== undefined));
+    const result = await pool.query(queryText, queryParams);
 
     // 결과가 정확히 하나인지 확인하고, 그렇지 않으면 오류 발생
     if (result.rows.length < 1) {
@@ -92,11 +117,79 @@ const getMemory = async (memory_seq_no, memory_code_seq_no, user_seq_no, symbol_
     } else {
       return result.rows[0];
     }
+  } catch (error) {
+    throw error;
+  }
+};
+
+
+const getMemorys = async (memory_seq_no, memory_code_seq_no, user_seq_no, symbol_color_code, is_active) => {
+  try {
+    let queryText = 'SELECT * FROM memory WHERE 1 = 1';
+    const queryParams = [];
+
+    // 매개변수가 주어진 경우에만 해당 조건을 추가
+    if (memory_seq_no !== undefined) { 
+      queryText += ` AND memory_seq_no = $${queryParams.push(memory_seq_no)}`;
+    }
+    if (memory_code_seq_no !== undefined) { 
+      queryText += ` AND memory_code_seq_no = $${queryParams.push(memory_code_seq_no)}`;
+    }
+    if (user_seq_no !== undefined) { 
+      queryText += ` AND user_seq_no = $${queryParams.push(user_seq_no)}`;
+    }
+    if (symbol_color_code !== undefined) { 
+      queryText += ` AND symbol_color_code = $${queryParams.push(symbol_color_code)}`;
+    }
+    if (is_active !== undefined) { 
+      queryText += ` AND is_active = $${queryParams.push(is_active)}`;
+    }
+
+    queryText += ' order by memory_seq_no desc';
+
+    // 쿼리 실행
+    const result = await pool.query(queryText, queryParams);
+
+    // 결과가 정확히 하나인지 확인하고, 그렇지 않으면 오류 발생
+    if (result.rows.length < 1) {
+      return null;
+    } else {
+      return result.rows;
+    }
 
   } catch (error) {
     throw error;
   }
 };
+
+
+
+// # 추억 등록 시 필요한 색상 코드 선택
+const getMemorySymbolColorCodeChoice = async (memory_code_seq_no) => {
+  try {
+    let queryText = `select common_code `;
+    queryText += `from common_code `;
+    queryText += `where group_code ='COLOR_CODE' `;
+    queryText += `and common_code not in (`;
+    queryText += `  select m.symbol_color_code `;
+    queryText += `  from memory m `;
+    queryText += `  where m.memory_code_seq_no = $1 `;
+    queryText += `) order by common_code asc limit 1 `;
+    // 쿼리 실행
+    const result = await pool.query(queryText, [memory_code_seq_no]);
+    if (result.rows.length < 1) {
+      return { common_code: 'COLOR_CODE_1' };
+    } else {
+      return result.rows[0];
+    }
+
+  } catch (error) {
+    return { common_code: 'COLOR_CODE_1' };
+  }
+
+};
+
+
 
 // 추억 등록
 const insertMemory = async (memory_code_seq_no, user_seq_no, symbol_color_code, is_active) => {
@@ -104,7 +197,7 @@ const insertMemory = async (memory_code_seq_no, user_seq_no, symbol_color_code, 
 
     const queryText = `INSERT INTO memory (memory_seq_no, memory_code_seq_no, user_seq_no, symbol_color_code, is_active) VALUES (NEXTVAL('sq_memory'), $1, $2, $3, $4) RETURNING *`;
     // 쿼리 실행
-    const memoryInfo = await pool.query(queryText, [memory_code_seq_no, user_seq_no, symbol_color_code, is_active ]);
+    const memoryInfo = await pool.query(queryText, [memory_code_seq_no, user_seq_no, symbol_color_code, is_active]);
 
     return { result: true, memoryInfo: memoryInfo.rows[0] };
   } catch (error) {
@@ -112,7 +205,44 @@ const insertMemory = async (memory_code_seq_no, user_seq_no, symbol_color_code, 
   }
 };
 
-// 추억 활성화 여부 수정 (자기 자신이 아닌 경우)
+// 추억 수정
+const updateMemory = async (memory_seq_no, memory_code_seq_no, user_seq_no, symbol_color_code, is_active ) => {
+
+  try {
+    let queryText = 'UPDATE memory SET ';
+    const queryParams = [];
+
+    if (memory_code_seq_no !== undefined) { 
+      queryText += `memory_code_seq_no = $${queryParams.push(memory_code_seq_no)}, `;
+    }
+    if (user_seq_no !== undefined) { 
+      queryText += `user_seq_no = $${queryParams.push(user_seq_no)}, `;
+    }
+    if (symbol_color_code !== undefined) { 
+      queryText += `symbol_color_code = $${queryParams.push(symbol_color_code)}, `;
+    }
+    if (is_active !== undefined) { 
+      queryText += `is_active = $${queryParams.push(is_active)}, `;
+    }
+
+    // 마지막 쉼표 제거
+    queryText = queryText.slice(0, -2);
+
+    queryText += ` WHERE memory_seq_no = $${queryParams.push(memory_seq_no)} RETURNING * `;
+
+    // 쿼리 실행
+    const result = await pool.query(queryText, queryParams);
+
+    // 결과 반환
+    return result.rows;
+  } catch (error) {
+    throw error;
+  }
+};
+
+
+
+// 추억 활성화 여부 수정
 const updateMemoryActiveNotThis = async (memory_seq_no, user_seq_no) => {
   try {
 
@@ -165,6 +295,7 @@ const getMemoryCodes = async (memory_code_seq_no, memory_code, memory_nm) => {
     if (memory_code_seq_no !== undefined) { queryText += ` AND memory_code_seq_no = $1`; }
     if (memory_code !== undefined) { queryText += ` AND memory_code = $${queryText.split('$').length}`; }
     if (memory_nm !== undefined) { queryText += ` AND memory_nm = $${queryText.split('$').length}`; }
+    queryText += ' order by memory_code_seq_no desc';
 
     // 쿼리 실행
     const result = await pool.query(queryText, [memory_code_seq_no, memory_code, memory_nm].filter(param => param !== undefined));
@@ -199,6 +330,7 @@ const insertMemoryCode = async (memory_code, memory_nm) => {
 module.exports = {
   getTests, insertTest,
   getUsers, insertUser,
-  getMemory, insertMemory, updateMemoryActiveNotThis,
-  getMemoryCode, getMemoryCodes,insertMemoryCode
+  getMemory, insertMemory, updateMemoryActiveNotThis, getMemorys, updateMemory, 
+  getMemoryCode, getMemoryCodes, insertMemoryCode,
+  getMemorySymbolColorCodeChoice
 };

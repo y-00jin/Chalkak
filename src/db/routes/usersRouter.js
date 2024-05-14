@@ -20,12 +20,12 @@ router.post('/login', async (req, res) => {
         if (!isUserExists) {    // 신규 회원 -> 회원가입
             const result = await queries.insertUser(userInfo.email, userInfo.user_nm, userInfo.social_type, userInfo.social_id);  // 회원가입
             req.session.loginUser = result.result ? result.userInfo : null;    // 회원가입 성공 시 세션 저장
-            redirectUrl = result.result ? '/memory/connection' : '/'; // 회원가입 성공 시 리다이렉트 경로
+            redirectUrl = result.result ? '/memories/connection' : '/'; // 회원가입 성공 시 리다이렉트 경로
             status = result.result ? 200 : 500;
         } else {    // 기존 회원 -> 로그인
             req.session.loginUser = resUsers[0]; // 첫 번째 사용자로 로그인
             status = 200;
-            redirectUrl = '/memory/connection';
+            redirectUrl = '/memories/connection';
             resultMsg = '';
         }
 
