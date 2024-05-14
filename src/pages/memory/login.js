@@ -8,7 +8,9 @@ export default function MemoryLogin() {
 
     const REST_API_KEY = `${process.env.REACT_APP_KAKAO_CLIENT_ID}`;
     const CLIENT_IP = `${process.env.REACT_APP_CLIENT_IP}`;
-    
+    const CLIENT_PORT = `${process.env.REACT_APP_CLIENT_PORT}`;
+
+
     const navigate = useNavigate();
 
     // useEffect(() => {
@@ -46,7 +48,7 @@ export default function MemoryLogin() {
                 <button
                     type="button"
                     className="login-btn login-btn-kakao"
-                    onClick={()=>window.location.href = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=http://${CLIENT_IP}:8088/auth/kakao&response_type=code`}
+                    onClick={()=>window.location.href = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=http://${CLIENT_IP}:${CLIENT_PORT}/auth/kakao&response_type=code`}
                 >
                     <RiKakaoTalkFill className="w-6 h-6 " />
                     Sign in with Kakao
