@@ -17,6 +17,7 @@ const testRouter = require('./src/db/routes/testRouter');
 const authRouter = require('./src/db/routes/authRouter');
 const usersRouter = require('./src/db/routes/usersRouter');
 const memoryRouter = require('./src/db/routes/memoryRouter');
+const memoryCodeRouter = require('./src/db/routes/memoryCodeRouter');
 
 const port = process.env.PORT || 8088; // 포트 설정
 
@@ -32,7 +33,8 @@ app.use(express.json());
 app.use('/api/tests', testRouter); // '/tests' 경로에 대한 요청은 testRouter.js 파일에서 처리
 app.use('/api/auth', authRouter);  // auth
 app.use('/api/users', usersRouter);  // users
-app.use('/api/memories', memoryRouter);  // users
+app.use('/api/memories', memoryRouter);  // memories
+app.use('/api/memoryCodes', memoryCodeRouter);  // memoryCodes
 
 
 // 정적 파일 미들웨어 설정

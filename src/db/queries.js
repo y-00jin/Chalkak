@@ -35,20 +35,20 @@ const getUsers = async (user_seq_no, email, user_nm, social_type, social_id) => 
     const queryParams = [];
 
     // 매개변수가 주어진 경우에만 해당 조건을 추가하고, 쿼리파라미터 배열에 추가
-    if (user_seq_no !== undefined) { 
-      queryText += ` AND user_seq_no = $${queryParams.push(user_seq_no)}`; 
+    if (user_seq_no !== undefined) {
+      queryText += ` AND user_seq_no = $${queryParams.push(user_seq_no)}`;
     }
-    if (email !== undefined) { 
-      queryText += ` AND email = $${queryParams.push(email)}`; 
+    if (email !== undefined) {
+      queryText += ` AND email = $${queryParams.push(email)}`;
     }
-    if (user_nm !== undefined) { 
-      queryText += ` AND user_nm = $${queryParams.push(user_nm)}`; 
+    if (user_nm !== undefined) {
+      queryText += ` AND user_nm = $${queryParams.push(user_nm)}`;
     }
-    if (social_type !== undefined) { 
-      queryText += ` AND social_type = $${queryParams.push(social_type)}`; 
+    if (social_type !== undefined) {
+      queryText += ` AND social_type = $${queryParams.push(social_type)}`;
     }
-    if (social_id !== undefined) { 
-      queryText += ` AND social_id = $${queryParams.push(social_id)}`; 
+    if (social_id !== undefined) {
+      queryText += ` AND social_id = $${queryParams.push(social_id)}`;
     }
     queryText += ' ORDER BY user_seq_no ASC';
 
@@ -90,20 +90,20 @@ const getMemory = async (memory_seq_no, memory_code_seq_no, user_seq_no, symbol_
     const queryParams = [];
 
     // 매개변수가 주어진 경우에만 해당 조건을 추가하고, 쿼리파라미터 배열에 추가
-    if (memory_seq_no !== undefined) { 
-      queryText += ` AND memory_seq_no = $${queryParams.push(memory_seq_no)}`; 
+    if (memory_seq_no !== undefined) {
+      queryText += ` AND memory_seq_no = $${queryParams.push(memory_seq_no)}`;
     }
-    if (memory_code_seq_no !== undefined) { 
-      queryText += ` AND memory_code_seq_no = $${queryParams.push(memory_code_seq_no)}`; 
+    if (memory_code_seq_no !== undefined) {
+      queryText += ` AND memory_code_seq_no = $${queryParams.push(memory_code_seq_no)}`;
     }
-    if (user_seq_no !== undefined) { 
-      queryText += ` AND user_seq_no = $${queryParams.push(user_seq_no)}`; 
+    if (user_seq_no !== undefined) {
+      queryText += ` AND user_seq_no = $${queryParams.push(user_seq_no)}`;
     }
-    if (symbol_color_code !== undefined) { 
-      queryText += ` AND symbol_color_code = $${queryParams.push(symbol_color_code)}`; 
+    if (symbol_color_code !== undefined) {
+      queryText += ` AND symbol_color_code = $${queryParams.push(symbol_color_code)}`;
     }
-    if (is_active !== undefined) { 
-      queryText += ` AND is_active = $${queryParams.push(is_active)}`; 
+    if (is_active !== undefined) {
+      queryText += ` AND is_active = $${queryParams.push(is_active)}`;
     }
 
     // 쿼리 실행
@@ -122,26 +122,26 @@ const getMemory = async (memory_seq_no, memory_code_seq_no, user_seq_no, symbol_
   }
 };
 
-
+// 추억 목록 조회
 const getMemorys = async (memory_seq_no, memory_code_seq_no, user_seq_no, symbol_color_code, is_active) => {
   try {
     let queryText = 'SELECT * FROM memory WHERE 1 = 1';
     const queryParams = [];
 
     // 매개변수가 주어진 경우에만 해당 조건을 추가
-    if (memory_seq_no !== undefined) { 
+    if (memory_seq_no !== undefined) {
       queryText += ` AND memory_seq_no = $${queryParams.push(memory_seq_no)}`;
     }
-    if (memory_code_seq_no !== undefined) { 
+    if (memory_code_seq_no !== undefined) {
       queryText += ` AND memory_code_seq_no = $${queryParams.push(memory_code_seq_no)}`;
     }
-    if (user_seq_no !== undefined) { 
+    if (user_seq_no !== undefined) {
       queryText += ` AND user_seq_no = $${queryParams.push(user_seq_no)}`;
     }
-    if (symbol_color_code !== undefined) { 
+    if (symbol_color_code !== undefined) {
       queryText += ` AND symbol_color_code = $${queryParams.push(symbol_color_code)}`;
     }
-    if (is_active !== undefined) { 
+    if (is_active !== undefined) {
       queryText += ` AND is_active = $${queryParams.push(is_active)}`;
     }
 
@@ -167,21 +167,27 @@ const getMemorys = async (memory_seq_no, memory_code_seq_no, user_seq_no, symbol
 // # 추억 등록 시 필요한 색상 코드 선택
 const getMemorySymbolColorCodeChoice = async (memory_code_seq_no) => {
   try {
-    let queryText = `select common_code `;
-    queryText += `from common_code `;
-    queryText += `where group_code ='COLOR_CODE' `;
-    queryText += `and common_code not in (`;
-    queryText += `  select m.symbol_color_code `;
-    queryText += `  from memory m `;
-    queryText += `  where m.memory_code_seq_no = $1 `;
-    queryText += `) order by common_code asc limit 1 `;
+
+    const queryText = `
+    SELECT common_code 
+    FROM common_code 
+    WHERE group_code = 'COLOR_CODE' 
+    AND common_code NOT IN (
+      SELECT m.symbol_color_code 
+      FROM memory m 
+      WHERE m.memory_code_seq_no = $1
+    ) 
+    ORDER BY common_code ASC 
+    LIMIT 1`;
+
     // 쿼리 실행
     const result = await pool.query(queryText, [memory_code_seq_no]);
-    if (result.rows.length < 1) {
-      return { common_code: 'COLOR_CODE_1' };
-    } else {
-      return result.rows[0];
-    }
+    return result.rows.length < 1 ? { common_code: 'COLOR_CODE_1' } : result.rows[0];
+    // if (result.rows.length < 1) {
+    //   return { common_code: 'COLOR_CODE_1' };
+    // } else {
+    //   return result.rows[0];
+    // }
 
   } catch (error) {
     return { common_code: 'COLOR_CODE_1' };
@@ -206,22 +212,22 @@ const insertMemory = async (memory_code_seq_no, user_seq_no, symbol_color_code, 
 };
 
 // 추억 수정
-const updateMemory = async (memory_seq_no, memory_code_seq_no, user_seq_no, symbol_color_code, is_active ) => {
+const updateMemory = async (memory_seq_no, memory_code_seq_no, user_seq_no, symbol_color_code, is_active) => {
 
   try {
     let queryText = 'UPDATE memory SET ';
     const queryParams = [];
 
-    if (memory_code_seq_no !== undefined) { 
+    if (memory_code_seq_no !== undefined) {
       queryText += `memory_code_seq_no = $${queryParams.push(memory_code_seq_no)}, `;
     }
-    if (user_seq_no !== undefined) { 
+    if (user_seq_no !== undefined) {
       queryText += `user_seq_no = $${queryParams.push(user_seq_no)}, `;
     }
-    if (symbol_color_code !== undefined) { 
+    if (symbol_color_code !== undefined) {
       queryText += `symbol_color_code = $${queryParams.push(symbol_color_code)}, `;
     }
-    if (is_active !== undefined) { 
+    if (is_active !== undefined) {
       queryText += `is_active = $${queryParams.push(is_active)}, `;
     }
 
@@ -234,7 +240,7 @@ const updateMemory = async (memory_seq_no, memory_code_seq_no, user_seq_no, symb
     const result = await pool.query(queryText, queryParams);
 
     // 결과 반환
-    return result.rows;
+    return result.rows[0];
   } catch (error) {
     throw error;
   }
@@ -256,6 +262,25 @@ const updateMemoryActiveNotThis = async (memory_seq_no, user_seq_no) => {
   }
 };
 
+// 추억 코드를 사용하여 추억에 속한 사용자 정보 조회
+const getUsersByMemoryCode = async (memory_code_seq_no) => {
+  try {
+    const queryText = `
+
+    SELECT u.user_seq_no, u.email, u.user_nm, cc.common_code_nm as symbol_color_code 
+    FROM memory m 
+    LEFT JOIN users u ON m.user_seq_no = u.user_seq_no 
+    LEFT JOIN common_code cc ON cc.common_code = m.symbol_color_code  
+    WHERE m.memory_code_seq_no = $1`;
+
+    // 쿼리 실행
+    const result = await pool.query(queryText, [memory_code_seq_no]);
+    return result.rows.length > 0 ? result.rows : null;
+  } catch (error) {
+    throw error;
+  }
+
+};
 
 // memory ##
 
@@ -273,7 +298,6 @@ const getMemoryCode = async (memory_code_seq_no, memory_code, memory_nm) => {
 
     // 쿼리 실행
     const result = await pool.query(queryText, [memory_code_seq_no, memory_code, memory_nm].filter(param => param !== undefined));
-
     // 결과가 정확히 하나인지 확인하고, 그렇지 않으면 오류 발생
     if (result.rows.length < 1) {
       return null;
@@ -330,7 +354,7 @@ const insertMemoryCode = async (memory_code, memory_nm) => {
 module.exports = {
   getTests, insertTest,
   getUsers, insertUser,
-  getMemory, insertMemory, updateMemoryActiveNotThis, getMemorys, updateMemory, 
+  getMemory, insertMemory, updateMemoryActiveNotThis, getMemorys, updateMemory, getUsersByMemoryCode,
   getMemoryCode, getMemoryCodes, insertMemoryCode,
   getMemorySymbolColorCodeChoice
 };

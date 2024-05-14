@@ -5,8 +5,8 @@ const pool = require('../dbConfig');
 const router = express.Router();
 const { generateRandomString } = require('../../utils/commonFunctions');
 
-// 활성화 추억 확인
-router.get('/active', async (req, res) => {
+// 활성화 추억으로 연결
+router.get('/connection/active', async (req, res) => {
 
     await pool.query('BEGIN'); // 트랜잭션 시작
 
@@ -48,6 +48,7 @@ router.get('/active', async (req, res) => {
 router.post('/new', async (req, res) => {
     let status = 500;
     let resultMsg = '추억 생성 중 문제가 발생했습니다. 다시 시도해주세요.';
+    let activeMemoryInfo = null;
     const { memoryNm } = req.body;
 
     try {
@@ -95,20 +96,22 @@ router.post('/new', async (req, res) => {
 
         status = 200;
         resultMsg = "";
+        activeMemoryInfo = insertMemoryRes.memoryInfo;
+
         await pool.query('COMMIT'); // 트랜잭션 커밋
     } catch (error) {
         await pool.query('ROLLBACK'); // 트랜잭션 롤백
     } finally {
-        res.status(status).json({ resultMsg: resultMsg });
+        res.status(status).json({ resultMsg: resultMsg, activeMemoryInfo: activeMemoryInfo });
     }
 });
 
 // 추억 코드로 추억 연결
-router.post('/connection', async (req, res) => {
+router.post('/connection/code', async (req, res) => {
     let status = 500;
     let resultMsg = '추억 연결 중 문제가 발생했습니다. 다시 시도해주세요.';
+    let activeMemoryInfo = null;
     const { memoryCode } = req.body;
-
     try {
 
         await pool.query('BEGIN'); // 트랜잭션 시작
@@ -151,12 +154,52 @@ router.post('/connection', async (req, res) => {
         }
         status = 200;
         resultMsg = "";
+
+        activeMemoryInfo = insertMemoryRes.memoryInfo;
         await pool.query('COMMIT'); // 트랜잭션 커밋
     } catch (error) {
         await pool.query('ROLLBACK'); // 트랜잭션 롤백
     } finally {
-        res.status(status).json({ resultMsg: resultMsg });
+        res.status(status).json({ resultMsg: resultMsg, activeMemoryInfo : activeMemoryInfo });
     }
 });
+
+// 활성화된 추억 정보 조회
+router.get('/active', async (req, res) => {
+    let memoryInfo = null;
+    try {
+        const loginUser = req.session.loginUser;
+        const activeMemoryInfo = await queries.getMemory(undefined, undefined, loginUser.user_seq_no, undefined, true);    // 활성화 된 추억 조회
+        const activeMemoryCodeInfo = await queries.getMemoryCode(activeMemoryInfo.memory_code_seq_no);
+
+        memoryInfo = {
+            ...activeMemoryInfo,
+            ...activeMemoryCodeInfo
+        };
+    } catch (error) {
+
+    } finally {
+        res.json({ memoryInfo: memoryInfo });
+    }
+});
+
+// 추억 정보의 추억 코드로 사용자 목록 조회
+router.get('/memoryCodes/:memoryCodeSeqNo/users', async (req, res) => {
+
+    let userList = null;
+
+    try {
+
+        const reqMemoryCodeSeqNo = req.params.memoryCodeSeqNo;
+        userList = await queries.getUsersByMemoryCode(reqMemoryCodeSeqNo);    // 사용자 정보 조회
+
+    } catch (error) {
+
+    } finally {
+        res.json({ userList: userList });
+    }
+
+});
+
 
 module.exports = router;

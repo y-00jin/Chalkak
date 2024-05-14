@@ -294,7 +294,7 @@
 }
 
 
-.user-color-0{
+/* .user-color-0{
   @apply text-[#FF7E7E];
 }
 .user-color-1{
@@ -317,7 +317,7 @@
 }
 .user-color-7{
   @apply text-[#FFB2D9];
-}
+} */
 
 
 /* components > MapSearch, MemoryChange, MemoryInfo ### */

@@ -1,47 +1,70 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AiOutlineClose } from "react-icons/ai";
 import { Scrollbars } from 'react-custom-scrollbars-2';
 import { FaPencilAlt } from "react-icons/fa";
 import { BsEmojiSmileFill } from "react-icons/bs";
 import useMobile from 'components/UseMobile.js';
-
+import axios from "axios";
 export default function MemoryInfo({ closeEvent }) {
 
     const isMobile = useMobile();
-    const [memoryNm, setMemoryNm] = useState('강릉 여행');
-    const [memoryCode, setMemoryCode] = useState('P2RF6Z');
+    const [memoryNm, setMemoryNm] = useState('');
+    const [memoryCode, setMemoryCode] = useState('');
+    const [memoryCodeSeqNo, setMemoryCodeSeqNo] = useState('');
 
     // 사용자 임시 데이터
-    const [userList, setUserList] = useState([
-        {
-            user_seq_no: 1,
-            email: 'test1@test.com'
-        },
-        {
-            user_seq_no: 2,
-            email: 'test2@test.com'
-        },
-        {
-            user_seq_no: 3,
-            email: 'test3@test.com'
-        },
-        {
-            user_seq_no: 4,
-            email: 'test4@test.com'
-        },
-        {
-            user_seq_no: 5,
-            email: 'test5@test.com'
-        },
-        {
-            user_seq_no: 6,
-            email: 'test6@test.com'
-        },
-        {
-            user_seq_no: 7,
-            email: 'test7@test.com'
+    const [userList, setUserList] = useState([]);
+
+    useEffect(() => {
+
+        let activeMemoryInfo = null;
+
+        // 추억 정보 가져오기
+        const getActiveMemoryInfo = async () => {
+            try {
+
+                // 세션에서 추억 정보 가져오기
+                const activeMemoryInfoStr = sessionStorage.getItem('activeMemoryInfo');
+
+                if (activeMemoryInfoStr != null) {
+                    activeMemoryInfo = JSON.parse(activeMemoryInfoStr);
+                } else {
+                    // 세션이 비어있는 경우 추억 정보 조회
+                    const res = await axios.get('/api/memories/active');
+                    activeMemoryInfo = res.data.memoryInfo;
+                    sessionStorage.setItem("activeMemoryInfo", JSON.stringify(activeMemoryInfo));
+                }
+
+                // 추억 정보 설정
+                setMemoryNm(activeMemoryInfo.memory_nm);
+                setMemoryCode(activeMemoryInfo.memory_code);
+                setMemoryCodeSeqNo(activeMemoryInfo.memory_code_seq_no);
+            } catch (error) {
+                console.error('Error fetching or setting active memory info:', error);
+            }
+        };
+
+        getActiveMemoryInfo();
+    }, [])
+
+
+    useEffect(() => {
+        if (memoryCodeSeqNo == '') {
+            return;
         }
-    ]);
+
+        // 추억에 속한 사용자 정보 목록 가져오기
+        const getUsersInMemory = async () => {
+            try {
+                const res = await axios.get(`/api/memories/memoryCodes/${memoryCodeSeqNo}/users`);
+                setUserList(res.data.userList);
+            } catch (error) {
+            }
+        };
+
+        getUsersInMemory();
+    }, [memoryCodeSeqNo])
+
 
     return (
         <>
@@ -72,8 +95,8 @@ export default function MemoryInfo({ closeEvent }) {
 
                         {userList.map((data, index) => (
                             <div key={data.user_seq_no} className={`${!isMobile ? 'memory-info-item' : 'memory-info-mobile-item'}`}>
-                                <BsEmojiSmileFill className={`size-8 user-color-${index}`} />
-                                <p>{data.email}</p>
+                                <BsEmojiSmileFill className={`size-8`} style={{ color: data.symbol_color_code }} />
+                                <p>{data.user_nm}</p>
                             </div>
                         ))}
                     </Scrollbars>
@@ -81,7 +104,7 @@ export default function MemoryInfo({ closeEvent }) {
                 </div>
 
                 <div className='memory-change-btn-box '>
-                    <button onClick={() => alert('연결 해제')}>연결 해제</button>
+                    <button onClick={() => alert('연결 해제')}>이 추억 나가기</button>
                 </div>
 
             </div>

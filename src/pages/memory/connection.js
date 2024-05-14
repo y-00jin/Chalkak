@@ -2,7 +2,7 @@ import MemoryWrite from "components/MemoryWrite";
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
-import { loginCheck } from 'utils/commonFunctionsReact';
+import { loginCheck, activeMemoryInfoSaveSession, handleLogout } from 'utils/commonFunctionsReact';
 
 export default function MemoryConnection() {
 
@@ -20,33 +20,13 @@ export default function MemoryConnection() {
     }
     // 페이지 제한 ##
 
-    // 로그아웃 이벤트
-    const handleLogout = async () => {
-
-        const logoutErrorMsg = '로그아웃 중 문제가 발생했습니다. 다시 시도해주세요.';
-
-        await axios.get('/api/users/logout', { withCredentials: true })
-            .then(res => {
-                if (res.status === 200) {
-                    navigate(`/`);
-                } else {
-                    alert(logoutErrorMsg);
-                }
-            })
-            .catch(error => {
-                alert(logoutErrorMsg);
-                navigate('/');
-            });
-    };
-
     // 활성화 된 추억으로 연결
     const handleActiveConnect = async () => {
-        await axios.get('/api/memories/active')
+        await axios.get('/api/memories/connection/active')
             .then(res => {
                 if (res.status === 200) {
                     if (res.data.resultMsg === null || res.data.resultMsg === undefined) {
-                        
-                        
+                        // activeMemoryInfoSaveSession(res.data.activeMemoryInfo);
                         navigate('/map');
                     } else {
                         alert(res.data.resultMsg);
@@ -70,9 +50,10 @@ export default function MemoryConnection() {
             memoryCode: memoryCode
         };
 
-        axios.post('/api/memories/connection', reqData)
+        axios.post('/api/memories/connection/code', reqData)
             .then(res => {
                 if (res.status == 200) {
+                    activeMemoryInfoSaveSession(res.data.activeMemoryInfo);
                     navigate('/map');
                 } else {
                     alert(res.data.resultMsg);

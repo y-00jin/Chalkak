@@ -2,7 +2,7 @@ import MemoryWrite from "components/MemoryWrite";
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
-import { loginCheck } from 'utils/commonFunctionsReact';
+import { loginCheck, activeMemoryInfoSaveSession } from 'utils/commonFunctionsReact';
 
 export default function MemoryNew() {
 
@@ -38,6 +38,7 @@ export default function MemoryNew() {
         axios.post('/api/memories/new', reqData)
             .then(res => {
                 if (res.status == 200) {
+                    activeMemoryInfoSaveSession(res.data.activeMemoryInfo);
                     navigate('/map');
                 } else {
                     alert(res.data.resultMsg);
