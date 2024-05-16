@@ -235,7 +235,7 @@ const updateMemory = async (memory_seq_no, memory_code_seq_no, user_seq_no, symb
     const result = await pool.query(queryText, queryParams);
 
     // 결과 반환
-    return result.rows[0];
+    return result.rows.length > 0 ? result.rows[0] : null;
   } catch (error) {
     throw error;
   }
@@ -278,6 +278,26 @@ const getUsersByMemoryCode = async (memory_code_seq_no) => {
 
 };
 
+// 활성화 추억 제외하고 목록 조회
+const getMemorysInactive = async (user_seq_no) => {
+  try {
+
+    let queryText = `SELECT m.memory_seq_no, m.memory_code_seq_no, mc.memory_code, mc.memory_nm 
+     from memory m
+     left join memory_code mc on m.memory_code_seq_no = mc.memory_code_seq_no
+     WHERE user_seq_no = $1 
+     AND is_active = false 
+     order by memory_seq_no desc
+    `;
+
+    // 쿼리 실행
+    const result = await pool.query(queryText, [user_seq_no]);
+    return result.rows.length > 0 ? result.rows : null;
+
+  } catch (error) {
+    throw error;
+  }
+};
 // memory ##
 
 
@@ -389,7 +409,7 @@ const updateMemoryCode = async (memory_code_seq_no, memory_code, memory_nm) => {
 module.exports = {
   getTests, insertTest,
   getUsers, insertUser,
-  getMemory, insertMemory, updateMemoryActiveNotThis, getMemorys, updateMemory, getUsersByMemoryCode,
+  getMemory, insertMemory, updateMemoryActiveNotThis, getMemorys, updateMemory, getUsersByMemoryCode, getMemorysInactive,
   getMemoryCode, getMemoryCodes, insertMemoryCode, updateMemoryCode,
   getMemorySymbolColorCodeChoice
 };

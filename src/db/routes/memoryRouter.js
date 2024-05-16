@@ -160,7 +160,7 @@ router.post('/connection/code', async (req, res) => {
     } catch (error) {
         await pool.query('ROLLBACK'); // 트랜잭션 롤백
     } finally {
-        res.status(status).json({ resultMsg: resultMsg, activeMemoryInfo : activeMemoryInfo });
+        res.status(status).json({ resultMsg: resultMsg, activeMemoryInfo: activeMemoryInfo });
     }
 });
 
@@ -201,5 +201,77 @@ router.get('/memoryCodes/:memoryCodeSeqNo/users', async (req, res) => {
 
 });
 
+// 로그인 정보로 추억 목록 조회
+router.get('/inactive', async (req, res) => {
+
+    let memoryList = null;
+
+    try {
+        const loginUser = req.session.loginUser;
+        memoryList = await queries.getMemorysInactive(loginUser.user_seq_no);    // 사용자 정보 조회
+
+    } catch (error) {
+
+    } finally {
+        res.json({ memoryList: memoryList });
+    }
+
+});
+
+// 활성화 추억 변경
+router.put('/:memorySeqNo/active', async (req, res) => {
+
+    const reqMemorySeqNo = req.params.memorySeqNo;
+console.log(reqMemorySeqNo);
+
+    let status = 500;
+    let resultMsg = '추억 변경 중 문제가 발생했습니다. 다시 시도해 주세요.';
+    let memoryInfo = null;
+
+    const loginUser = req.session.loginUser;
+
+    try {
+
+        await pool.query('BEGIN'); // 트랜잭션 시작
+
+        // 추억 & 권한 확인
+        const memoryRes = await queries.getMemory(reqMemorySeqNo, undefined, loginUser.user_seq_no, undefined, undefined);
+        if (memoryRes == null) {
+            resultMsg = '변경할 추억 정보 또는 권한이 존재하지 않습니다. 확인 후 다시 시도해주세요.';
+            throw new Error(resultMsg);
+        }
+
+        // 기존 활성화 된 추억 비활성화로 UPDATE
+        const updateMemoryInactiveRes = await queries.updateMemoryActiveNotThis(memoryRes.memory_seq_no, loginUser.user_seq_no);
+        if (!updateMemoryInactiveRes.result) {
+            throw new Error(resultMsg);
+        }
+
+        // 선택한 추억 활성화 UPDATE
+        const updateMemoryActiveRes = await queries.updateMemory(reqMemorySeqNo, undefined, undefined, undefined, true);
+        if (updateMemoryActiveRes == null) {
+            throw new Error(resultMsg);
+        }
+
+        // 추억 코드 정보 조회
+        const memoryCodeInfo = await queries.getMemoryCode(updateMemoryActiveRes.memory_code_seq_no, undefined, undefined);
+        if (memoryCodeInfo == null) {
+            throw new Error(resultMsg);
+        }
+
+        status = 200;
+        resultMsg = '';
+        memoryInfo = {
+            ...updateMemoryActiveRes,
+            ...memoryCodeInfo
+        };
+        await pool.query('COMMIT'); // 트랜잭션 커밋
+
+    } catch (error) {
+        await pool.query('ROLLBACK'); // 트랜잭션 롤백
+    } finally {
+        res.status(status).json({ resultMsg: resultMsg, memoryInfo: memoryInfo });
+    }
+});
 
 module.exports = router;

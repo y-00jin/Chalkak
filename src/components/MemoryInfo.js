@@ -5,10 +5,9 @@ import { FaPencilAlt } from "react-icons/fa";
 import { BsEmojiSmileFill } from "react-icons/bs";
 import useMobile from 'components/UseMobile.js';
 import axios from "axios";
-import { IoCheckmark } from "react-icons/io5";
 import { FaCheck } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
-
+import { PiUser } from "react-icons/pi";
 
 export default function MemoryInfo({ closeEvent }) {
 
@@ -103,7 +102,6 @@ export default function MemoryInfo({ closeEvent }) {
 
                     // SESSION UPDATE
                     const updateMemoryCodeInfo = res.data.memoryCodeInfo;
-                    console.log(updateMemoryCodeInfo);
                     sessionStorage.setItem("activeMemoryInfo", JSON.stringify(updateMemoryCodeInfo));
 
                     // 화면 UPDATE
@@ -139,13 +137,13 @@ export default function MemoryInfo({ closeEvent }) {
 
                 <div className={`${!isMobile ? 'memory-change-info-box' : 'memory-change-mobile-info-box '}`}>
                     <div className='flex flex-col'>
-                        <div className="flex text-xl gap-2 items-center pb-5">
+                        <div className="flex text-xl gap-2 items-center pb-2">
 
 
                             {memoryNmEdit ? ( // 수정 모드인 경우
                                 <input
                                     type="text"
-                                    className='bg-gray-100 rounded-full px-8 py-2 w-full focus:outline-none focus:ring-2 focus:ring-[#96DBF4] focus:ring-opacity-50'
+                                    className='bg-gray-100 rounded-lg px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-[#96DBF4] focus:ring-opacity-50'
                                     value={editedMemoryNm}
                                     onChange={(e) => setEditedMemoryNm(e.target.value)}
                                 />
@@ -162,11 +160,6 @@ export default function MemoryInfo({ closeEvent }) {
                                 </>
                             )}
 
-
-
-
-                            {/* {memoryNm}
-                            <button><FaPencilAlt /></button> */}
                         </div>
                         <p>
                             {memoryCode}
@@ -174,7 +167,13 @@ export default function MemoryInfo({ closeEvent }) {
                     </div>
                 </div>
 
+                <div className={`flex mb-5 text-xl border-t border-gray-300 pt-8 items-center ${isMobile?'mx-5':'mt-10'}`}>
+                    <PiUser/>
+                    <span className='ml-2'>사용자 목록</span>
+                </div>
+
                 <div className={`${!isMobile ? 'memory-change-box' : 'memory-change-mobile-box'}`}>
+
                     <Scrollbars thumbSize={85}>
 
                         {userList.map((data, index) => (

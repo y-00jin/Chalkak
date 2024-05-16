@@ -243,13 +243,13 @@
     @apply  h-[90%] flex flex-col gap-2 my-5 px-5;
   }
   .memory-change-box{
-    @apply my-10 h-full flex  flex-col;
+    @apply mb-10 h-full flex  flex-col;
   }
   .memory-change-item{
     @apply py-5 px-3 flex  justify-between items-center border-b-gray-200 border-b;
   }
   .memory-change-info-box{
-    @apply flex flex-col pb-10 border-b border-gray-300;
+    @apply flex flex-col ;
   }
 
   .memory-info-item{
@@ -282,7 +282,7 @@
   }
 
   .memory-change-mobile-box{
-    @apply border rounded-3xl my-10 min-h-80 flex  flex-col mx-5;
+    @apply border rounded-3xl mb-10 min-h-80 flex  flex-col mx-5;
   }
   .memory-change-mobile-item{
     @apply py-5 px-2 flex justify-between items-center border-b-gray-200 mx-5 border-b;

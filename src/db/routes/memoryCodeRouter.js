@@ -23,8 +23,6 @@ router.put('/:memoryCodeSeqNo', async (req, res) => {
     const reqMemoryCodeSeqNo = req.params.memoryCodeSeqNo;
     const { memoryNm } = req.body;
 
-    console.log(reqMemoryCodeSeqNo, memoryNm);
-
     let status = 500;
     let resultMsg = '추억 수정 중 문제가 발생했습니다. 다시 시도해 주세요.';
     let memoryCodeInfo = null;
