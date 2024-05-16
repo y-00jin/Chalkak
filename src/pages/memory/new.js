@@ -26,7 +26,7 @@ export default function MemoryNew() {
     const handleCreateMemory = async () => {
 
         if(memoryNm.trim() === '') {
-            alert('생성할 추억 이름을 입력하세요.');
+            alert('생성할 추억 명을 입력하세요.');
             setMemoryNm("");
             return;
         }
@@ -55,7 +55,7 @@ export default function MemoryNew() {
         <>
             <div className="new-box">
                 <MemoryWrite
-                    title='"생성할 추억 이름을 입력하세요"'
+                    title='"생성할 추억 명을 입력하세요"'
                     buttonText="추억 생성"
                     value={memoryNm} // 입력된 값의 상태를 전달합니다.
                     onChange={(e) => setMemoryNm(e.target.value)} // 입력 값이 변경될 때마다 상태를 업데이트합니다.

@@ -183,11 +183,6 @@ const getMemorySymbolColorCodeChoice = async (memory_code_seq_no) => {
     // 쿼리 실행
     const result = await pool.query(queryText, [memory_code_seq_no]);
     return result.rows.length < 1 ? { common_code: 'COLOR_CODE_1' } : result.rows[0];
-    // if (result.rows.length < 1) {
-    //   return { common_code: 'COLOR_CODE_1' };
-    // } else {
-    //   return result.rows[0];
-    // }
 
   } catch (error) {
     return { common_code: 'COLOR_CODE_1' };
@@ -271,7 +266,8 @@ const getUsersByMemoryCode = async (memory_code_seq_no) => {
     FROM memory m 
     LEFT JOIN users u ON m.user_seq_no = u.user_seq_no 
     LEFT JOIN common_code cc ON cc.common_code = m.symbol_color_code  
-    WHERE m.memory_code_seq_no = $1`;
+    WHERE m.memory_code_seq_no = $1 
+    ORDER BY m.memory_seq_no asc `;
 
     // 쿼리 실행
     const result = await pool.query(queryText, [memory_code_seq_no]);
@@ -287,6 +283,7 @@ const getUsersByMemoryCode = async (memory_code_seq_no) => {
 
 
 // ## memory_code
+// 추억 코드 조회
 const getMemoryCode = async (memory_code_seq_no, memory_code, memory_nm) => {
   try {
     let queryText = 'SELECT * FROM memory_code WHERE 1 = 1';
@@ -311,6 +308,7 @@ const getMemoryCode = async (memory_code_seq_no, memory_code, memory_nm) => {
   }
 };
 
+// 추억 코드 목록 조회
 const getMemoryCodes = async (memory_code_seq_no, memory_code, memory_nm) => {
   try {
     let queryText = 'SELECT * FROM memory_code WHERE 1 = 1';
@@ -344,6 +342,43 @@ const insertMemoryCode = async (memory_code, memory_nm) => {
   }
 };
 
+// 추억 코드 수정
+const updateMemoryCode = async (memory_code_seq_no, memory_code, memory_nm) => {
+
+  try {
+
+    let queryText = 'UPDATE memory_code SET ';
+    const queryParams = [];
+
+    if (memory_code !== undefined) {
+      queryText += `memory_code = $${queryParams.push(memory_code)}, `;
+    }
+    if (memory_nm !== undefined) {
+      queryText += `memory_nm = $${queryParams.push(memory_nm)}, `;
+    }
+    
+    // 마지막 쉼표 제거
+    queryText = queryText.slice(0, -2);
+
+    queryText += ` WHERE memory_code_seq_no = $${queryParams.push(memory_code_seq_no)} RETURNING * `;
+
+    // 쿼리 실행
+    const result = await pool.query(queryText, queryParams);
+
+     // 결과가 존재하면 첫 번째 레코드 반환, 그렇지 않으면 null 반환
+     const updatedMemoryCodeInfo = result.rows.length > 0 ? result.rows[0] : null;
+
+    // 결과 반환
+    return { result: true, memoryCodeInfo: updatedMemoryCodeInfo };
+
+  } catch (error) {
+    return { result: false, memoryCodeInfo: null };
+  }
+
+}
+
+
+
 // memory_code ##
 
 
@@ -355,6 +390,6 @@ module.exports = {
   getTests, insertTest,
   getUsers, insertUser,
   getMemory, insertMemory, updateMemoryActiveNotThis, getMemorys, updateMemory, getUsersByMemoryCode,
-  getMemoryCode, getMemoryCodes, insertMemoryCode,
+  getMemoryCode, getMemoryCodes, insertMemoryCode, updateMemoryCode,
   getMemorySymbolColorCodeChoice
 };

@@ -52,13 +52,12 @@ export default function MemoryInfo({ closeEvent }) {
                 console.error('Error fetching or setting active memory info:', error);
             }
         };
-
         getActiveMemoryInfo();
     }, [])
 
     // 추억에 속한 사용자 정보 목록 가져오기
     useEffect(() => {
-        if (memoryCodeSeqNo == '') {
+        if (memoryCodeSeqNo == '' || userList.length > 0) {
             return;
         }
 
@@ -73,31 +72,57 @@ export default function MemoryInfo({ closeEvent }) {
         getUsersInMemory();
     }, [memoryCodeSeqNo])
 
-
-
-
-    // 수정 모드로 전환하는 함수
+    // 수정 모드로 전환
     const enableEdit = () => {
         setEditedMemoryNm(memoryNm); // 수정하기 전에 기존 값을 저장
         setMemoryNmEdit(true);
     };
 
-    // 수정 모드를 취소하고 이전 값으로 되돌리는 함수
+    // 수정 모드를 취소하고 이전 값으로 되돌림
     const cancelEdit = () => {
-        setMemoryNm(editedMemoryNm); // 이전 값으로 되돌림
+        setEditedMemoryNm('');  // 이전 값으로 되돌림
         setMemoryNmEdit(false);
     };
 
     // 수정된 값을 적용하고 수정 모드를 종료하는 함수
-    const applyEdit = () => {
+    const applyEdit = async () => {
+        if (editedMemoryNm.trim() === '') {
+            alert('수정할 추억 명을 입력하세요.');
+            setEditedMemoryNm('');
+            return;
+        }
 
         // DB update
+        const reqData = {
+            memoryNm: editedMemoryNm
+        };
 
-        // session update
-        
-        // front update
-        setMemoryNm(editedMemoryNm); // 수정된 값을 적용
-        setMemoryNmEdit(false); // 수정 모드 종료
+        await axios.put(`/api/memoryCodes/${memoryCodeSeqNo}`, reqData)
+            .then(res => {
+                if (res.status == 200) {
+
+                    // SESSION UPDATE
+                    const updateMemoryCodeInfo = res.data.memoryCodeInfo;
+                    console.log(updateMemoryCodeInfo);
+                    sessionStorage.setItem("activeMemoryInfo", JSON.stringify(updateMemoryCodeInfo));
+
+                    // 화면 UPDATE
+                    setMemoryNm(editedMemoryNm); // 수정된 값을 적용
+                    setMemoryNmEdit(false); // 수정 모드 종료
+                } else {
+                    alert(res.data.resultMsg);
+                    cancelEdit();
+                }
+            })
+            .catch(error => {
+                alert(error.response.data.resultMsg);
+                cancelEdit();
+            });
+    };
+
+    // 추억 나가기 이벤트
+    const ExitMemory = async () => {
+        alert('a');
     };
 
     return (
@@ -117,10 +142,10 @@ export default function MemoryInfo({ closeEvent }) {
                         <div className="flex text-xl gap-2 items-center pb-5">
 
 
-                        {memoryNmEdit ? ( // 수정 모드인 경우
+                            {memoryNmEdit ? ( // 수정 모드인 경우
                                 <input
                                     type="text"
-                                    className='bg-gray-100 rounded-full px-8 py-3 w-full focus:outline-none focus:ring-2 focus:ring-[#96DBF4] focus:ring-opacity-50'
+                                    className='bg-gray-100 rounded-full px-8 py-2 w-full focus:outline-none focus:ring-2 focus:ring-[#96DBF4] focus:ring-opacity-50'
                                     value={editedMemoryNm}
                                     onChange={(e) => setEditedMemoryNm(e.target.value)}
                                 />
@@ -132,8 +157,8 @@ export default function MemoryInfo({ closeEvent }) {
                             )}
                             {memoryNmEdit && ( // 수정 모드인 경우에만 확인 및 취소 버튼 표시
                                 <>
-                                    <button className='text-green-400' onClick={applyEdit}><FaCheck/></button>
-                                    <button className='text-red-500' onClick={cancelEdit}><IoClose className='size-8'/></button>
+                                    <button className='text-green-400' onClick={applyEdit}><FaCheck /></button>
+                                    <button className='text-red-500' onClick={cancelEdit}><IoClose className='size-8' /></button>
                                 </>
                             )}
 
@@ -163,7 +188,7 @@ export default function MemoryInfo({ closeEvent }) {
                 </div>
 
                 <div className='memory-change-btn-box '>
-                    <button onClick={() => alert('연결 해제')}>이 추억 나가기</button>
+                    <button onClick={ExitMemory}>추억 나가기</button>
                 </div>
 
             </div>
