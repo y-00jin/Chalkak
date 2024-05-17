@@ -46,6 +46,7 @@ router.put('/:memoryCodeSeqNo', async (req, res) => {
             throw new Error(resultMsg);
         }
 
+        let updateMemoryCodeInfo = memoryCodeRes;
         // 기존의 추억 명이랑 다른 경우 update
         if (memoryCodeRes.memory_nm !== memoryNm) {
             // 추억 명 수정
@@ -53,10 +54,14 @@ router.put('/:memoryCodeSeqNo', async (req, res) => {
             if (!updateMemoryCodeRes.result) {
                 throw new Error(resultMsg);
             }
-            memoryCodeInfo = updateMemoryCodeRes.memoryCodeInfo;
-        } else{
-            memoryCodeInfo = memoryCodeRes;
+            updateMemoryCodeInfo = updateMemoryCodeRes.memoryCodeInfo;
         }
+        const activeMemoryInfo = await queries.getMemory(undefined, undefined, loginUser.user_seq_no, undefined, true);    // 활성화 된 추억 조회
+
+        memoryCodeInfo = {
+            ...activeMemoryInfo,
+            ...updateMemoryCodeInfo
+        };
 
         status = 200;
         resultMsg = '';

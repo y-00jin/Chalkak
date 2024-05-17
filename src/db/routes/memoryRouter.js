@@ -222,8 +222,6 @@ router.get('/inactive', async (req, res) => {
 router.put('/:memorySeqNo/active', async (req, res) => {
 
     const reqMemorySeqNo = req.params.memorySeqNo;
-console.log(reqMemorySeqNo);
-
     let status = 500;
     let resultMsg = '추억 변경 중 문제가 발생했습니다. 다시 시도해 주세요.';
     let memoryInfo = null;
@@ -273,5 +271,60 @@ console.log(reqMemorySeqNo);
         res.status(status).json({ resultMsg: resultMsg, memoryInfo: memoryInfo });
     }
 });
+
+router.delete('/:memorySeqNo', async (req, res) => {
+
+    const reqMemorySeqNo = req.params.memorySeqNo;
+    let status = 500;
+    let resultMsg = '연결 해제중 문제가 발생했습니다. 다시 시도해 주세요.';
+    let redirectUrl = '';
+    const loginUser = req.session.loginUser;
+
+    try {
+
+        await pool.query('BEGIN'); // 트랜잭션 시작
+
+        // 추억 & 권한 확인
+        const memoryRes = await queries.getMemory(reqMemorySeqNo, undefined, loginUser.user_seq_no, undefined, undefined);
+        if (memoryRes == null) {
+            resultMsg = '연결 해제할 추억 정보 또는 권한이 존재하지 않습니다. 확인 후 다시 시도해주세요.';
+            throw new Error(resultMsg);
+        }
+
+        // 삭제
+        const memoryDeleteRes = await queries.deleteMemory(memoryRes.memory_seq_no);
+        if (!memoryDeleteRes) {
+            throw new Error(resultMsg);
+        }
+
+        // 장소 삭제
+
+        // 마지막 사용자인 경우 코드 삭제  
+        const memoryCodeDelCheck = await queries.getUsersByMemoryCode(memoryRes.memory_code_seq_no);
+        if (memoryCodeDelCheck == null) {
+            const memoryCodeDeleteRes = await queries.deleteMemoryCode(memoryRes.memory_code_seq_no);
+            if (!memoryCodeDeleteRes) {
+                throw new Error(resultMsg);
+            }
+        }
+
+        // 활성화 추억 조회-> 없는 경우 위에서 삭제된거임
+        const activeMemoryInfo = await queries.getMemory(undefined, undefined, loginUser.user_seq_no, undefined, true);    // 활성화 된 추억 조회
+        if(activeMemoryInfo == null) {
+            redirectUrl = '/memories/connection';
+        }
+        status = 200;
+        resultMsg = '';
+        await pool.query('COMMIT'); // 트랜잭션 커밋
+
+    } catch (error) {
+        await pool.query('ROLLBACK'); // 트랜잭션 롤백
+    } finally {
+        res.status(status).json({ resultMsg: resultMsg, redirectUrl: redirectUrl });
+    }
+});
+
+// 연결 해제 (추억 삭제)
+
 
 module.exports = router;

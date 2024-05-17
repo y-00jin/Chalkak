@@ -298,6 +298,24 @@ const getMemorysInactive = async (user_seq_no) => {
     throw error;
   }
 };
+
+// 추억 삭제
+const deleteMemory = async (memory_seq_no) => {
+  try {
+
+    let queryText = `DELETE FROM memory 
+    WHERE memory_seq_no = $1 
+    `;
+
+    // 쿼리 실행
+    const result = await pool.query(queryText, [memory_seq_no]);
+    return result.rowCount > 0 ? true:false; 
+
+  } catch (error) {
+    throw error;
+  }
+};
+
 // memory ##
 
 
@@ -397,6 +415,22 @@ const updateMemoryCode = async (memory_code_seq_no, memory_code, memory_nm) => {
 
 }
 
+// 추억 코드 삭제
+const deleteMemoryCode = async (memory_code_seq_no) => {
+  try {
+
+    let queryText = `DELETE FROM memory_code 
+    WHERE memory_code_seq_no = $1 
+    `;
+
+    // 쿼리 실행
+    const result = await pool.query(queryText, [memory_code_seq_no]);
+    return result.rowCount > 0 ? true:false; 
+
+  } catch (error) {
+    throw error;
+  }
+};
 
 
 // memory_code ##
@@ -409,7 +443,7 @@ const updateMemoryCode = async (memory_code_seq_no, memory_code, memory_nm) => {
 module.exports = {
   getTests, insertTest,
   getUsers, insertUser,
-  getMemory, insertMemory, updateMemoryActiveNotThis, getMemorys, updateMemory, getUsersByMemoryCode, getMemorysInactive,
-  getMemoryCode, getMemoryCodes, insertMemoryCode, updateMemoryCode,
+  getMemory, insertMemory, updateMemoryActiveNotThis, getMemorys, updateMemory, getUsersByMemoryCode, getMemorysInactive, deleteMemory,
+  getMemoryCode, getMemoryCodes, insertMemoryCode, updateMemoryCode, deleteMemoryCode,
   getMemorySymbolColorCodeChoice
 };

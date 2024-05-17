@@ -8,14 +8,17 @@ import axios from "axios";
 import { FaCheck } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
 import { PiUser } from "react-icons/pi";
+import { useNavigate } from 'react-router-dom';
 
 export default function MemoryInfo({ closeEvent }) {
+
+    const navigate = useNavigate();
 
     const isMobile = useMobile();
     const [memoryNm, setMemoryNm] = useState('');
     const [memoryCode, setMemoryCode] = useState('');
     const [memoryCodeSeqNo, setMemoryCodeSeqNo] = useState('');
-
+    const [memorySeqNo, setMemorySeqNo] = useState('');
 
     const [memoryNmEdit, setMemoryNmEdit] = useState(false); // 수정 모드 여부를 추적하는 상태 
     const [editedMemoryNm, setEditedMemoryNm] = useState('');   // 수정 추억 명
@@ -35,6 +38,7 @@ export default function MemoryInfo({ closeEvent }) {
                 const activeMemoryInfoStr = sessionStorage.getItem('activeMemoryInfo');
 
                 if (activeMemoryInfoStr != null) {
+                    
                     activeMemoryInfo = JSON.parse(activeMemoryInfoStr);
                 } else {
                     // 세션이 비어있는 경우 추억 정보 조회
@@ -47,6 +51,7 @@ export default function MemoryInfo({ closeEvent }) {
                 setMemoryNm(activeMemoryInfo.memory_nm);
                 setMemoryCode(activeMemoryInfo.memory_code);
                 setMemoryCodeSeqNo(activeMemoryInfo.memory_code_seq_no);
+                setMemorySeqNo(activeMemoryInfo.memory_seq_no);
             } catch (error) {
                 console.error('Error fetching or setting active memory info:', error);
             }
@@ -120,7 +125,26 @@ export default function MemoryInfo({ closeEvent }) {
 
     // 추억 나가기 이벤트
     const ExitMemory = async () => {
-        alert('a');
+
+        let confirmMsg = `'${memoryNm}'의 연결을 해제하시겠습니까?\n연결 해제 시 본인이 저장한 장소 정보는 모두 삭제됩니다.`;
+        if (userList.length <= 1)    // 마지막 남은 사용자
+            confirmMsg = `'${memoryNm}' 추억의 마지막 사용자입니다. 연결을 해제하시겠습니까?\n연결을 해제 시 '${memoryCode}' 코드로 다시 연결할 수 없으며, 본인이 저장한 장소 정보는 모두 삭제됩니다.`
+
+        const deleteCheck = window.confirm(confirmMsg);
+        if (deleteCheck) {    // 삭제
+            try {
+                const res = await axios.delete(`/api/memories/${memorySeqNo}`);
+                if (res.status === 200 && res.data.redirectUrl !== '') {
+                    // 세션 삭제
+                    sessionStorage.removeItem('activeMemoryInfo');
+                    navigate('/memories/connection');   // 링크 이동
+                } else {
+                    alert(res.data.resultMsg);
+                }
+            } catch (error) {
+                alert(error.response.data.resultMsg);
+            } 
+        }
     };
 
     return (
@@ -167,8 +191,8 @@ export default function MemoryInfo({ closeEvent }) {
                     </div>
                 </div>
 
-                <div className={`flex mb-5 text-xl border-t border-gray-300 pt-8 items-center ${isMobile?'mx-5':'mt-10'}`}>
-                    <PiUser/>
+                <div className={`flex mb-5 text-xl border-t border-gray-300 pt-8 items-center ${isMobile ? 'mx-5' : 'mt-10'}`}>
+                    <PiUser />
                     <span className='ml-2'>사용자 목록</span>
                 </div>
 
@@ -176,7 +200,7 @@ export default function MemoryInfo({ closeEvent }) {
 
                     <Scrollbars thumbSize={85}>
 
-                        {userList.map((data, index) => (
+                        {userList.map((data) => (
                             <div key={data.user_seq_no} className={`${!isMobile ? 'memory-info-item' : 'memory-info-mobile-item'}`}>
                                 <BsEmojiSmileFill className={`size-8`} style={{ color: data.symbol_color_code }} />
                                 <p>{data.user_nm}</p>
@@ -187,7 +211,7 @@ export default function MemoryInfo({ closeEvent }) {
                 </div>
 
                 <div className='memory-change-btn-box '>
-                    <button onClick={ExitMemory}>추억 나가기</button>
+                    <button onClick={ExitMemory}>연결 해제</button>
                 </div>
 
             </div>
