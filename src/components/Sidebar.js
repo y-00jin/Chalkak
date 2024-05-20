@@ -16,7 +16,7 @@ import useMobile from 'components/UseMobile';
 import { IoExitOutline } from "react-icons/io5";
 import { handleLogout } from 'utils/commonFunctionsReact';
 
-export default function Sidebar() {
+export default function Sidebar({showMobileMapSearch, setShowMobileMapSearch}) {
 
     const isMobile = useMobile();
 
@@ -25,6 +25,7 @@ export default function Sidebar() {
 
     const [isMobileMenubarOpen, setIsMobileMenubarOpen] = useState(false);  // 모바일 메뉴바 펼침 상태
 
+    
     // 메뉴 클릭 이벤트
     const handleMenuClick = (target) => {
         setIsMobileMenubarOpen(false);   // 모바일 메뉴 바 상태 false
@@ -122,7 +123,7 @@ export default function Sidebar() {
                 </div>
 
                 { /** 모바일 메뉴바 */
-                    isMobile && <div className='absolute z-10 right-4 bottom-4'>
+                    isMobile && !showMobileMapSearch && <div className='absolute z-10 right-4 bottom-4'>
                         <button className="map-mobile-menu-btn " onClick={() => setIsMobileMenubarOpen((val) => !val)}>
                             <BiMenu />
                         </button>
@@ -140,7 +141,7 @@ export default function Sidebar() {
 
                 {/* 장소 검색 */}
                 {isMobile &&
-                    <MapSearch closeEvent={handleMenuClick} />
+                    <MapSearch closeEvent={handleMenuClick} setShowMobileMapSearch={setShowMobileMapSearch} showMobileMapSearch={showMobileMapSearch}/>
                 }
 
             </div>

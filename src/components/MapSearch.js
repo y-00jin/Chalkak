@@ -7,7 +7,7 @@ import { FaListUl } from "react-icons/fa6";
 
 import React, { useState } from 'react';
 import PlaceSave from './PlaceSave';
-export default function MapSearch({ closeEvent }) {
+export default function MapSearch({ closeEvent, showMobileMapSearch, setShowMobileMapSearch}) {
 
     // 임시 데이터
     const [datas, setDatas] = useState([
@@ -51,7 +51,7 @@ export default function MapSearch({ closeEvent }) {
 
     const [selectedData, setSelectedData] = useState(null);
     const [showMobileMapList, setShowMobileMapList] = useState(false);      // 검색 목록 여부
-    const [showMobileMapSearch, setShowMobileMapSearch] = useState(false);  // 검색창 여부
+    // const [showMobileMapSearch, setShowMobileMapSearch] = useState(false);  // 검색창 여부
 
     const [showPlaceSave, setShowPlaceSave] = useState(false);  // 저장
 

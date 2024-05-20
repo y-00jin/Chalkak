@@ -11,6 +11,8 @@ export default function MapHome() {
   const [map, setMap] = useState(null);
   const isMobile = useMobile();
 
+  const [showMobileMapSearch, setShowMobileMapSearch] = useState(false);  // 검색창 여부
+
   // ## 페이지 제한
   const [isLoading, setIsLoading] = useState(true); // 로딩 상태
   useEffect(() => {
@@ -27,20 +29,21 @@ export default function MapHome() {
     <div className="map-container">
 
       {/* 지도서비스 기능 버튼 */}
-      <div className={`absolute right-4 ${isMobile ? 'top-24' : 'top-4'} z-10 flex flex-col gap-4`}>
-        <button className='map-func-btn'>
-          <GoStar />
-        </button>
-        <button className='map-func-btn'>
-          <TfiPencilAlt />
-        </button>
-      </div>
-
+      {!showMobileMapSearch &&
+        <div className={`absolute right-4 ${isMobile ? 'top-24' : 'top-4'} z-10 flex flex-col gap-4`}>
+          <button className='map-func-btn'>
+            <GoStar />
+          </button>
+          <button className='map-func-btn'>
+            <TfiPencilAlt />
+          </button>
+        </div>
+      }
       {/* 사이드바 및 메뉴바 */}
-      <Sidebar />
+      <Sidebar setShowMobileMapSearch={setShowMobileMapSearch} showMobileMapSearch={showMobileMapSearch} />
 
       {/* 지도 */}
       <Map setMap={setMap} />
-    </div>
+    </div >
   );
 }
