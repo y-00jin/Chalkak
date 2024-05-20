@@ -22,7 +22,7 @@ export default function MemoryConnection() {
 
     // 활성화 된 추억으로 연결
     const handleActiveConnect = async () => {
-        await axios.get('/api/memories/connection/active')
+        await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/memories/connection/active`)
             .then(res => {
                 if (res.status === 200) {
                     if (res.data.resultMsg === null || res.data.resultMsg === undefined) {
@@ -50,9 +50,9 @@ export default function MemoryConnection() {
             memoryCode: memoryCode
         };
 
-        axios.post('/api/memories/connection/code', reqData)
+        axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/memories/connection/code`, reqData)
             .then(res => {
-                if (res.status == 200) {
+                if (res.status === 200) {
                     activeMemoryInfoSaveSession(res.data.activeMemoryInfo);
                     navigate('/map');
                 } else {

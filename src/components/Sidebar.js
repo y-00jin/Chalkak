@@ -14,12 +14,9 @@ import MemoryInfo from './MemoryInfo';
 import PlaceStorage from './PlaceStorage';
 import useMobile from 'components/UseMobile';
 import { IoExitOutline } from "react-icons/io5";
-import { useNavigate } from 'react-router-dom';
-import axios from "axios";
 import { handleLogout } from 'utils/commonFunctionsReact';
 
 export default function Sidebar() {
-    const navigate = useNavigate();
 
     const isMobile = useMobile();
 

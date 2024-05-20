@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 // 기본 위도 경도 설정
 const DEFAULT_LAT = 37.497625203;
 const DEFAULT_LNG = 127.03088379;
 
 export default function Map({ setMap }) {
+
 
 
     // 카카오 맵 로드
@@ -31,7 +32,7 @@ export default function Map({ setMap }) {
         script.async = true;
         script.onload = loadKaKaoMap;
         document.head.appendChild(script);
-        
+
     }, [setMap]);
 
     return (

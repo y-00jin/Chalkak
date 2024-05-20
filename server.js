@@ -19,7 +19,7 @@ const usersRouter = require('./src/db/routes/usersRouter');
 const memoryRouter = require('./src/db/routes/memoryRouter');
 const memoryCodeRouter = require('./src/db/routes/memoryCodeRouter');
 
-const port = process.env.PORT || 8088; // 포트 설정
+const port = 8088; // 포트 설정
 
 // CORS 사용
 const cors = require('cors');

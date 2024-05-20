@@ -16,7 +16,7 @@ export default function KakaoCallback() {
         };
 
         // 인증 코드를 사용하여 백엔드 서버로 요청
-        axios.post('/api/auth/kakao', reqData)
+        axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/auth/kakao`, reqData)
             .then(res => {
                 if (res.status !== 200) {
                     alert(errorMsg);
@@ -34,7 +34,7 @@ export default function KakaoCallback() {
 
     // 사용자 정보 update -> 로그인 처리
     useEffect(() => {
-        if (userInfo.length == 0) {
+        if (userInfo.length === 0) {
             return;
         }
         const reqData = {
@@ -42,7 +42,7 @@ export default function KakaoCallback() {
         };
 
         // 인증 코드를 사용하여 백엔드 서버로 요청
-        axios.post('/api/users/login', reqData)
+        axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/users/login`, reqData)
             .then(res => {
                 if (res.status !== 200) {
                     alert(res.data.resultMsg);

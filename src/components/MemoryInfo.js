@@ -42,7 +42,7 @@ export default function MemoryInfo({ closeEvent }) {
                     activeMemoryInfo = JSON.parse(activeMemoryInfoStr);
                 } else {
                     // 세션이 비어있는 경우 추억 정보 조회
-                    const res = await axios.get('/api/memories/active');
+                    const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/memories/active`);
                     activeMemoryInfo = res.data.memoryInfo;
                     sessionStorage.setItem("activeMemoryInfo", JSON.stringify(activeMemoryInfo));
                 }
@@ -61,13 +61,13 @@ export default function MemoryInfo({ closeEvent }) {
 
     // 추억에 속한 사용자 정보 목록 가져오기
     useEffect(() => {
-        if (memoryCodeSeqNo == '' || userList.length > 0) {
+        if (memoryCodeSeqNo === '' || userList.length > 0) {
             return;
         }
 
         const getUsersInMemory = async () => {
             try {
-                const res = await axios.get(`/api/memories/memoryCodes/${memoryCodeSeqNo}/users`);
+                const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/memories/memoryCodes/${memoryCodeSeqNo}/users`);
                 setUserList(res.data.userList);
             } catch (error) {
             }
@@ -101,9 +101,9 @@ export default function MemoryInfo({ closeEvent }) {
             memoryNm: editedMemoryNm
         };
 
-        await axios.put(`/api/memoryCodes/${memoryCodeSeqNo}`, reqData)
+        await axios.put(`${process.env.REACT_APP_API_BASE_URL}/api/memoryCodes/${memoryCodeSeqNo}`, reqData)
             .then(res => {
-                if (res.status == 200) {
+                if (res.status === 200) {
 
                     // SESSION UPDATE
                     const updateMemoryCodeInfo = res.data.memoryCodeInfo;
@@ -133,7 +133,7 @@ export default function MemoryInfo({ closeEvent }) {
         const deleteCheck = window.confirm(confirmMsg);
         if (deleteCheck) {    // 삭제
             try {
-                const res = await axios.delete(`/api/memories/${memorySeqNo}`);
+                const res = await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/api/memories/${memorySeqNo}`);
                 if (res.status === 200 && res.data.redirectUrl !== '') {
                     // 세션 삭제
                     sessionStorage.removeItem('activeMemoryInfo');
