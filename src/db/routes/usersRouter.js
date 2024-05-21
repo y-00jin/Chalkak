@@ -46,7 +46,6 @@ router.get('/logout', async (req, res) => {
 // 로그인 확인
 router.get('/login/check', async (req, res) => {
     const loginUser = req.session.loginUser;
-    console.log(loginUser);
     if(loginUser === undefined){
         delete req.session.loginUser;
     }

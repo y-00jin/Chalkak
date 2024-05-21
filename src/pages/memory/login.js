@@ -1,32 +1,42 @@
 import { RiKakaoTalkFill } from "react-icons/ri";
-// import { useEffect, useState } from 'react';
-// import axios from "axios";
-// import { useNavigate } from 'react-router-dom'; 
+import { useEffect, useState } from 'react';
+import axios from "axios";
+import { useNavigate } from 'react-router-dom';
 
 export default function MemoryLogin() {
 
     const REST_API_KEY = `${process.env.REACT_APP_KAKAO_CLIENT_ID}`;
 
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
+    const handleLoginOther = async () => {
+        const reqData = {
+            userInfo: {
+                user_seq_no: 2,
+                email: 'shalpha_2@naver.com',
+                user_nm: '강성현',
+                social_type: 'naver',
+                social_id: '1'
+            }
+        };
 
-    // useEffect(() => {
-    //     // 서버로부터 로그인 상태 확인
-    //     axios.post('/api/users/login/check')
-    //         .then(response => {
-    //             if(response.data.result){
-    //                 navigate('/memories/connection');
-    //             }else{
-    //                 navigate('/');
-    //             }
-    //         })
-    //         .catch(error => {
-    //             navigate('/');
-    //         });
-    // }, []);
+        // 인증 코드를 사용하여 백엔드 서버로 요청
+        await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/users/login`, reqData, { withCredentials: true })
+            .then(res => {
+                if (res.status !== 200) {
+                    alert(res.data.resultMsg);
+                }
 
+                // sessionStorage.setItem('loginUser', JSON.stringify(userInfo));  // 세션 저장
+                navigate(res.data.redirectUrl);
+            })
+            .catch(error => {
+                alert(error.response.data.resultMsg);
+                navigate('/');
+            });
+    }
 
     return (
-       
+
         <div className="login-box" >
             <div className="login-logo-box">
                 <div className="login-logo-img">
@@ -38,16 +48,24 @@ export default function MemoryLogin() {
                 <p className="login-logo-text">
                     계정이 없다면 자동으로 회원가입이 진행됩니다.
                 </p>
-                
+
             </div>
             <div className="login-btn-box">
                 <button
                     type="button"
                     className="login-btn login-btn-kakao"
-                    onClick={()=>window.location.href = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${process.env.REACT_APP_CLIENT_BASE_URL}/auth/kakao&response_type=code`}
+                    onClick={() => window.location.href = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${process.env.REACT_APP_CLIENT_BASE_URL}/auth/kakao&response_type=code`}
                 >
                     <RiKakaoTalkFill className="w-6 h-6 " />
                     Sign in with Kakao
+                </button>
+                <button
+                    type="button"
+                    className="login-btn login-btn-naver"
+                    onClick={handleLoginOther}
+                >
+                    <RiKakaoTalkFill className="w-6 h-6 " />
+                    다른 계정 로그인
                 </button>
             </div>
         </div>

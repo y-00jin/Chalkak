@@ -6,158 +6,193 @@ import { FaRegStar } from "react-icons/fa";
 import { FaListUl } from "react-icons/fa6";
 import React, { useState, useRef, useEffect } from 'react';
 import PlaceSave from './PlaceSave';
-export default function MapSearch({ closeEvent, showMobileMapSearch, setShowMobileMapSearch, map, setMap , psRef}) {
+import useMobile from 'components/UseMobile.js';
+export default function MapSearch({ closeEvent, showMobileMapSearch, setShowMobileMapSearch, map, setMap, psRef, markers, setMarkers }) {
+
+    const isMobile = useMobile();
 
     // 임시 데이터
-    const [datas, setDatas] = useState([
-
-        {
-            id: 1,
-            location_nm: '가산디지털단지역 7호선',
-            address: '서울 금천구 벚꽃로 309 (가산동)'
-        },
-        {
-            id: 2,
-            location_nm: '스타벅스 가산디지털단지역점',
-            address: '서울 금천구 벚꽃로 298 (가산동)'
-        },
-        {
-            id: 3,
-            location_nm: '노브랜드버거 가산디지털단지점',
-            address: '서울 금천구 벚꽃로 286 삼성리더스타워 1층 109호'
-        },
-        {
-            id: 4,
-            location_nm: '할리스 가산디지털단지점',
-            address: '서울 금천구 가산디지털 1로 186 제이플라츠 1층'
-        },
-        {
-            id: 5,
-            location_nm: '한솥 가산디지털단지점',
-            address: '서울 금천구 가산디지털2로 108 (가산동)'
-        },
-        {
-            id: 6,
-            location_nm: '한솥 가산디지털단지점',
-            address: '서울 금천구 가산디지털2로 108 (가산동)'
-        },
-        {
-            id: 7,
-            location_nm: '한솥 가산디지털단지점',
-            address: '서울 금천구 가산디지털2로 108 (가산동)'
-        }
-    ]);
+    const [datas, setDatas] = useState([]);
 
     const [selectedData, setSelectedData] = useState(null);
     const [showMobileMapList, setShowMobileMapList] = useState(false);      // 검색 목록 여부
     // const [showMobileMapSearch, setShowMobileMapSearch] = useState(false);  // 검색창 여부
     const [showPlaceSave, setShowPlaceSave] = useState(false);  // 저장
 
+    // const [markers, setMarkers] = useState([]);
+    const [keyword, setKeyword] = useState('');
     const kakao = window.kakao;
 
-    
-    const handleSearch = async(keyword) => {
+    useEffect(() => {
+console.log(markers);
+    },[]);
+    // 기존 마커 제거 로직
+    useEffect(() => {
 
-                psRef.keywordSearch(keyword, (data, status) => {
-                    if (status === kakao.maps.services.Status.OK) {
-                        data.map((place, index) => (
-                            console.log(place)
-                        ));
-                        // 검색 결과를 처리하는 로직 작성
+        // 기존의 마커들 제거
+            markers.forEach(marker => marker.setMap(null));
+            setMarkers([]);
+            setDatas([]);
+            setSelectedData(null);
+        if (keyword.trim() !== '') {
+            handleSearch();
+        } 
 
-                        //     setDatas(
-                        //         data.map((place, index) => ({
-                        //         id: index,
-                        //         location_nm: place.place_name,
-                        //         address: place.address_name,
-                        //         y: place.y,
-                        //         x: place.x
-                        //     }))
-
-
-                    } else {
-                        setDatas([]);
-                    }
-                });
-                
-    }
-
+    }, [keyword]);
 
 
     // 장소 검색
-    const handleEnter = async(event) => {
+    const handleSearch = async () => {
+
+        if (!psRef) psRef = new window.kakao.maps.services.Places();     // psRef == null이면 Places 생성
+
+        
+        // 기존의 마커들 제거
+        // markers.forEach(marker => marker.setMap(null));
+        // setMarkers([]);
+        // setSelectedData(null);  // 선택 장소 초기화
+
+        psRef.keywordSearch(keyword, (data, status) => {
+
+            if (status === kakao.maps.services.Status.OK) {
+
+                // 새로운 마커들 생성
+                const newMarkers = data.map((place, index) => {
+                    const markerPosition = new kakao.maps.LatLng(place.y, place.x);
+                    const marker = new kakao.maps.Marker({
+                        position: markerPosition
+                    });
+                    // 생성한 마커를 지도에 추가
+                    marker.placeId = place.id
+                    marker.setMap(map);
+                    return marker;
+                });
+                setMarkers(newMarkers);
+
+                // 검색 결과를 처리하는 로직 작성
+
+                setDatas(
+                    data.map((place) => (
+                        {
+                            placeId: place.id,
+                            placeNm: place.place_name,
+                            address: place.address_name,
+                            placeUrl: place.place_url,
+                            latitude: place.y,  // 위도
+                            longitude: place.x  // 경도
+                        })))
+
+                // 검색 결과 중 첫 번째 장소의 위치를 기준으로 지도의 중심을 설정
+                if (data.length > 0) {
+                    const firstPlace = data[0];
+                    const centerPosition = new kakao.maps.LatLng(firstPlace.y, firstPlace.x);
+                    map.setCenter(centerPosition);
+                }
+            } else {
+                setMarkers([]);
+                setDatas([]);
+                setSelectedData(null);
+            }
+        });
+
+    }
+
+
+    // 장소 검색
+    const handleEnter = (event) => {
 
         if (event.key === 'Enter') {
-            const keyword = event.target.value;
-
-            if(!psRef) psRef = new window.kakao.maps.services.Places();     // psRef == null이면 Places 생성
-            handleSearch(keyword);  // 키워드로 조회
+            setKeyword(event.target.value);
         }
     };
 
-
-
     // 장소 정보 클릭했을 때
-    const handlePlaceDataClick = (data) => {
+    const handlePlaceDataClick = async (data) => {
+
         setSelectedData(data);
         setShowMobileMapList(false);
-        alert(data.location_nm)
+
+        const dataPosition = new kakao.maps.LatLng(data.latitude, data.longitude);
+        map.setCenter(dataPosition);
+
+
+        // 클릭된 장소의 좌표와 마커의 좌표를 비교하여 색상을 변경
+        markers.forEach(marker => {
+            if (marker.placeId === data.placeId) {  // 클릭한 정보 마커 변경
+                marker.setImage(new kakao.maps.MarkerImage(
+                    'http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png',
+                    new kakao.maps.Size(29, 40) // 마커 크기
+                ));
+                marker.setZIndex(1000); // 클릭된 마커를 가장 위로 올림
+            } else {
+                marker.setImage(null); // 원래 마커 이미지로 변경
+                marker.setZIndex(0);
+            }
+
+
+        });
     };
-
-
 
     return (
         <>
             {/* PC */}
-            <div className='sidebar-content-box'>
-                <input type="text" placeholder="장소 검색" className="map-search-input" onKeyDown={handleEnter} />
+            {!isMobile &&
+                <div className='sidebar-content-box'>
+                    <input type="text" placeholder="장소 검색" className="map-search-input" onKeyDown={handleEnter} />
 
-                <div className='place-search-box'>
-                    <Scrollbars thumbSize={85}>
+                    <div className='place-search-box'>
+                        <Scrollbars thumbSize={85}>
+                            {datas.length === 0 &&
+                                <span>검색 결과가 존재하지 않습니다.</span>
+                            }
 
-                        {datas.map(data => (
-                            <div key={data.id} className='border-b-gray-200 py-5 border-b '>
-                                <div className='place-search-item' onClick={() => handlePlaceDataClick(data)}>
-                                    <SiMaplibre className='size-10 text-slate-300' />
-                                    <div className='flex-1'>
-                                        <p>{data.location_nm}</p>
-                                        <p>{data.address}</p>
+                            {datas.length !== 0 && datas.map(data => (
+                                <div key={data.placeId} className='border-b-gray-200 py-5 border-b '>
+                                    <div className='place-search-item' onClick={() => handlePlaceDataClick(data)}>
+                                        <SiMaplibre className='size-10 text-slate-300' />
+                                        <div className={`flex-1 ${selectedData !== null && selectedData.placeId === data.placeId ? 'text-[#96DBF4]' : ''}`}>
+                                            <p>{data.placeNm}</p>
+                                            <p>{data.address}</p>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <button className='flex items-center gap-1 ml-12 mt-2' onClick={() => setShowPlaceSave(true)}>
-                                    <FaRegStar />저장
-                                </button>
-                            </div>
-                        ))}
-                    </Scrollbars>
+                                    <button className='flex items-center gap-1 ml-12 mt-2' onClick={() => setShowPlaceSave(true)}>
+                                        <FaRegStar />저장
+                                    </button>
+                                </div>
+                            ))}
+                        </Scrollbars>
+                    </div>
                 </div>
-            </div>
+            }
+
 
             {/* Mobile */}
             {/* 검색창 */}
-            <div role="presentation" className={`map-mobile-search-box ${showMobileMapSearch ? 'bg-white' : ''}`}>
-                {showMobileMapSearch &&
-                    <button>
-                        {showMobileMapList ?
-                            <RiRoadMapFill className='size-7 text-[#96DBF4]' onClick={() => setShowMobileMapList((val) => !val)} />
-                            :
-                            <FaListUl className='size-7 text-[#96DBF4]' onClick={() => setShowMobileMapList((val) => !val)} />
-                        }
-                    </button>
-                }
+            {isMobile &&
+                <div role="presentation" className={`map-mobile-search-box ${showMobileMapSearch ? 'bg-white' : ''}`}>
+                    {showMobileMapSearch &&
+                        <button>
+                            {showMobileMapList ?
+                                <RiRoadMapFill className='size-7 text-[#96DBF4]' onClick={() => setShowMobileMapList((val) => !val)} />
+                                :
+                                <FaListUl className='size-7 text-[#96DBF4]' onClick={() => setShowMobileMapList((val) => !val)} />
+                            }
+                        </button>
+                    }
 
-                <input type="text" placeholder="장소 검색" className="map-mobile-search-input h-full " onClick={() => { setShowMobileMapList(true); setShowMobileMapSearch(true); }} />
+                    <input type="text" placeholder="장소 검색" className="map-mobile-search-input h-full " onClick={() => { setShowMobileMapList(true); setShowMobileMapSearch(true); }} />
 
-                {showMobileMapSearch &&
-                    <button onClick={() => { setShowMobileMapSearch(false); setShowMobileMapList(false); closeEvent('mapSearch'); }}>
-                        <AiOutlineClose className='size-5' />
-                    </button>
-                }
-            </div>
+                    {showMobileMapSearch &&
+                        <button onClick={() => { setShowMobileMapSearch(false); setShowMobileMapList(false); closeEvent('mapSearch'); }}>
+                            <AiOutlineClose className='size-5' />
+                        </button>
+                    }
+                </div>
+            }
 
             {/* 검색 목록 */}
-            {showMobileMapList &&
+            {isMobile && showMobileMapList &&
                 <div className='map-search-mobile-content-box'>
                     <div className='mobile-place-box'>
                         <Scrollbars thumbSize={85}>
@@ -168,7 +203,7 @@ export default function MapSearch({ closeEvent, showMobileMapSearch, setShowMobi
                                     <div className='place-search-item' onClick={() => handlePlaceDataClick(data)}>
                                         <SiMaplibre className='size-10 text-slate-300' />
                                         <div className='flex-1'>
-                                            <p>{data.location_nm}</p>
+                                            <p>{data.place_nm}</p>
                                             <p>{data.address}</p>
                                         </div>
                                     </div>

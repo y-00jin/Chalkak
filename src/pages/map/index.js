@@ -9,6 +9,7 @@ import { loginCheck } from 'utils/commonFunctionsReact';
 
 export default function MapHome() {
   const [map, setMap] = useState(null);
+  const [markers, setMarkers] = useState([]);
   const isMobile = useMobile();
 
   const [showMobileMapSearch, setShowMobileMapSearch] = useState(false);  // 검색창 여부
@@ -41,7 +42,7 @@ export default function MapHome() {
         </div>
       }
       {/* 사이드바 및 메뉴바 */}
-      <Sidebar setShowMobileMapSearch={setShowMobileMapSearch} showMobileMapSearch={showMobileMapSearch} map={map} setMap={setMap} />
+      <Sidebar setShowMobileMapSearch={setShowMobileMapSearch} showMobileMapSearch={showMobileMapSearch} map={map} setMap={setMap} markers={markers} setMarkers={setMarkers} />
 
       {/* 지도 */}
       <Map setMap={setMap} psRef={psRef}/>
