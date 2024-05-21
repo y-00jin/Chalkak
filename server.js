@@ -17,7 +17,7 @@ app.use(session({
   }
 }));
 
-const port = process.env.PORT; // 포트 설정
+const port = process.env.REACT_APP_API_PORT; // 포트 설정
 
 // CORS 사용
 const cors = require('cors');

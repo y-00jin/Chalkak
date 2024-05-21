@@ -2,15 +2,11 @@ import { useEffect, useState } from 'react';
 
 export default function Test() {
 
-    // const path = "http://192.168.0.245:8088";
-    // const path = "http://localhost:8088";
-
-        
-    const [tests, setTests] = useState(['test000']);
+    const [tests, setTests] = useState([]);
 
     useEffect(() => {
 
-        fetch(`/api/tests`)
+        fetch(`${process.env.REACT_APP_API_BASE_URL}/api/tests`)
             .then(res => res.json())
             .then(data => {
                 const newItem = data.map(element => element.test_nm);
@@ -24,8 +20,8 @@ export default function Test() {
 
     return (
         <>
-            {tests.map(data =>{
-                return <h1 key={data}>{data}</h1>
+            {tests.map((data, index) =>{
+                return <h1 key={index}>{data}</h1>
                 }
             )}
         </>
