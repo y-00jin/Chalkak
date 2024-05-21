@@ -5,19 +5,20 @@ export async function loginCheck() {
 
     const errorMsg = '해당 페이지는 로그인이 필요한 서비스입니다. 로그인 후 이용해주세요.';
 
-    await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/users/login/check` , { withCredentials: true })
-        .then(res => {
-            if (!res.data.result) {
-                sessionStorage.clear();
-                alert(errorMsg);
-                window.location.href = '/';
-            }
-        })
-        .catch(error => {
-            sessionStorage.clear();
-            alert(errorMsg);
-            window.location.href = '/';
-        });
+    try {
+        const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/users/login/check`, { withCredentials: true });
+        if (!res.data.result) {
+            handleLoginFailure(errorMsg);
+        }
+    } catch (error) {
+        handleLoginFailure(errorMsg);
+    }
+}
+
+function handleLoginFailure(errorMsg) {
+    sessionStorage.clear();
+    alert(errorMsg);
+    window.location.href = '/';
 }
 
 // 로그아웃

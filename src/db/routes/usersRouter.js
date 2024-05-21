@@ -20,17 +20,17 @@ router.post('/login', async (req, res) => {
         if (!isUserExists) {    // 신규 회원 -> 회원가입
             const result = await queries.insertUser(userInfo.email, userInfo.user_nm, userInfo.social_type, userInfo.social_id);  // 회원가입
             req.session.loginUser = result.result ? result.userInfo : null;    // 회원가입 성공 시 세션 저장
-            redirectUrl = result.result ? '/memories/connection' : '/'; // 회원가입 성공 시 리다이렉트 경로
             status = result.result ? 200 : 500;
+            redirectUrl = result.result ? '/memories/connection' : '/'; // 회원가입 성공 시 리다이렉트 경로
         } else {    // 기존 회원 -> 로그인
-            req.session.loginUser = resUsers[0]; // 첫 번째 사용자로 로그인
+            req.session.loginUser = resUsers[0]; // 세션 저장
             status = 200;
             redirectUrl = '/memories/connection';
             resultMsg = '';
         }
 
     } catch (error) {
-        // res.status(500).json({ redirectUrl: '/'}); // 오류 발생 시 500 에러 응답
+        // 오류 발생 시 500 에러 응답
     } finally {
         res.status(status).json({ redirectUrl: redirectUrl, resultMsg : resultMsg});
     }
@@ -46,6 +46,7 @@ router.get('/logout', async (req, res) => {
 // 로그인 확인
 router.get('/login/check', async (req, res) => {
     const loginUser = req.session.loginUser;
+    console.log(loginUser);
     if(loginUser === undefined){
         delete req.session.loginUser;
     }

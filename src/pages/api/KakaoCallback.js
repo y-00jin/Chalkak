@@ -48,7 +48,7 @@ export default function KakaoCallback() {
                     alert(res.data.resultMsg);
                 }
                 
-                sessionStorage.setItem('loginUser', JSON.stringify(userInfo));  // 세션 저장
+                // sessionStorage.setItem('loginUser', JSON.stringify(userInfo));  // 세션 저장
                 navigate(res.data.redirectUrl);
             })
             .catch(error => {
