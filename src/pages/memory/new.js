@@ -35,7 +35,7 @@ export default function MemoryNew() {
             memoryNm: memoryNm
         };
 
-        axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/memories/new`, reqData)
+        axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/memories/new`, reqData, { withCredentials: true })
             .then(res => {
                 if (res.status === 200) {
                     activeMemoryInfoSaveSession(res.data.activeMemoryInfo);

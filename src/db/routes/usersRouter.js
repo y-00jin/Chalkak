@@ -11,8 +11,8 @@ router.post('/login', async (req, res) => {
     let status = 500;
     let redirectUrl = "/";
 
-
     try {
+
         const { userInfo } = req.body;
         const resUsers = await queries.getUsers(undefined, undefined, undefined, undefined, userInfo.social_id);    // 사용자 조회
         const isUserExists = resUsers.length > 0;
@@ -44,8 +44,12 @@ router.get('/logout', async (req, res) => {
 });
 
 // 로그인 확인
-router.post('/login/check', async (req, res) => {
+router.get('/login/check', async (req, res) => {
     const loginUser = req.session.loginUser;
+    if(loginUser === undefined){
+        delete req.session.loginUser;
+    }
+
     res.json({
         result: loginUser === undefined? false:true,
         loginUser: loginUser

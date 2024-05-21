@@ -16,7 +16,7 @@ import useMobile from 'components/UseMobile';
 import { IoExitOutline } from "react-icons/io5";
 import { handleLogout } from 'utils/commonFunctionsReact';
 
-export default function Sidebar({showMobileMapSearch, setShowMobileMapSearch}) {
+export default function Sidebar({showMobileMapSearch, setShowMobileMapSearch, map, setMap, psRef}) {
 
     const isMobile = useMobile();
 
@@ -112,7 +112,7 @@ export default function Sidebar({showMobileMapSearch, setShowMobileMapSearch}) {
                     {/* 사이드바 내용 */}
                     {!isMobile &&
                         <div className={`map-sidebar-content ${!isSidebarOpen ? 'hidden' : ''}`}>
-                            {activeMenu === 'mapSearch' && <MapSearch />}
+                            {activeMenu === 'mapSearch' && <MapSearch map={map} setMap={setMap} psRef={psRef} />}
                             {activeMenu === 'placeStorage' && <PlaceStorage closeEvent={handleMenuClick} />}
                             {activeMenu === 'memoryInfo' && <MemoryInfo closeEvent={handleMenuClick} />}
                             {activeMenu === 'memoryChange' && <MemoryChange closeEvent={handleMenuClick} />}
@@ -141,7 +141,7 @@ export default function Sidebar({showMobileMapSearch, setShowMobileMapSearch}) {
 
                 {/* 장소 검색 */}
                 {isMobile &&
-                    <MapSearch closeEvent={handleMenuClick} setShowMobileMapSearch={setShowMobileMapSearch} showMobileMapSearch={showMobileMapSearch}/>
+                    <MapSearch closeEvent={handleMenuClick} setShowMobileMapSearch={setShowMobileMapSearch} showMobileMapSearch={showMobileMapSearch} map={map} setMap={setMap} psRef={psRef} />
                 }
 
             </div>

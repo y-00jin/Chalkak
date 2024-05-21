@@ -22,7 +22,10 @@ export default function MemoryConnection() {
 
     // 활성화 된 추억으로 연결
     const handleActiveConnect = async () => {
-        await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/memories/connection/active`)
+
+
+        console.log(sessionStorage.getItem('loginUser'));
+        await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/memories/connection/active`, { withCredentials: true })
             .then(res => {
                 if (res.status === 200) {
                     if (res.data.resultMsg === null || res.data.resultMsg === undefined) {
@@ -50,7 +53,7 @@ export default function MemoryConnection() {
             memoryCode: memoryCode
         };
 
-        axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/memories/connection/code`, reqData)
+        axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/memories/connection/code`, reqData, { withCredentials: true })
             .then(res => {
                 if (res.status === 200) {
                     activeMemoryInfoSaveSession(res.data.activeMemoryInfo);

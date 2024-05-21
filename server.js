@@ -10,29 +10,34 @@ app.use(session({
   secret: process.env.REACT_APP_SESSION_SECRET_KEY, // 세션 암호화를 위한 비밀키
   resave: false, // 변경 사항이 없더라도 세션을 다시 저장할지 여부
   saveUninitialized: false, // 초기화되지 않은 세션을 저장할지 여부
-  cookie: { secure: false } // 쿠키 설정, HTTPS가 아닌 환경에서도 사용하려면 false로 설정
+  cookie: {
+    secure: false, // HTTPS가 아닌 환경에서도 사용하려면 false로 설정
+    httpOnly: true, // 클라이언트 측에서 쿠키 접근 불가
+    maxAge: 24 * 60 * 60 * 1000, // 쿠키 유효 기간 설정 (1일)
+  }
 }));
 
-const testRouter = require('./src/db/routes/testRouter');
-const authRouter = require('./src/db/routes/authRouter');
-const usersRouter = require('./src/db/routes/usersRouter');
-const memoryRouter = require('./src/db/routes/memoryRouter');
-const memoryCodeRouter = require('./src/db/routes/memoryCodeRouter');
-
-const port = 8088; // 포트 설정
+const port = process.env.PORT; // 포트 설정
 
 // CORS 사용
 const cors = require('cors');
 const corsOption = {
-    origin: "*",
-    optionSuccessStatus: 200,
+  origin: process.env.REACT_APP_CLIENT_BASE_URL,
+  credentials: true, // 세션 쿠키를 허용하도록 설정
+  optionSuccessStatus: 200,
 };
 app.use(cors(corsOption));
 app.use(express.json());
 
+const testRouter = require('./src/db/routes/testRouter');
+const usersRouter = require('./src/db/routes/usersRouter');
+const authRouter = require('./src/db/routes/authRouter');
+const memoryRouter = require('./src/db/routes/memoryRouter');
+const memoryCodeRouter = require('./src/db/routes/memoryCodeRouter');
+
+app.use('/api/users', usersRouter);  // users
 app.use('/api/tests', testRouter); // '/tests' 경로에 대한 요청은 testRouter.js 파일에서 처리
 app.use('/api/auth', authRouter);  // auth
-app.use('/api/users', usersRouter);  // users
 app.use('/api/memories', memoryRouter);  // memories
 app.use('/api/memoryCodes', memoryCodeRouter);  // memoryCodes
 
@@ -46,8 +51,8 @@ app.get('*', (req, res) => {
 });
 
 // 서버 확인
-app.listen(port, ()=>{
+app.listen(port, () => {
   console.log('노드 연결 쌉가능 :' + port);
 });
 
-  
+

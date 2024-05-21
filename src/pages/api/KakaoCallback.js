@@ -16,7 +16,7 @@ export default function KakaoCallback() {
         };
 
         // 인증 코드를 사용하여 백엔드 서버로 요청
-        axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/auth/kakao`, reqData)
+        axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/auth/kakao`, reqData, { withCredentials: true })
             .then(res => {
                 if (res.status !== 200) {
                     alert(errorMsg);
@@ -42,11 +42,13 @@ export default function KakaoCallback() {
         };
 
         // 인증 코드를 사용하여 백엔드 서버로 요청
-        axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/users/login`, reqData)
+        axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/users/login`, reqData, { withCredentials: true })
             .then(res => {
                 if (res.status !== 200) {
                     alert(res.data.resultMsg);
                 }
+                
+                sessionStorage.setItem('loginUser', JSON.stringify(userInfo));  // 세션 저장
                 navigate(res.data.redirectUrl);
             })
             .catch(error => {

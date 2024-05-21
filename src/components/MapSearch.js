@@ -4,10 +4,9 @@ import { AiOutlineClose } from "react-icons/ai";
 import { RiRoadMapFill } from "react-icons/ri";
 import { FaRegStar } from "react-icons/fa";
 import { FaListUl } from "react-icons/fa6";
-
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import PlaceSave from './PlaceSave';
-export default function MapSearch({ closeEvent, showMobileMapSearch, setShowMobileMapSearch}) {
+export default function MapSearch({ closeEvent, showMobileMapSearch, setShowMobileMapSearch, map, setMap , psRef}) {
 
     // 임시 데이터
     const [datas, setDatas] = useState([
@@ -52,27 +51,73 @@ export default function MapSearch({ closeEvent, showMobileMapSearch, setShowMobi
     const [selectedData, setSelectedData] = useState(null);
     const [showMobileMapList, setShowMobileMapList] = useState(false);      // 검색 목록 여부
     // const [showMobileMapSearch, setShowMobileMapSearch] = useState(false);  // 검색창 여부
-
     const [showPlaceSave, setShowPlaceSave] = useState(false);  // 저장
 
+    const kakao = window.kakao;
+
+    
+    const handleSearch = async(keyword) => {
+
+                psRef.keywordSearch(keyword, (data, status) => {
+                    if (status === kakao.maps.services.Status.OK) {
+                        data.map((place, index) => (
+                            console.log(place)
+                        ));
+                        // 검색 결과를 처리하는 로직 작성
+
+                        //     setDatas(
+                        //         data.map((place, index) => ({
+                        //         id: index,
+                        //         location_nm: place.place_name,
+                        //         address: place.address_name,
+                        //         y: place.y,
+                        //         x: place.x
+                        //     }))
+
+
+                    } else {
+                        setDatas([]);
+                    }
+                });
+                
+    }
+
+
+
+    // 장소 검색
+    const handleEnter = async(event) => {
+
+        if (event.key === 'Enter') {
+            const keyword = event.target.value;
+
+            if(!psRef) psRef = new window.kakao.maps.services.Places();     // psRef == null이면 Places 생성
+            handleSearch(keyword);  // 키워드로 조회
+        }
+    };
+
+
+
+    // 장소 정보 클릭했을 때
     const handlePlaceDataClick = (data) => {
         setSelectedData(data);
         setShowMobileMapList(false);
         alert(data.location_nm)
     };
 
+
+
     return (
         <>
             {/* PC */}
             <div className='sidebar-content-box'>
-                <input type="text" placeholder="장소 검색" className="map-search-input" />
+                <input type="text" placeholder="장소 검색" className="map-search-input" onKeyDown={handleEnter} />
 
                 <div className='place-search-box'>
                     <Scrollbars thumbSize={85}>
 
                         {datas.map(data => (
                             <div key={data.id} className='border-b-gray-200 py-5 border-b '>
-                                <div className='place-search-item'  onClick={() => handlePlaceDataClick(data)}>
+                                <div className='place-search-item' onClick={() => handlePlaceDataClick(data)}>
                                     <SiMaplibre className='size-10 text-slate-300' />
                                     <div className='flex-1'>
                                         <p>{data.location_nm}</p>
@@ -80,8 +125,8 @@ export default function MapSearch({ closeEvent, showMobileMapSearch, setShowMobi
                                     </div>
                                 </div>
 
-                                <button className='flex items-center gap-1 ml-12 mt-2' onClick={()=>setShowPlaceSave(true)}>
-                                    <FaRegStar/>저장
+                                <button className='flex items-center gap-1 ml-12 mt-2' onClick={() => setShowPlaceSave(true)}>
+                                    <FaRegStar />저장
                                 </button>
                             </div>
                         ))}
@@ -94,23 +139,23 @@ export default function MapSearch({ closeEvent, showMobileMapSearch, setShowMobi
             <div role="presentation" className={`map-mobile-search-box ${showMobileMapSearch ? 'bg-white' : ''}`}>
                 {showMobileMapSearch &&
                     <button>
-                        {showMobileMapList ? 
-                            <RiRoadMapFill className='size-7 text-[#96DBF4]' onClick={()=> setShowMobileMapList((val) => !val)}/> 
+                        {showMobileMapList ?
+                            <RiRoadMapFill className='size-7 text-[#96DBF4]' onClick={() => setShowMobileMapList((val) => !val)} />
                             :
-                            <FaListUl className='size-7 text-[#96DBF4]' onClick={()=> setShowMobileMapList((val) => !val)}/> 
+                            <FaListUl className='size-7 text-[#96DBF4]' onClick={() => setShowMobileMapList((val) => !val)} />
                         }
                     </button>
                 }
 
                 <input type="text" placeholder="장소 검색" className="map-mobile-search-input h-full " onClick={() => { setShowMobileMapList(true); setShowMobileMapSearch(true); }} />
-                
+
                 {showMobileMapSearch &&
-                    <button onClick={() => {setShowMobileMapSearch(false); setShowMobileMapList(false); closeEvent('mapSearch');}}>
+                    <button onClick={() => { setShowMobileMapSearch(false); setShowMobileMapList(false); closeEvent('mapSearch'); }}>
                         <AiOutlineClose className='size-5' />
                     </button>
                 }
             </div>
-            
+
             {/* 검색 목록 */}
             {showMobileMapList &&
                 <div className='map-search-mobile-content-box'>
@@ -120,15 +165,15 @@ export default function MapSearch({ closeEvent, showMobileMapSearch, setShowMobi
                             {datas.map(data => (
 
                                 <div key={data.id} className='border-b-gray-200 py-5 border-b '>
-                                <div className='place-search-item' onClick={() => handlePlaceDataClick(data)}>
-                                    <SiMaplibre className='size-10 text-slate-300' />
-                                    <div className='flex-1'>
-                                        <p>{data.location_nm}</p>
-                                        <p>{data.address}</p>
+                                    <div className='place-search-item' onClick={() => handlePlaceDataClick(data)}>
+                                        <SiMaplibre className='size-10 text-slate-300' />
+                                        <div className='flex-1'>
+                                            <p>{data.location_nm}</p>
+                                            <p>{data.address}</p>
+                                        </div>
                                     </div>
-                                </div>
-                                <button className='flex items-center gap-1 ml-12 mt-2 ' onClick={()=>setShowPlaceSave(true)}>
-                                    <FaRegStar/>저장
+                                    <button className='flex items-center gap-1 ml-12 mt-2 ' onClick={() => setShowPlaceSave(true)}>
+                                        <FaRegStar />저장
                                     </button>
                                 </div>
 
@@ -139,7 +184,7 @@ export default function MapSearch({ closeEvent, showMobileMapSearch, setShowMobi
             }
 
 
-            { showPlaceSave && <PlaceSave onClose={()=>setShowPlaceSave(false)}/>}
+            {showPlaceSave && <PlaceSave onClose={() => setShowPlaceSave(false)} />}
 
         </>
 

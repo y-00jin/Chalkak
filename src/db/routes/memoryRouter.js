@@ -15,7 +15,6 @@ router.get('/connection/active', async (req, res) => {
     let activeMemoryInfo = null;
     try {
         const loginUser = req.session.loginUser;
-
         activeMemoryInfo = await queries.getMemory(undefined, undefined, loginUser.user_seq_no, undefined, true);    // 활성화 된 추억 조회
 
         if (activeMemoryInfo == null) {
