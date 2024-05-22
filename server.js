@@ -1,7 +1,11 @@
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
+const https = require('https');
+const fs = require('fs');
+const cors = require('cors');
 const app = express();
+
 
 require('dotenv').config(); // dotenv를 사용하여 환경 변수 로드
 
@@ -20,7 +24,6 @@ app.use(session({
 const port = process.env.REACT_APP_API_PORT; // 포트 설정
 
 // CORS 사용
-const cors = require('cors');
 const corsOption = {
   origin: process.env.REACT_APP_CLIENT_BASE_URL,
   credentials: true, // 세션 쿠키를 허용하도록 설정
@@ -50,9 +53,20 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '/build', 'index.html'));
 });
 
-// 서버 확인
-app.listen(port, () => {
-  console.log('노드 연결 쌉가능 :' + port);
+// HTTPS 옵션 설정
+const httpsOptions = {
+  key: fs.readFileSync('./key.pem'), // 개인 키 파일
+  cert: fs.readFileSync('./cert.pem'), // SSL/TLS 인증서 파일
+};
+
+// HTTPS 서버 시작
+https.createServer(httpsOptions, app).listen(port, () => {
+  console.log('Node 서버가 HTTPS로 연결됨: ' + port);
 });
+
+// 서버 확인
+// app.listen(port, () => {
+//   console.log('노드 연결 쌉가능 :' + port);
+// });
 
 

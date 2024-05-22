@@ -4,39 +4,47 @@ import { AiOutlineClose } from "react-icons/ai";
 import { RiRoadMapFill } from "react-icons/ri";
 import { FaRegStar } from "react-icons/fa";
 import { FaListUl } from "react-icons/fa6";
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import PlaceSave from './PlaceSave';
 import useMobile from 'components/UseMobile.js';
-export default function MapSearch({ closeEvent, showMobileMapSearch, setShowMobileMapSearch, map, setMap, psRef, markers, setMarkers }) {
+import { MapContext } from 'context/MapContext';
+
+export default function MapSearch({ closeEvent }) {
 
     const isMobile = useMobile();
+
+    const { showMobileMapSearch, setShowMobileMapSearch, map, psRef, markers, setMarkers, currentPosition } = useContext(MapContext);
 
     // 임시 데이터
     const [datas, setDatas] = useState([]);
 
     const [selectedData, setSelectedData] = useState(null);
     const [showMobileMapList, setShowMobileMapList] = useState(false);      // 검색 목록 여부
-    // const [showMobileMapSearch, setShowMobileMapSearch] = useState(false);  // 검색창 여부
     const [showPlaceSave, setShowPlaceSave] = useState(false);  // 저장
 
     // const [markers, setMarkers] = useState([]);
     const [keyword, setKeyword] = useState('');
     const kakao = window.kakao;
 
-    useEffect(() => {
-console.log(markers);
-    },[]);
+    const clearAllData = () => {
+        setMarkers([]);
+        setDatas([]);
+        setSelectedData(null);
+    }
+
     // 기존 마커 제거 로직
     useEffect(() => {
 
         // 기존의 마커들 제거
-            markers.forEach(marker => marker.setMap(null));
-            setMarkers([]);
-            setDatas([]);
-            setSelectedData(null);
+        markers.forEach(marker => marker.setMap(null));
+        clearAllData();
+
         if (keyword.trim() !== '') {
+            if (!psRef.current) {
+                psRef.current = new window.kakao.maps.services.Places();    // psRef == null이면 Places 생성
+            };
             handleSearch();
-        } 
+        }
 
     }, [keyword]);
 
@@ -44,15 +52,7 @@ console.log(markers);
     // 장소 검색
     const handleSearch = async () => {
 
-        if (!psRef) psRef = new window.kakao.maps.services.Places();     // psRef == null이면 Places 생성
-
-        
-        // 기존의 마커들 제거
-        // markers.forEach(marker => marker.setMap(null));
-        // setMarkers([]);
-        // setSelectedData(null);  // 선택 장소 초기화
-
-        psRef.keywordSearch(keyword, (data, status) => {
+        psRef.current.keywordSearch(keyword, (data, status) => {
 
             if (status === kakao.maps.services.Status.OK) {
 
@@ -89,9 +89,7 @@ console.log(markers);
                     map.setCenter(centerPosition);
                 }
             } else {
-                setMarkers([]);
-                setDatas([]);
-                setSelectedData(null);
+                clearAllData();
             }
         });
 

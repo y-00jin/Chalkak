@@ -1,31 +1,26 @@
 import Map from 'components/Map';
 import Sidebar from 'components/Sidebar';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useContext  } from 'react';
 import { GoStar } from "react-icons/go";
 import { TfiPencilAlt } from "react-icons/tfi";
 import useMobile from 'components/UseMobile.js';
 import { loginCheck } from 'utils/commonFunctionsReact';
-
+import { MapContext } from 'context/MapContext';
 
 export default function MapHome() {
-  const [map, setMap] = useState(null);
-  const [markers, setMarkers] = useState([]);
   const isMobile = useMobile();
 
-  const [showMobileMapSearch, setShowMobileMapSearch] = useState(false);  // 검색창 여부
-
-  const psRef = useRef(null); // psRef 생성
+  const { showMobileMapSearch } = useContext(MapContext);
 
   // ## 페이지 제한
-  const [isLoading, setIsLoading] = useState(true); // 로딩 상태
-  useEffect(() => {
-    loginCheck().then(() => setIsLoading(false)); // 로그인 체크 후 로딩 상태 변경
-  }, [])
-  if (isLoading) {
-    return null; // 로딩 중에는 아무것도 렌더링하지 않음
-  }
+  // const [isLoading, setIsLoading] = useState(true); // 로딩 상태
+  // useEffect(() => {
+  //   loginCheck().then(() => setIsLoading(false)); // 로그인 체크 후 로딩 상태 변경
+  // }, [])
+  // if (isLoading) {
+  //   return null; // 로딩 중에는 아무것도 렌더링하지 않음
+  // }
   // 페이지 제한 ##
-
 
   return (
     <div className="map-container">
@@ -42,10 +37,10 @@ export default function MapHome() {
         </div>
       }
       {/* 사이드바 및 메뉴바 */}
-      <Sidebar setShowMobileMapSearch={setShowMobileMapSearch} showMobileMapSearch={showMobileMapSearch} map={map} setMap={setMap} markers={markers} setMarkers={setMarkers} />
+      <Sidebar />
 
       {/* 지도 */}
-      <Map setMap={setMap} psRef={psRef}/>
+      <Map/>
     </div >
   );
 }

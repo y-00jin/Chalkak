@@ -22,9 +22,6 @@ export default function MemoryConnection() {
 
     // 활성화 된 추억으로 연결
     const handleActiveConnect = async () => {
-
-
-        console.log(sessionStorage.getItem('loginUser'));
         await axiosInstance.get(`/api/memories/connection/active`)
             .then(res => {
                 if (res.status === 200) {

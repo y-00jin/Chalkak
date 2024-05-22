@@ -26,3 +26,6 @@ yarn-error.log*
 
 # DB
 dbConfig.js
+
+# SSL 인증파일
+*.pem
