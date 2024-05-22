@@ -4,7 +4,7 @@ import { Scrollbars } from 'react-custom-scrollbars-2';
 import { useNavigate } from 'react-router-dom';
 import useMobile from 'components/UseMobile.js';
 import { MdOutlineChecklist } from "react-icons/md";
-import axios from "axios";
+import axiosInstance from 'utils/axiosInstance';
 
 export default function MemoryChange({ closeEvent }) {
 
@@ -36,7 +36,7 @@ export default function MemoryChange({ closeEvent }) {
                     activeMemoryInfo = JSON.parse(activeMemoryInfoStr);
                 } else {
                     // 세션이 비어있는 경우 추억 정보 조회
-                    const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/memories/active`, { withCredentials: true });
+                    const res = await axiosInstance.get(`/api/memories/active`);
                     activeMemoryInfo = res.data.memoryInfo;
                     sessionStorage.setItem("activeMemoryInfo", JSON.stringify(activeMemoryInfo));
                 }
@@ -53,7 +53,7 @@ export default function MemoryChange({ closeEvent }) {
         // 추억 목록 가져오기
         const getMemorysInfo = async () => {
             try {
-                const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/memories/inactive`, { withCredentials: true });
+                const res = await axiosInstance.get(`/api/memories/inactive`);
                 setMemoryList(res.data.memoryList);
             } catch (error) {
                 console.error('Error fetching or setting active memory info:', error);
@@ -81,7 +81,7 @@ export default function MemoryChange({ closeEvent }) {
             return;
         }
 
-        await axios.put(`${process.env.REACT_APP_API_BASE_URL}/api/memories/${selectedMemorySeqNo}/active`, null , { withCredentials: true })
+        await axiosInstance.put(`/api/memories/${selectedMemorySeqNo}/active`, null)
             .then(res => {
                 if (res.status === 200) {
 
@@ -106,7 +106,7 @@ export default function MemoryChange({ closeEvent }) {
     // 연결 해제 전 남아있는 사용자 조회
     const ExitMemoryCheck = async (data) => {
         try {
-            const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/memories/memoryCodes/${data.memory_code_seq_no}/users`, { withCredentials: true });
+            const res = await axiosInstance.get(`/api/memories/memoryCodes/${data.memory_code_seq_no}/users`);
             let confirmMsg = `'${data.memory_nm}'의 연결을 해제하시겠습니까?\n연결 해제 시 본인이 저장한 장소 정보는 모두 삭제됩니다.`;
             if (res.data.userList.length <= 1) {    // 마지막 남은 사용자
                 confirmMsg = `'${data.memory_nm}' 추억의 마지막 사용자입니다. 연결을 해제하시겠습니까?\n연결을 해제 시 '${data.memory_code}' 코드로 다시 연결할 수 없으며, 본인이 저장한 장소 정보는 모두 삭제됩니다.`
@@ -131,14 +131,14 @@ export default function MemoryChange({ closeEvent }) {
 
         const ExitMemory = async () => {
             try {
-                const res = await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/api/memories/${deleteMemoryInfo.memory_seq_no}`, { withCredentials: true });
+                const res = await axiosInstance.delete(`/api/memories/${deleteMemoryInfo.memory_seq_no}`);
                 if (res.status === 200) {
                     if (res.data.redirectUrl !== '') {
                         // 세션 삭제
                         sessionStorage.removeItem('activeMemoryInfo');
                         navigate('/memories/connection');   // 링크 이동
                     } else {
-                        const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/memories/inactive`, { withCredentials: true });
+                        const res = await axiosInstance.get(`/api/memories/inactive`);
                         setMemoryList(res.data.memoryList);
                         // setMemoryCodeSeqNo(memoryCodeSeqNo);    // 화면 새로고침
                     }

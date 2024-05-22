@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import axios from "axios";
+import axiosInstance from 'utils/axiosInstance';
 
 export default function KakaoCallback() {
 
@@ -16,7 +16,7 @@ export default function KakaoCallback() {
         };
 
         // 인증 코드를 사용하여 백엔드 서버로 요청
-        axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/auth/kakao`, reqData, { withCredentials: true })
+        axiosInstance.post(`/api/auth/kakao`, reqData)
             .then(res => {
                 if (res.status !== 200) {
                     alert(errorMsg);
@@ -42,7 +42,7 @@ export default function KakaoCallback() {
         };
 
         // 인증 코드를 사용하여 백엔드 서버로 요청
-        axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/users/login`, reqData, { withCredentials: true })
+        axiosInstance.post(`/api/users/login`, reqData)
             .then(res => {
                 if (res.status !== 200) {
                     alert(res.data.resultMsg);

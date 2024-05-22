@@ -1,7 +1,7 @@
 import { RiKakaoTalkFill } from "react-icons/ri";
 import { useEffect, useState } from 'react';
-import axios from "axios";
 import { useNavigate } from 'react-router-dom';
+import axiosInstance from 'utils/axiosInstance';
 
 export default function MemoryLogin() {
 
@@ -11,7 +11,7 @@ export default function MemoryLogin() {
     const handleLoginOther = async () => {
         const reqData = {
             userInfo: {
-                user_seq_no: 2,
+                user_seq_no: 8,
                 email: 'shalpha_2@naver.com',
                 user_nm: '강성현',
                 social_type: 'naver',
@@ -20,7 +20,7 @@ export default function MemoryLogin() {
         };
 
         // 인증 코드를 사용하여 백엔드 서버로 요청
-        await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/users/login`, reqData, { withCredentials: true })
+        await axiosInstance.post(`/api/users/login`, reqData)
             .then(res => {
                 if (res.status !== 200) {
                     alert(res.data.resultMsg);

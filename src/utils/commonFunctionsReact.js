@@ -1,4 +1,4 @@
-import axios from "axios";
+import axiosInstance from 'utils/axiosInstance';
 
 // 로그인 확인
 export async function loginCheck() {
@@ -6,7 +6,7 @@ export async function loginCheck() {
     const errorMsg = '해당 페이지는 로그인이 필요한 서비스입니다. 로그인 후 이용해주세요.';
 
     try {
-        const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/users/login/check`, { withCredentials: true });
+        const res = await axiosInstance.get('/api/users/login/check');
         if (!res.data.result) {
             handleLoginFailure(errorMsg);
         }
@@ -26,7 +26,7 @@ export async function handleLogout() {
 
     const logoutErrorMsg = '로그아웃 중 문제가 발생했습니다. 다시 시도해주세요.';
 
-    await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/users/logout`, { withCredentials: true })
+    await axiosInstance.get(`/api/users/logout`)
         .then(res => {
             if (res.status === 200) {
                 sessionStorage.clear();
@@ -44,7 +44,7 @@ export async function handleLogout() {
 // 활성화 추억 정보 세션에 저장
 export async function activeMemoryInfoSaveSession(activeMemoryInfo) {
     // 추억 코드 정보 조회
-    await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/memoryCodes/${activeMemoryInfo.memory_code_seq_no}` , { withCredentials: true })
+    await axiosInstance.get(`/api/memoryCodes/${activeMemoryInfo.memory_code_seq_no}`)
         .then(res => {
 
             // activeMemoryInfo에 res.data.memoryCodeInfo를 추가합니다.

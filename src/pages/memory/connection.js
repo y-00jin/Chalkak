@@ -1,8 +1,8 @@
 import MemoryWrite from "components/MemoryWrite";
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from "axios";
 import { loginCheck, activeMemoryInfoSaveSession, handleLogout } from 'utils/commonFunctionsReact';
+import axiosInstance from 'utils/axiosInstance';
 
 export default function MemoryConnection() {
 
@@ -25,7 +25,7 @@ export default function MemoryConnection() {
 
 
         console.log(sessionStorage.getItem('loginUser'));
-        await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/memories/connection/active`, { withCredentials: true })
+        await axiosInstance.get(`/api/memories/connection/active`)
             .then(res => {
                 if (res.status === 200) {
                     if (res.data.resultMsg === null || res.data.resultMsg === undefined) {
@@ -53,7 +53,7 @@ export default function MemoryConnection() {
             memoryCode: memoryCode
         };
 
-        axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/memories/connection/code`, reqData, { withCredentials: true })
+        axiosInstance.post(`/api/memories/connection/code`, reqData)
             .then(res => {
                 if (res.status === 200) {
                     activeMemoryInfoSaveSession(res.data.activeMemoryInfo);

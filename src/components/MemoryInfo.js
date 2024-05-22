@@ -4,11 +4,11 @@ import { Scrollbars } from 'react-custom-scrollbars-2';
 import { FaPencilAlt } from "react-icons/fa";
 import { BsEmojiSmileFill } from "react-icons/bs";
 import useMobile from 'components/UseMobile.js';
-import axios from "axios";
 import { FaCheck } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
 import { PiUser } from "react-icons/pi";
 import { useNavigate } from 'react-router-dom';
+import axiosInstance from 'utils/axiosInstance';
 
 export default function MemoryInfo({ closeEvent }) {
 
@@ -42,7 +42,7 @@ export default function MemoryInfo({ closeEvent }) {
                     activeMemoryInfo = JSON.parse(activeMemoryInfoStr);
                 } else {
                     // 세션이 비어있는 경우 추억 정보 조회
-                    const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/memories/active`, { withCredentials: true });
+                    const res = await axiosInstance.get(`/api/memories/active`);
                     activeMemoryInfo = res.data.memoryInfo;
                     sessionStorage.setItem("activeMemoryInfo", JSON.stringify(activeMemoryInfo));
                 }
@@ -67,7 +67,7 @@ export default function MemoryInfo({ closeEvent }) {
 
         const getUsersInMemory = async () => {
             try {
-                const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/memories/memoryCodes/${memoryCodeSeqNo}/users`, { withCredentials: true });
+                const res = await axiosInstance.get(`/api/memories/memoryCodes/${memoryCodeSeqNo}/users`);
                 setUserList(res.data.userList);
             } catch (error) {
             }
@@ -101,7 +101,7 @@ export default function MemoryInfo({ closeEvent }) {
             memoryNm: editedMemoryNm
         };
 
-        await axios.put(`${process.env.REACT_APP_API_BASE_URL}/api/memoryCodes/${memoryCodeSeqNo}`, reqData, { withCredentials: true })
+        await axiosInstance.put(`/api/memoryCodes/${memoryCodeSeqNo}`, reqData)
             .then(res => {
                 if (res.status === 200) {
 
@@ -133,7 +133,7 @@ export default function MemoryInfo({ closeEvent }) {
         const deleteCheck = window.confirm(confirmMsg);
         if (deleteCheck) {    // 삭제
             try {
-                const res = await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/api/memories/${memorySeqNo}`, { withCredentials: true });
+                const res = await axiosInstance.delete(`/api/memories/${memorySeqNo}`);
                 if (res.status === 200 && res.data.redirectUrl !== '') {
                     // 세션 삭제
                     sessionStorage.removeItem('activeMemoryInfo');

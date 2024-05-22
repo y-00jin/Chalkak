@@ -1,8 +1,8 @@
 import MemoryWrite from "components/MemoryWrite";
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from "axios";
 import { loginCheck, activeMemoryInfoSaveSession } from 'utils/commonFunctionsReact';
+import axiosInstance from 'utils/axiosInstance';
 
 export default function MemoryNew() {
 
@@ -35,7 +35,7 @@ export default function MemoryNew() {
             memoryNm: memoryNm
         };
 
-        axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/memories/new`, reqData, { withCredentials: true })
+        axiosInstance.post(`/api/memories/new`, reqData)
             .then(res => {
                 if (res.status === 200) {
                     activeMemoryInfoSaveSession(res.data.activeMemoryInfo);
