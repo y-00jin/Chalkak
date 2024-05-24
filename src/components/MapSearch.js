@@ -8,7 +8,8 @@ import React, { useState, useRef, useEffect, useContext } from 'react';
 import PlaceSave from './PlaceSave';
 import useMobile from 'components/UseMobile.js';
 import { MapContext } from 'context/MapContext';
-
+import { IoInformationCircleOutline } from "react-icons/io5";
+import { MdOutlineInfo } from "react-icons/md";
 export default function MapSearch({ closeEvent }) {
 
     const isMobile = useMobile();
@@ -55,6 +56,7 @@ export default function MapSearch({ closeEvent }) {
         psRef.current.keywordSearch(keyword, (data, status) => {
 
             if (status === kakao.maps.services.Status.OK) {
+                console.log(data);
 
                 // 새로운 마커들 생성
                 const newMarkers = data.map((place, index) => {
@@ -146,17 +148,24 @@ export default function MapSearch({ closeEvent }) {
 
                             {datas.length !== 0 && datas.map(data => (
                                 <div key={data.placeId} className='border-b-gray-200 py-5 border-b '>
-                                    <div className='place-search-item' onClick={() => handlePlaceDataClick(data)}>
-                                        <SiMaplibre className='size-10 text-slate-300' />
-                                        <div className={`flex-1 ${selectedData !== null && selectedData.placeId === data.placeId ? 'text-[#96DBF4]' : ''}`}>
-                                            <p>{data.placeNm}</p>
-                                            <p>{data.address}</p>
+                                    <div className='place-search-item'>
+                                        <div className='place-search-item flex-1' onClick={() => handlePlaceDataClick(data)}>
+                                            <SiMaplibre className='size-10 text-slate-300' />
+                                            <div className={`flex-1 ${selectedData !== null && selectedData.placeId === data.placeId ? 'text-[#96DBF4]' : ''}`}>
+                                                <p>{data.placeNm}</p>
+                                                <p>{data.address}</p>
+                                            </div>
+                                        </div>
+                                        <div className='mr-4 gap-2 flex items-center'>
+                                            <button onClick={() => window.open(data.placeUrl, '_blank')}>
+                                                <MdOutlineInfo className='size-4' />
+                                            </button>
+                                            <button onClick={() => setShowPlaceSave(true)}>
+                                                <FaRegStar className='size-4' />
+                                            </button>
                                         </div>
                                     </div>
 
-                                    <button className='flex items-center gap-1 ml-12 mt-2' onClick={() => setShowPlaceSave(true)}>
-                                        <FaRegStar />저장
-                                    </button>
                                 </div>
                             ))}
                         </Scrollbars>
@@ -179,10 +188,13 @@ export default function MapSearch({ closeEvent }) {
                         </button>
                     }
 
-                    <input type="text" placeholder="장소 검색" className="map-mobile-search-input h-full " onClick={() => { setShowMobileMapList(true); setShowMobileMapSearch(true); }} />
+                    <input type="text" placeholder="장소 검색" className="map-mobile-search-input h-full " 
+                        onClick={() => { setShowMobileMapList(true); setShowMobileMapSearch(true); }} 
+                        onKeyDown={handleEnter}
+                         />
 
                     {showMobileMapSearch &&
-                        <button onClick={() => { setShowMobileMapSearch(false); setShowMobileMapList(false); closeEvent('mapSearch'); }}>
+                        <button onClick={() => { setShowMobileMapSearch(false); setShowMobileMapList(false); closeEvent('mapSearch'); clearAllData()}}>
                             <AiOutlineClose className='size-5' />
                         </button>
                     }
@@ -194,20 +206,34 @@ export default function MapSearch({ closeEvent }) {
                 <div className='map-search-mobile-content-box'>
                     <div className='mobile-place-box'>
                         <Scrollbars thumbSize={85}>
+                            {datas.length === 0 &&
+                                <span>검색 결과가 존재하지 않습니다.</span>
+                            }
 
-                            {datas.map(data => (
+                            {datas.length !== 0 && datas.map(data => (
 
-                                <div key={data.id} className='border-b-gray-200 py-5 border-b '>
-                                    <div className='place-search-item' onClick={() => handlePlaceDataClick(data)}>
-                                        <SiMaplibre className='size-10 text-slate-300' />
-                                        <div className='flex-1'>
-                                            <p>{data.place_nm}</p>
-                                            <p>{data.address}</p>
+                                <div key={data.placeId} className='border-b-gray-200 py-5 border-b '>
+                                    <div className='place-search-item'>
+                                        <div className='place-search-item flex-1' onClick={() => handlePlaceDataClick(data)}>
+                                            <SiMaplibre className='size-10 text-slate-300' />
+                                            <div className={`flex-1 ${selectedData !== null && selectedData.placeId === data.placeId ? 'text-[#96DBF4]' : ''}`}>
+                                                <p>{data.placeNm}</p>
+                                                <p>{data.address}</p>
+                                            </div>
+                                        </div>
+                                        <div className='mr-4 gap-2 flex items-center'>
+                                            <button onClick={() => window.open(data.placeUrl, '_blank')}>
+                                                <MdOutlineInfo className='size-4' />
+                                            </button>
+                                            <button onClick={() => setShowPlaceSave(true)}>
+                                                <FaRegStar className='size-4' />
+                                            </button>
+
                                         </div>
                                     </div>
-                                    <button className='flex items-center gap-1 ml-12 mt-2 ' onClick={() => setShowPlaceSave(true)}>
+                                    {/* <button className='flex items-center gap-1 ml-12 mt-2 ' onClick={() => setShowPlaceSave(true)}>
                                         <FaRegStar />저장
-                                    </button>
+                                    </button> */}
                                 </div>
 
                             ))}
