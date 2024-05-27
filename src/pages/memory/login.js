@@ -11,7 +11,7 @@ export default function MemoryLogin() {
     const handleLoginOther = async () => {
         const reqData = {
             userInfo: {
-                user_seq_no: 8,
+                user_seq_no: 2,
                 email: 'shalpha_2@naver.com',
                 user_nm: '강성현',
                 social_type: 'naver',

@@ -80,7 +80,7 @@ export default function MemoryConnection() {
 
                 <div className="new-btn-box">
                     <button onClick={handleActiveConnect}>
-                        활성화 된 추억으로 연결하기
+                        최근 접속한 추억으로 연결하기
                     </button>
 
                     <button onClick={() => { navigate(`/memories/new`) }}>
