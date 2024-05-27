@@ -15,17 +15,20 @@ export default function MapSearch({ closeEvent }) {
     const isMobile = useMobile();
 
     const { showMobileMapSearch, setShowMobileMapSearch, map, psRef, markers, setMarkers, currentPosition } = useContext(MapContext);
-
     const [datas, setDatas] = useState([]);
     const [selectedData, setSelectedData] = useState(null);
     const [showMobileMapList, setShowMobileMapList] = useState(false);      // 검색 목록 여부
     const [showPlaceSave, setShowPlaceSave] = useState(false);  // 저장
 
     const [keyword, setKeyword] = useState('');
+    const [pageNumber, setPageNumber] = useState(1); // 추가 검색을 위한 페이지 번호
+    const [searchLastCheck, setSearchLastCheck] = useState(false);  // 검색 마지막 완료 
     const kakao = window.kakao;
 
     // 기존 정보 초기화
     const clearAllData = () => {
+        setSearchLastCheck(false);  // 검색 초기화
+        setPageNumber(1);   // 번호 초기화
         markers.forEach(marker => marker.setMap(null));
         setMarkers([]);
         setDatas([]);
@@ -59,11 +62,25 @@ export default function MapSearch({ closeEvent }) {
     }, [markers]);
 
     // 장소 검색
-    const handleSearch = async () => {
+    const handleSearch = async (newPage) => {
+        const searchOption = {
+            location: new kakao.maps.LatLng(currentPosition.lat, currentPosition.lng),
+            page: newPage
+        };
 
         psRef.current.keywordSearch(keyword, (data, status) => {
 
             if (status === kakao.maps.services.Status.OK) {
+
+                // 중복된 장소를 필터링하여 새로운 데이터 생성
+                const filteredData = data.filter((place) => (
+                    !datas.some((existingPlace) => existingPlace.placeId === place.id)
+                ));
+
+                if(filteredData.length === 0){  // 더이상 중복되지 않은 데이터가 없는 경우에는 목록 추가x
+                    setSearchLastCheck(true);
+                    return;
+                }
 
                 // 새로운 마커들 생성
                 const newMarkers = data.map((place) => {
@@ -88,29 +105,29 @@ export default function MapSearch({ closeEvent }) {
                     marker.setMap(map);
                     return marker;
                 });
-                setMarkers(newMarkers);
+                setMarkers((prevMarkers) => [...prevMarkers, ...newMarkers]);
 
-                setDatas(
-                    data.map((place) => (
-                        {
-                            placeId: place.id,
-                            placeNm: place.place_name,
-                            address: place.address_name,
-                            placeUrl: place.place_url,
-                            latitude: place.y,  // 위도
-                            longitude: place.x  // 경도
-                        })))
+                setDatas((prevDatas) => [...prevDatas,
+                ...filteredData.map((place) => (
+                    {
+                        placeId: place.id,
+                        placeNm: place.place_name,
+                        address: place.address_name,
+                        placeUrl: place.place_url,
+                        latitude: place.y,  // 위도
+                        longitude: place.x  // 경도
+                    }))])
 
                 // 검색 결과 중 첫 번째 장소의 위치를 기준으로 지도의 중심을 설정
-                if (data.length > 0) {
-                    const firstPlace = data[0];
+                if (filteredData.length > 0 && pageNumber === 1) {
+                    const firstPlace = filteredData[0];
                     const centerPosition = new kakao.maps.LatLng(firstPlace.y, firstPlace.x);
-                    map.setCenter(centerPosition);
+                    map.panTo(centerPosition);
                 }
             } else {
                 clearAllData();
             }
-        });
+        }, searchOption);
     }
 
 
@@ -120,12 +137,11 @@ export default function MapSearch({ closeEvent }) {
         if (event.key === 'Enter') {
             // 기존의 마커들 제거
             clearAllData();
-
             if (keyword.trim() !== '') {
                 if (!psRef.current) {
                     psRef.current = new window.kakao.maps.services.Places();    // psRef == null이면 Places 생성
                 };
-                handleSearch();
+                handleSearch(1);
             }
         }
     };
@@ -137,7 +153,7 @@ export default function MapSearch({ closeEvent }) {
         setShowMobileMapList(false);
 
         const dataPosition = new kakao.maps.LatLng(data.latitude, data.longitude);
-        map.setCenter(dataPosition);
+        map.panTo(dataPosition);
 
         // 클릭된 장소의 좌표와 마커의 좌표를 비교하여 색상을 변경
         markers.forEach(marker => {
@@ -168,6 +184,17 @@ export default function MapSearch({ closeEvent }) {
         window.open(placeUrl, '_blank')
     }
 
+    // 스크롤이 가장 아래로 내려왔을 때 실행되는 메서드
+    const handleScrollToBottom = (values) => {
+        const { scrollTop, scrollHeight, clientHeight } = values;
+
+        if (scrollTop !== 0 && searchLastCheck === false && scrollHeight - scrollTop === clientHeight) {
+            let newPageNumber = pageNumber + 1;
+            handleSearch(newPageNumber);
+            setPageNumber(newPageNumber);
+        }
+    };
+
     return (
         <>
             {/* PC */}
@@ -180,7 +207,7 @@ export default function MapSearch({ closeEvent }) {
                     />
 
                     <div className='place-search-box'>
-                        <Scrollbars thumbSize={85}>
+                        <Scrollbars thumbSize={85} onScrollFrame={(values) => { handleScrollToBottom(values); }}>
                             {datas.length === 0 &&
                                 <span>검색 결과가 존재하지 않습니다.</span>
                             }
@@ -248,7 +275,7 @@ export default function MapSearch({ closeEvent }) {
             {isMobile && showMobileMapList &&
                 <div className='map-search-mobile-content-box'>
                     <div className='mobile-place-box'>
-                        <Scrollbars thumbSize={85}>
+                        <Scrollbars thumbSize={85} onScrollFrame={(values) => { handleScrollToBottom(values); }}>
                             {datas.length === 0 &&
                                 <span>검색 결과가 존재하지 않습니다.</span>
                             }

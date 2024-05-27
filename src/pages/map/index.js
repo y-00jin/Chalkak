@@ -1,16 +1,17 @@
 import Map from 'components/Map';
 import Sidebar from 'components/Sidebar';
-import React, { useEffect, useState, useContext  } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { GoStar } from "react-icons/go";
 import { TfiPencilAlt } from "react-icons/tfi";
 import useMobile from 'components/UseMobile.js';
 import { loginCheck } from 'utils/commonFunctionsReact';
 import { MapContext } from 'context/MapContext';
+import { TbCurrentLocation } from "react-icons/tb";
 
 export default function MapHome() {
   const isMobile = useMobile();
 
-  const { showMobileMapSearch } = useContext(MapContext);
+  const { showMobileMapSearch, currentPosition, map } = useContext(MapContext);
 
   // ## 페이지 제한
   // const [isLoading, setIsLoading] = useState(true); // 로딩 상태
@@ -22,6 +23,13 @@ export default function MapHome() {
   // }
   // 페이지 제한 ##
 
+  const moveCurrentLocation = () => {
+    const moveLatLon = new window.kakao.maps.LatLng(currentPosition.lat, currentPosition.lng);
+    map.setLevel(3);
+    map.panTo(moveLatLon);
+
+  }
+
   return (
     <div className="map-container">
 
@@ -29,10 +37,10 @@ export default function MapHome() {
       {!showMobileMapSearch &&
         <div className={`absolute right-4 ${isMobile ? 'top-24' : 'top-4'} z-10 flex flex-col gap-4`}>
           <button className='map-func-btn'>
-            <GoStar />
-          </button>
-          <button className='map-func-btn'>
             <TfiPencilAlt />
+          </button>
+          <button className='map-func-btn' onClick={moveCurrentLocation}>
+            <TbCurrentLocation />
           </button>
         </div>
       }
@@ -40,7 +48,7 @@ export default function MapHome() {
       <Sidebar />
 
       {/* 지도 */}
-      <Map/>
+      <Map />
     </div >
   );
 }

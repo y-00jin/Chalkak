@@ -52,7 +52,7 @@ export default function Map() {
     useEffect(() => {
         if (map && currentPosition.lat !== DEFAULT_LAT && currentPosition.lng !== DEFAULT_LNG) {
             const moveLatLon = new window.kakao.maps.LatLng(currentPosition.lat, currentPosition.lng);
-            map.setCenter(moveLatLon);
+            map.panTo(moveLatLon);
         }
 
         if (map != null) {
