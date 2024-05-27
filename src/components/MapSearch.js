@@ -16,39 +16,47 @@ export default function MapSearch({ closeEvent }) {
 
     const { showMobileMapSearch, setShowMobileMapSearch, map, psRef, markers, setMarkers, currentPosition } = useContext(MapContext);
 
-    // 임시 데이터
     const [datas, setDatas] = useState([]);
-
     const [selectedData, setSelectedData] = useState(null);
     const [showMobileMapList, setShowMobileMapList] = useState(false);      // 검색 목록 여부
     const [showPlaceSave, setShowPlaceSave] = useState(false);  // 저장
 
-    // const [markers, setMarkers] = useState([]);
     const [keyword, setKeyword] = useState('');
     const kakao = window.kakao;
 
+    // 기존 정보 초기화
     const clearAllData = () => {
+        markers.forEach(marker => marker.setMap(null));
         setMarkers([]);
         setDatas([]);
         setSelectedData(null);
     }
 
-    // 기존 마커 제거 로직
     useEffect(() => {
-
-        // 기존의 마커들 제거
-        markers.forEach(marker => marker.setMap(null));
         clearAllData();
+        setShowMobileMapSearch(false);
+        setKeyword('');
+    }, []);
 
-        if (keyword.trim() !== '') {
-            if (!psRef.current) {
-                psRef.current = new window.kakao.maps.services.Places();    // psRef == null이면 Places 생성
-            };
-            handleSearch();
+
+    useEffect(() => {
+        if (markers.length <= 0) {
+            return;
         }
 
-    }, [keyword]);
-
+        markers.forEach(marker => {
+            kakao.maps.event.addListener(marker, 'click', () => {
+                handlePlaceDataClick({
+                    placeId: marker.placeId,
+                    placeNm: marker.placeNm,
+                    address: marker.address,
+                    placeUrl: marker.placeUrl,
+                    latitude: marker.getPosition().getLat(),
+                    longitude: marker.getPosition().getLng()
+                });
+            });
+        });
+    }, [markers]);
 
     // 장소 검색
     const handleSearch = async () => {
@@ -56,22 +64,31 @@ export default function MapSearch({ closeEvent }) {
         psRef.current.keywordSearch(keyword, (data, status) => {
 
             if (status === kakao.maps.services.Status.OK) {
-                console.log(data);
 
                 // 새로운 마커들 생성
-                const newMarkers = data.map((place, index) => {
+                const newMarkers = data.map((place) => {
                     const markerPosition = new kakao.maps.LatLng(place.y, place.x);
+                    const markerImage = new kakao.maps.MarkerImage(
+                        `${process.env.PUBLIC_URL}/images/marker_search.png`, // 마커 이미지 경로
+                        new kakao.maps.Size(32, 32)
+                    );
+
                     const marker = new kakao.maps.Marker({
-                        position: markerPosition
+                        position: markerPosition,
+                        image: markerImage // 마커 이미지 설정
                     });
+
+
                     // 생성한 마커를 지도에 추가
                     marker.placeId = place.id
+                    marker.placeNm = place.place_name;
+                    marker.address = place.address_name;
+                    marker.placeUrl = place.place_url;
+
                     marker.setMap(map);
                     return marker;
                 });
                 setMarkers(newMarkers);
-
-                // 검색 결과를 처리하는 로직 작성
 
                 setDatas(
                     data.map((place) => (
@@ -94,7 +111,6 @@ export default function MapSearch({ closeEvent }) {
                 clearAllData();
             }
         });
-
     }
 
 
@@ -102,7 +118,15 @@ export default function MapSearch({ closeEvent }) {
     const handleEnter = (event) => {
 
         if (event.key === 'Enter') {
-            setKeyword(event.target.value);
+            // 기존의 마커들 제거
+            clearAllData();
+
+            if (keyword.trim() !== '') {
+                if (!psRef.current) {
+                    psRef.current = new window.kakao.maps.services.Places();    // psRef == null이면 Places 생성
+                };
+                handleSearch();
+            }
         }
     };
 
@@ -115,30 +139,45 @@ export default function MapSearch({ closeEvent }) {
         const dataPosition = new kakao.maps.LatLng(data.latitude, data.longitude);
         map.setCenter(dataPosition);
 
-
         // 클릭된 장소의 좌표와 마커의 좌표를 비교하여 색상을 변경
         markers.forEach(marker => {
             if (marker.placeId === data.placeId) {  // 클릭한 정보 마커 변경
                 marker.setImage(new kakao.maps.MarkerImage(
-                    'http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png',
-                    new kakao.maps.Size(29, 40) // 마커 크기
+                    `${process.env.PUBLIC_URL}/images/marker_search_current.png`, // 마커 이미지 경로
+                    new kakao.maps.Size(32, 32)
                 ));
                 marker.setZIndex(1000); // 클릭된 마커를 가장 위로 올림
             } else {
-                marker.setImage(null); // 원래 마커 이미지로 변경
+                marker.setImage(new kakao.maps.MarkerImage(
+                    `${process.env.PUBLIC_URL}/images/marker_search.png`, // 마커 이미지 경로
+                    new kakao.maps.Size(32, 32)
+                )); // 원래 마커 이미지로 변경
                 marker.setZIndex(0);
             }
-
-
         });
     };
+
+    // 상세정보
+    const openPlaceUrl = (data) => {
+        let placeUrl = data;
+        if (isMobile) {
+            const parts = data.split('.com');
+            placeUrl = parts[0] + '.com/m' + parts[1];
+            // const remainingUrl = parts.length > 1 ? parts[1] : '';
+        }
+        window.open(placeUrl, '_blank')
+    }
 
     return (
         <>
             {/* PC */}
             {!isMobile &&
                 <div className='sidebar-content-box'>
-                    <input type="text" placeholder="장소 검색" className="map-search-input" onKeyDown={handleEnter} />
+                    <input type="text" placeholder="장소 검색" className="map-search-input"
+                        onKeyDown={handleEnter}
+                        value={keyword}
+                        onChange={(e) => setKeyword(e.target.value)}
+                    />
 
                     <div className='place-search-box'>
                         <Scrollbars thumbSize={85}>
@@ -155,15 +194,17 @@ export default function MapSearch({ closeEvent }) {
                                                 <p>{data.placeNm}</p>
                                                 <p>{data.address}</p>
                                             </div>
+
                                         </div>
-                                        <div className='mr-4 gap-2 flex items-center'>
-                                            <button onClick={() => window.open(data.placeUrl, '_blank')}>
-                                                <MdOutlineInfo className='size-4' />
-                                            </button>
-                                            <button onClick={() => setShowPlaceSave(true)}>
-                                                <FaRegStar className='size-4' />
-                                            </button>
-                                        </div>
+                                        <button className='mr-4' onClick={() => setShowPlaceSave(true)}>
+                                            <FaRegStar className='size-5' />
+                                        </button>
+                                    </div>
+                                    <div className='ml-12 mt-2 gap-1 flex items-center cursor-pointer' onClick={() => openPlaceUrl(data.placeUrl)}>
+                                        <button>
+                                            <IoInformationCircleOutline className='size-4' />
+                                        </button>
+                                        상세 정보
                                     </div>
 
                                 </div>
@@ -188,13 +229,15 @@ export default function MapSearch({ closeEvent }) {
                         </button>
                     }
 
-                    <input type="text" placeholder="장소 검색" className="map-mobile-search-input h-full " 
-                        onClick={() => { setShowMobileMapList(true); setShowMobileMapSearch(true); }} 
+                    <input type="text" placeholder="장소 검색" className="map-mobile-search-input h-full "
+                        onClick={() => { setShowMobileMapList(true); setShowMobileMapSearch(true); }}
                         onKeyDown={handleEnter}
-                         />
+                        value={keyword}
+                        onChange={(e) => setKeyword(e.target.value)}
+                    />
 
                     {showMobileMapSearch &&
-                        <button onClick={() => { setShowMobileMapSearch(false); setShowMobileMapList(false); closeEvent('mapSearch'); clearAllData()}}>
+                        <button onClick={() => { setShowMobileMapSearch(false); setShowMobileMapList(false); closeEvent('mapSearch'); clearAllData() }}>
                             <AiOutlineClose className='size-5' />
                         </button>
                     }
@@ -221,19 +264,16 @@ export default function MapSearch({ closeEvent }) {
                                                 <p>{data.address}</p>
                                             </div>
                                         </div>
-                                        <div className='mr-4 gap-2 flex items-center'>
-                                            <button onClick={() => window.open(data.placeUrl, '_blank')}>
-                                                <MdOutlineInfo className='size-4' />
-                                            </button>
-                                            <button onClick={() => setShowPlaceSave(true)}>
-                                                <FaRegStar className='size-4' />
-                                            </button>
-
-                                        </div>
+                                        <button className='mr-4' onClick={() => setShowPlaceSave(true)}>
+                                            <FaRegStar className='size-5' />
+                                        </button>
                                     </div>
-                                    {/* <button className='flex items-center gap-1 ml-12 mt-2 ' onClick={() => setShowPlaceSave(true)}>
-                                        <FaRegStar />저장
-                                    </button> */}
+                                    <div className='ml-12 mt-2 gap-1 flex items-center cursor-pointer' onClick={() => openPlaceUrl(data.placeUrl)}>
+                                        <button>
+                                            <IoInformationCircleOutline className='size-4' />
+                                        </button>
+                                        상세 정보
+                                    </div>
                                 </div>
 
                             ))}
