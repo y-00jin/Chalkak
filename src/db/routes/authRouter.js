@@ -7,7 +7,10 @@ require('dotenv').config(); // dotenv를 사용하여 환경 변수 로드
 const router = express.Router();
 
 router.post('/kakao', async (req, res) => {
-
+    /*#swagger.tags = ["Auth"]
+    #swagger.summary = "카카오 인증 api"
+    #swagger.description = "설명"
+    #swagger.parameters['code'] = { description: '카카오 인증 코드' }*/
     try {
 
         // # 토큰

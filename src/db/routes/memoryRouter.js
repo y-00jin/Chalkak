@@ -7,7 +7,8 @@ const { generateRandomString } = require('../../utils/commonFunctions');
 
 // 활성화 추억으로 연결
 router.get('/connection/active', async (req, res) => {
-
+    //#swagger.tags = ["Memory"]
+    //#swagger.summary = "활성화 추억으로 연결"
     await pool.query('BEGIN'); // 트랜잭션 시작
 
     let status = 500;
@@ -45,6 +46,8 @@ router.get('/connection/active', async (req, res) => {
 
 // 새 추억 생성
 router.post('/new', async (req, res) => {
+    //#swagger.tags = ["Memory"]
+    //#swagger.summary = "새 추억 생성"
     let status = 500;
     let resultMsg = '추억 생성 중 문제가 발생했습니다. 다시 시도해주세요.';
     let activeMemoryInfo = null;
@@ -107,6 +110,8 @@ router.post('/new', async (req, res) => {
 
 // 추억 코드로 추억 연결
 router.post('/connection/code', async (req, res) => {
+    //#swagger.tags = ["Memory"]
+    //#swagger.summary = "추억 코드로 추억 연결"
     let status = 500;
     let resultMsg = '추억 연결 중 문제가 발생했습니다. 다시 시도해주세요.';
     let activeMemoryInfo = null;
@@ -165,6 +170,8 @@ router.post('/connection/code', async (req, res) => {
 
 // 활성화된 추억 정보 조회
 router.get('/active', async (req, res) => {
+    //#swagger.tags = ["Memory"]
+    //#swagger.summary = "활성화된 추억 정보 조회"
     let memoryInfo = null;
     try {
         const loginUser = req.session.loginUser;
@@ -184,7 +191,8 @@ router.get('/active', async (req, res) => {
 
 // 추억 정보의 추억 코드로 사용자 목록 조회
 router.get('/memoryCodes/:memoryCodeSeqNo/users', async (req, res) => {
-
+    //#swagger.tags = ["Memory"]
+    //#swagger.summary = "추억 정보의 추억 코드로 사용자 목록 조회"
     let userList = null;
 
     try {
@@ -202,7 +210,8 @@ router.get('/memoryCodes/:memoryCodeSeqNo/users', async (req, res) => {
 
 // 로그인 정보로 추억 목록 조회
 router.get('/inactive', async (req, res) => {
-
+    //#swagger.tags = ["Memory"]
+    //#swagger.summary = "로그인 정보로 추억 목록 조회"
     let memoryList = null;
 
     try {
@@ -219,7 +228,8 @@ router.get('/inactive', async (req, res) => {
 
 // 활성화 추억 변경
 router.put('/:memorySeqNo/active', async (req, res) => {
-
+    //#swagger.tags = ["Memory"]
+    //#swagger.summary = "활성화 추억 변경"
     const reqMemorySeqNo = req.params.memorySeqNo;
     let status = 500;
     let resultMsg = '추억 변경 중 문제가 발생했습니다. 다시 시도해 주세요.';
@@ -272,7 +282,7 @@ router.put('/:memorySeqNo/active', async (req, res) => {
 });
 
 router.delete('/:memorySeqNo', async (req, res) => {
-
+    //#swagger.tags = ["Memory"]
     const reqMemorySeqNo = req.params.memorySeqNo;
     let status = 500;
     let resultMsg = '연결 해제중 문제가 발생했습니다. 다시 시도해 주세요.';

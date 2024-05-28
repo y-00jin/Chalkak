@@ -5,6 +5,9 @@ const https = require('https');
 const fs = require('fs');
 const cors = require('cors');
 const app = express();
+// const { swaggerUi, specs } = require("./swagger.js");
+const swaggerUi = require("swagger-ui-express");
+const swaggerFile = require("./swagger-output");
 
 
 require('dotenv').config(); // dotenv를 사용하여 환경 변수 로드
@@ -47,6 +50,8 @@ app.use('/api/memoryCodes', memoryCodeRouter);  // memoryCodes
 
 // 정적 파일 미들웨어 설정
 app.use(express.static(path.join(__dirname, '/build')));
+// swagger-autogen
+app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 // 모든 요청에 대해 index.html 제공
 app.get('*', (req, res) => {
@@ -64,7 +69,7 @@ https.createServer(httpsOptions, app).listen(port, () => {
   console.log('Node 서버가 HTTPS로 연결됨: ' + port);
 });
 
-// 서버 확인
+// // 서버 확인
 // app.listen(port, () => {
 //   console.log('노드 연결 쌉가능 :' + port);
 // });

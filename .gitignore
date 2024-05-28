@@ -29,3 +29,6 @@ dbConfig.js
 
 # SSL 인증파일
 *.pem
+
+# swagger
+swagger-output.json

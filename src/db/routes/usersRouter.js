@@ -6,7 +6,8 @@ const router = express.Router();
 
 // 로그인 및 회원가입
 router.post('/login', async (req, res) => {
-
+    //#swagger.tags = ["User"]
+    //#swagger.summary = "로그인 및 회원가입"
     let resultMsg = "로그인 중 문제가 발생했습니다. 다시 시도해주세요.";
     let status = 500;
     let redirectUrl = "/";
@@ -39,12 +40,16 @@ router.post('/login', async (req, res) => {
 
 // 로그아웃
 router.get('/logout', async (req, res) => {
+    // #swagger.tags = ["User"]
+    // #swagger.summary = "로그아웃"
     delete req.session.loginUser;
     res.status(200).json({ redirectUrl: '/' });
 });
 
 // 로그인 확인
 router.get('/login/check', async (req, res) => {
+    //#swagger.tags = ["User"]
+    //#swagger.summary = "로그인 확인"
     const loginUser = req.session.loginUser;
     if(loginUser === undefined){
         delete req.session.loginUser;
