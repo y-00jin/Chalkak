@@ -5,7 +5,7 @@ const pool = require('../dbConfig');
 const router = express.Router();
 
 router.get('/:memoryCodeSeqNo', async (req, res) => {
-
+    //#swagger.tags = ["MemoryCode"]
     const reqMemoryCodeSeqNo = req.params.memoryCodeSeqNo;
     let memoryCodeInfo = null;
     try {
@@ -19,7 +19,7 @@ router.get('/:memoryCodeSeqNo', async (req, res) => {
 
 
 router.put('/:memoryCodeSeqNo', async (req, res) => {
-
+    //#swagger.tags = ["MemoryCode"]
     const reqMemoryCodeSeqNo = req.params.memoryCodeSeqNo;
     const { memoryNm } = req.body;
 
