@@ -67,7 +67,6 @@ export default function MapSearch({ closeEvent }) {
             location: new kakao.maps.LatLng(currentPosition.lat, currentPosition.lng),
             page: newPage
         };
-
         psRef.current.keywordSearch(keyword, (data, status) => {
 
             if (status === kakao.maps.services.Status.OK) {
@@ -137,6 +136,7 @@ export default function MapSearch({ closeEvent }) {
         if (event.key === 'Enter') {
             // 기존의 마커들 제거
             clearAllData();
+            // alert(event.target.value);
             if (keyword.trim() !== '') {
                 if (!psRef.current) {
                     psRef.current = new window.kakao.maps.services.Places();    // psRef == null이면 Places 생성
@@ -188,7 +188,7 @@ export default function MapSearch({ closeEvent }) {
     const handleScrollToBottom = (values) => {
         const { scrollTop, scrollHeight, clientHeight } = values;
 
-        if (scrollTop !== 0 && searchLastCheck === false && scrollHeight - scrollTop === clientHeight) {
+        if (scrollTop !== 0 && searchLastCheck === false && Math.abs(scrollHeight - scrollTop - clientHeight) <= 1) {
             let newPageNumber = pageNumber + 1;
             handleSearch(newPageNumber);
             setPageNumber(newPageNumber);

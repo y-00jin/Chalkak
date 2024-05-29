@@ -6,7 +6,7 @@ const doc = {
         title: "찰칵 API 명세서",
         description: "Express 서버 api 명세 정리",
     },
-    host: "localhost:8088",// API 호스트
+    host: "localhost:3000",// API 호스트
     basePath: '/', // 기본 경로
     schemes: ['https'], // 프로토콜 설정
     tags: [ // 태그 추가
