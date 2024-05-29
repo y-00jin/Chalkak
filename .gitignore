@@ -32,3 +32,6 @@ dbConfig.js
 
 # swagger
 swagger-output.json
+
+# lock 파일
+*.lock
