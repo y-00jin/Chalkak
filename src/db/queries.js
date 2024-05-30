@@ -309,7 +309,7 @@ const deleteMemory = async (memory_seq_no) => {
 
     // 쿼리 실행
     const result = await pool.query(queryText, [memory_seq_no]);
-    return result.rowCount > 0 ? true:false; 
+    return result.rowCount > 0 ? true : false;
 
   } catch (error) {
     throw error;
@@ -394,7 +394,7 @@ const updateMemoryCode = async (memory_code_seq_no, memory_code, memory_nm) => {
     if (memory_nm !== undefined) {
       queryText += `memory_nm = $${queryParams.push(memory_nm)}, `;
     }
-    
+
     // 마지막 쉼표 제거
     queryText = queryText.slice(0, -2);
 
@@ -403,8 +403,8 @@ const updateMemoryCode = async (memory_code_seq_no, memory_code, memory_nm) => {
     // 쿼리 실행
     const result = await pool.query(queryText, queryParams);
 
-     // 결과가 존재하면 첫 번째 레코드 반환, 그렇지 않으면 null 반환
-     const updatedMemoryCodeInfo = result.rows.length > 0 ? result.rows[0] : null;
+    // 결과가 존재하면 첫 번째 레코드 반환, 그렇지 않으면 null 반환
+    const updatedMemoryCodeInfo = result.rows.length > 0 ? result.rows[0] : null;
 
     // 결과 반환
     return { result: true, memoryCodeInfo: updatedMemoryCodeInfo };
@@ -425,7 +425,7 @@ const deleteMemoryCode = async (memory_code_seq_no) => {
 
     // 쿼리 실행
     const result = await pool.query(queryText, [memory_code_seq_no]);
-    return result.rowCount > 0 ? true:false; 
+    return result.rowCount > 0 ? true : false;
 
   } catch (error) {
     throw error;
@@ -435,7 +435,99 @@ const deleteMemoryCode = async (memory_code_seq_no) => {
 
 // memory_code ##
 
+// ## place
+// 장소 등록
+const insertPlace = async (placeData) => {
+  try {
 
+
+    const queryText = `INSERT INTO place
+    (place_seq_no, memory_code_seq_no, user_seq_no, place_id, place_nm, place_category_code, address, place_url, longitude, latitude, place_alias, notes, storage_category, edit_restrict)
+    VALUES(nextval('sq_place'), $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13);`;
+
+    const {
+      memoryCodeSeqNo, userSeqNo, placeId, placeNm, placeCategoryCode, address, placeUrl, longitude, latitude, placeAlias, notes, storageCategory, editRestrict
+    } = placeData;
+
+    // 쿼리 실행
+    const placeInfo = await pool.query(queryText, [
+      memoryCodeSeqNo, userSeqNo, placeId, placeNm, placeCategoryCode, address, placeUrl, longitude, latitude, placeAlias, notes, storageCategory, editRestrict
+    ]);
+
+    return { result: true, placeInfo: placeInfo.rows[0] };
+  } catch (error) {
+    return { result: false, placeInfo: null };
+  }
+};
+
+// 장소 목록 조회
+const getPlaces = async (placeSeqNo, memoryCodeSeqNo, userSeqNo, placeId, placeNm, placeCategoryCode, address, placeUrl, longitude, latitude, placeAlias, notes, storageCategory, editRestrict) => {
+  try {
+    let queryText = 'SELECT * FROM place WHERE 1 = 1';
+    const queryParams = [];
+
+    // 매개변수가 주어진 경우에만 해당 조건을 추가
+    if (placeSeqNo !== undefined) {
+      queryText += ` AND place_seq_no = $${queryParams.push(placeSeqNo)}`;
+    }
+    if (memoryCodeSeqNo !== undefined) {
+      queryText += ` AND memory_code_seq_no = $${queryParams.push(memoryCodeSeqNo)}`;
+    }
+    if (userSeqNo !== undefined) {
+      queryText += ` AND user_seq_no = $${queryParams.push(userSeqNo)}`;
+    }
+    if (placeId !== undefined ) {
+      queryText += ` AND place_id = $${queryParams.push(placeId)}`;
+    }
+    if (placeNm !== undefined ) {
+      queryText += ` AND place_nm = $${queryParams.push(placeNm)}`;
+    }
+    if (placeCategoryCode !== undefined) {
+      queryText += ` AND place_category_code = $${queryParams.push(placeCategoryCode)}`;
+    }
+    if (address !== undefined ) {
+      queryText += ` AND address = $${queryParams.push(address)}`;
+    }
+    if (placeUrl !== undefined ) {
+      queryText += ` AND place_url = $${queryParams.push(placeUrl)}`;
+    }
+    if (longitude !== undefined) {
+      queryText += ` AND longitude = $${queryParams.push(longitude)}`;
+    }
+    if (latitude !== undefined) {
+      queryText += ` AND latitude = $${queryParams.push(latitude)}`;
+    }
+    if (placeAlias !== undefined ) {
+      queryText += ` AND place_alias = $${queryParams.push(placeAlias)}`;
+    }
+    if (notes !== undefined) {
+      queryText += ` AND notes = $${queryParams.push(notes)}`;
+    }
+    if (storageCategory !== undefined ) {
+      queryText += ` AND storage_category = $${queryParams.push(storageCategory)}`;
+    }
+    if (editRestrict !== undefined) {
+      queryText += ` AND edit_restrict = $${queryParams.push(editRestrict)}`;
+    }
+
+    queryText += ' order by place_seq_no desc';
+
+    // 쿼리 실행
+    const result = await pool.query(queryText, queryParams);
+
+    // 결과가 정확히 하나인지 확인하고, 그렇지 않으면 오류 발생
+    if (result.rows.length < 1) {
+      return null;
+    } else {
+      return result.rows;
+    }
+
+  } catch (error) {
+    throw error;
+  }
+};
+
+// place ##
 
 
 
@@ -445,5 +537,6 @@ module.exports = {
   getUsers, insertUser,
   getMemory, insertMemory, updateMemoryActiveNotThis, getMemorys, updateMemory, getUsersByMemoryCode, getMemorysInactive, deleteMemory,
   getMemoryCode, getMemoryCodes, insertMemoryCode, updateMemoryCode, deleteMemoryCode,
-  getMemorySymbolColorCodeChoice
+  getMemorySymbolColorCodeChoice,
+  insertPlace, getPlaces
 };

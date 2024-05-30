@@ -13,72 +13,71 @@ router.post('/', async (req, res) => {
     let status = 500;
     let resultMsg = '장소 저장 중 문제가 발생했습니다. 다시 시도해주세요.';
 
+    try {
 
-    const loginUser = req.session.loginUser;
-    const test = req.session.activeMemoryInfo;
-    console.log(loginUser);
-    console.log(test);
+        await pool.query('BEGIN'); // 트랜잭션 시작
 
-    // const activeMemoryInfo = await queries.getMemory(undefined, undefined, loginUser.user_seq_no, undefined, true);    // 활성화 된 추억 조회
-    const placeData = req.body;
-    console.log(placeData);
+        const placeData = req.body;
 
+        // 전달받은 사용자와 세션값 같은지 확인
+        const loginUser = req.session.loginUser;
+        if (loginUser != null && (loginUser.user_seq_no != placeData.userSeqNo)) {
+            resultMsg = '장소 정보를 저장할 권한이 존재하지 않습니다. 확인 후 다시 시도해주세요.';
+            status = 403;
+            throw new Error(resultMsg);
+        }
 
+        // 넘어온 데이터가 활성화 된 추억이 아닌 경우
+        const activeMemoryInfo = await queries.getMemory(undefined, placeData.memoryCodeSeqNo, placeData.userSeqNo, undefined, true);
+        if (activeMemoryInfo === null) {
+            status = 400;
+            throw new Error(resultMsg);
+        }
 
-    res.status(status).json({ resultMsg });
-    // try {
+        // 중복 데이터 확인 (추억코드, 장소ID)
+        const placeInfoCheck = await queries.getPlaces(undefined, placeData.memoryCodeSeqNo, undefined, placeData.placeId, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined);
+        if(placeInfoCheck !== null){
+            status = 200;
+            resultMsg = '이미 저장된 장소 정보입니다. 확인 후 다시 시도해주세요.';
+            throw new Error(resultMsg);
+        }
 
-    //     await pool.query('BEGIN'); // 트랜잭션 시작
+        // 장소 저장
+        const insertPlaceRes = await queries.insertPlace(placeData);    // 추억 코드 생성
+        if (!insertPlaceRes.result){ // 생성 실패 시 오류
+            status = 400;
+            throw new Error(resultMsg);
+        }
+        status = 200;
+        resultMsg = "";
 
-    //     const loginUser = req.session.loginUser;
+        await pool.query('COMMIT'); // 트랜잭션 커밋
 
-    //     let memoryCodeCheck = false;
-    //     let memoryCode = "";
-    //     while (!memoryCodeCheck) {
-    //         // 추억 코드 랜덤 생성
-    //         memoryCode = generateRandomString(10);
+    } catch (error) {
+        await pool.query('ROLLBACK'); // 트랜잭션 롤백
+    } finally {
+        res.status(status).json({ resultMsg: resultMsg });
+    }
 
-    //         // 추억 코드 중복 확인
-    //         const memoryCodeCheckRes = await queries.getMemoryCodes(undefined, memoryCode, undefined);    // 추억 코드 중복 확인
-    //         if (memoryCodeCheckRes.length < 1) {
-    //             memoryCodeCheck = true;
-    //         }
-    //     }
-
-    //     // 추억 코드 생성
-    //     const insertMemoryCodeRes = await queries.insertMemoryCode(memoryCode, memoryNm);    // 추억 코드 생성
-    //     if (!insertMemoryCodeRes.result) // 생성 실패 시 오류
-    //         throw new Error(resultMsg);
-
-    //     // 새로운 추억 생성
-    //     const insertMemoryRes = await queries.insertMemory(
-    //         insertMemoryCodeRes.memoryCodeInfo.memory_code_seq_no,
-    //         loginUser.user_seq_no,
-    //         'COLOR_CODE_1',
-    //         true
-    //     );
-
-    //     if (!insertMemoryRes.result) { // 추억 생성 실패
-    //         throw new Error(resultMsg);
-    //     }
-
-
-    //     // 활성화 된 추억 비활성화로 수정
-    //     const updateMemoryActiveRes = await queries.updateMemoryActiveNotThis(insertMemoryRes.memoryInfo.memory_seq_no, loginUser.user_seq_no);
-    //     if (!updateMemoryActiveRes.result) {  // 수정 실패
-    //         throw new Error(resultMsg);
-    //     }
-
-    //     status = 200;
-    //     resultMsg = "";
-
-    //     await pool.query('COMMIT'); // 트랜잭션 커밋
-    // } catch (error) {
-    //     await pool.query('ROLLBACK'); // 트랜잭션 롤백
-    // } finally {
-    //     res.status(status).json({ resultMsg: resultMsg });
-    // }
 });
 
+// 장소 목록 조회
+router.get('/:memoryCodeSeqNo', async (req, res) => {
+    //#swagger.tags = ["Place"]
+    //#swagger.summary = "추억 코드로 저장 장소 목록 조회"
+    let placeList = null;
+
+    try {
+
+        const memoryCodeSeqNo = req.params.memoryCodeSeqNo;
+        placeList = await queries.getPlaces(undefined, memoryCodeSeqNo, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined);
+
+    } catch (error) {
+
+    } finally {
+        res.json({ placeList: placeList });
+    }
+
+});
 
 module.exports = router;

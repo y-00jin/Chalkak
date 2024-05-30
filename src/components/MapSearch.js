@@ -3,6 +3,7 @@ import { SiMaplibre } from "react-icons/si";
 import { AiOutlineClose } from "react-icons/ai";
 import { RiRoadMapFill } from "react-icons/ri";
 import { FaRegStar } from "react-icons/fa";
+import { FaStar } from "react-icons/fa";
 import { FaListUl } from "react-icons/fa6";
 import React, { useState, useRef, useEffect, useContext } from 'react';
 import PlaceSave from './PlaceSave';
@@ -11,6 +12,7 @@ import { MapContext } from 'context/MapContext';
 import { IoInformationCircleOutline } from "react-icons/io5";
 import { MdOutlineInfo } from "react-icons/md";
 import axiosInstance from 'utils/axiosInstance';
+import { getSavedPlaceList } from 'utils/commonFunctionsReact';
 
 export default function MapSearch({ closeEvent }) {
 
@@ -28,6 +30,8 @@ export default function MapSearch({ closeEvent }) {
 
     const itemRefs = useRef({});
 
+    let debounceTimeout = null;
+
     // 장소 저장에 필요한 데이터
     const [showPlaceSave, setShowPlaceSave] = useState(false);  // 저장
     const [savePlaceId, setSavePlaceId] = useState('');
@@ -35,6 +39,7 @@ export default function MapSearch({ closeEvent }) {
     const [saveNotes, setSaveNotes] = useState('');
     const [saveStorageCategory, setSaveStorageCategory] = useState('PSCC_1');
     const [saveEditRestrict, setSaveEditRestrict] = useState(false);
+
 
     // 장소 저장
     const handleSavePlace = async () => {
@@ -45,10 +50,8 @@ export default function MapSearch({ closeEvent }) {
         }
 
         // 저장  데이터
-        const activeMemoryInfo = sessionStorage.getItem('activeMemoryInfo');
-        const loginUser = sessionStorage.getItem('loginUser');
-        console.log(activeMemoryInfo.memory_code_seq_no);
-        console.log(loginUser.user_seq_no);
+        const activeMemoryInfo = JSON.parse(sessionStorage.getItem('activeMemoryInfo'));
+        const loginUser = JSON.parse(sessionStorage.getItem('loginUser'));
 
         const placeData = datas.find(data => data.placeId === savePlaceId);
         let reqData = {
@@ -64,15 +67,20 @@ export default function MapSearch({ closeEvent }) {
 
         await axiosInstance.post(`/api/places`, reqData)
             .then(res => {
-                if (res.status === 200) {
-                    // 저장한 항목 아이콘 바꾸기
-alert('a');
-
-                } else {
+                savePlaceClear();   // 저장 정보 초기화
+                if (res.data.resultMsg !== '') {
                     alert(res.data.resultMsg);
+                } else{
+                    getSavedPlaceList(activeMemoryInfo.memory_code_seq_no);
+
+                    const starBtn = document.getElementById(`starBtn_${savePlaceId}`);
+                    if (starBtn) {
+                      starBtn.classList.add('text-[#FFE400]'); // 클래스 추가
+                    }
                 }
             })
             .catch(error => {
+                savePlaceClear();
                 alert(error.response.data.resultMsg);
             });
     }
@@ -217,16 +225,26 @@ alert('a');
     // 장소 검색
     const handleEnter = (event) => {
         if (event.key === 'Enter') {
-            // 기존의 마커들 제거
-            clearAllData();
 
-            if (keyword.trim() !== '') {
-                if (!psRef.current) {
-                    psRef.current = new window.kakao.maps.services.Places();    // psRef == null이면 Places 생성
-                };
+            event.preventDefault();
+            event.stopPropagation();
 
-                handleSearch(1);
+            if (debounceTimeout) {
+                clearTimeout(debounceTimeout);
             }
+
+            debounceTimeout = setTimeout(() => {
+                // 기존의 마커들 제거
+                clearAllData();
+
+                if (keyword.trim() !== '') {
+                    if (!psRef.current) {
+                        psRef.current = new window.kakao.maps.services.Places();    // psRef == null이면 Places 생성
+                    }
+
+                    handleSearch(1);
+                }
+            }, 300); // 300ms 디바운스
         }
     };
 
@@ -309,15 +327,23 @@ alert('a');
                                             </div>
 
                                         </div>
-                                        <button className='mr-4' onClick={() => { setSavePlaceId(data.placeId); setSavePlaceAlias(data.placeNm); setShowPlaceSave(true) }}>
-                                            <FaRegStar className='size-5' />
+                                        <button className='mr-4' id={`starBtn_${data.placeId}`} onClick={() => { setSavePlaceId(data.placeId); setSavePlaceAlias(data.placeNm); setShowPlaceSave(true) }}>
+                                            {/* <FaRegStar className={`size-6 ${sessionStorage.getItem('activeMemorySavedPlaceList').length > 0  && JSON.parse(sessionStorage.getItem('activeMemorySavedPlaceList')).some(place => place.place_id === data.placeId) ? 'text-[#FFE400]':'' }`} /> */}
+                                            {/* {sessionStorage.getItem('activeMemorySavedPlaceList') && JSON.parse(sessionStorage.getItem('activeMemorySavedPlaceList')).some(place => place.place_id === data.placeId) ? (
+                                                <FaStar className='size-6 text-[#FFE400] ' /> // 저장된 장소 목록에 해당하는 경우
+                                            ) : (
+                                                <FaRegStar className='size-5' /> // 저장된 장소 목록에 해당하지 않는 경우
+                                            )} */}
+                                             <FaRegStar className='size-5' />
+
+                                            
                                         </button>
                                     </div>
-                                    <div className='ml-12 mt-2 gap-1 flex items-center cursor-pointer' onClick={() => openPlaceUrl(data.placeUrl)}>
-                                        <button>
+                                    <div className='ml-12 mt-2 ' onClick={() => openPlaceUrl(data.placeUrl)}>
+                                        <button className='flex gap-1 items-center cursor-pointer'>
                                             <IoInformationCircleOutline className='size-4' />
+                                            상세 정보
                                         </button>
-                                        상세 정보
                                     </div>
 
                                 </div>
@@ -380,12 +406,13 @@ alert('a');
                                             <FaRegStar className='size-5' />
                                         </button>
                                     </div>
-                                    <div className='ml-12 mt-2 gap-1 flex items-center cursor-pointer' onClick={() => openPlaceUrl(data.placeUrl)}>
-                                        <button>
+                                    <div className='ml-12 mt-2 ' onClick={() => openPlaceUrl(data.placeUrl)}>
+                                        <button className='flex gap-1 items-center cursor-pointer'>
                                             <IoInformationCircleOutline className='size-4' />
+                                            상세 정보
                                         </button>
-                                        상세 정보
                                     </div>
+
                                 </div>
 
                             ))}
