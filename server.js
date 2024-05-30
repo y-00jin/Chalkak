@@ -40,12 +40,14 @@ const usersRouter = require('./src/db/routes/usersRouter');
 const authRouter = require('./src/db/routes/authRouter');
 const memoryRouter = require('./src/db/routes/memoryRouter');
 const memoryCodeRouter = require('./src/db/routes/memoryCodeRouter');
+const placeRouter = require('./src/db/routes/placeRouter');
 
 app.use('/api/users', usersRouter);  // users
 app.use('/api/tests', testRouter); // '/tests' 경로에 대한 요청은 testRouter.js 파일에서 처리
 app.use('/api/auth', authRouter);  // auth
 app.use('/api/memories', memoryRouter);  // memories
 app.use('/api/memoryCodes', memoryCodeRouter);  // memoryCodes
+app.use('/api/places', placeRouter);  // places
 
 
 // 정적 파일 미들웨어 설정

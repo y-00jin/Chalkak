@@ -26,7 +26,7 @@ export default function MemoryConnection() {
             .then(res => {
                 if (res.status === 200) {
                     if (res.data.resultMsg === null || res.data.resultMsg === undefined) {
-                        // activeMemoryInfoSaveSession(res.data.activeMemoryInfo);
+                        activeMemoryInfoSaveSession(res.data.activeMemoryInfo);
                         navigate('/map');
                     } else {
                         alert(res.data.resultMsg);

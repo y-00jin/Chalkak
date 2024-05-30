@@ -10,6 +10,8 @@ import useMobile from 'components/UseMobile.js';
 import { MapContext } from 'context/MapContext';
 import { IoInformationCircleOutline } from "react-icons/io5";
 import { MdOutlineInfo } from "react-icons/md";
+import axiosInstance from 'utils/axiosInstance';
+
 export default function MapSearch({ closeEvent }) {
 
     const isMobile = useMobile();
@@ -18,7 +20,6 @@ export default function MapSearch({ closeEvent }) {
     const [datas, setDatas] = useState([]);
     const [selectedData, setSelectedData] = useState(null);
     const [showMobileMapList, setShowMobileMapList] = useState(false);      // 검색 목록 여부
-    const [showPlaceSave, setShowPlaceSave] = useState(false);  // 저장
 
     const [keyword, setKeyword] = useState('');
     const [pageNumber, setPageNumber] = useState(1); // 추가 검색을 위한 페이지 번호
@@ -26,6 +27,56 @@ export default function MapSearch({ closeEvent }) {
     const kakao = window.kakao;
 
     const itemRefs = useRef({});
+
+    // 장소 저장에 필요한 데이터
+    const [showPlaceSave, setShowPlaceSave] = useState(false);  // 저장
+    const [savePlaceId, setSavePlaceId] = useState('');
+    const [savePlaceAlias, setSavePlaceAlias] = useState('');
+    const [saveNotes, setSaveNotes] = useState('');
+    const [saveStorageCategory, setSaveStorageCategory] = useState('PSCC_1');
+    const [saveEditRestrict, setSaveEditRestrict] = useState(false);
+
+    // 장소 저장
+    const handleSavePlace = async () => {
+
+        if (savePlaceAlias === '') {
+            alert('장소 명을 입력하세요.');
+            return;
+        }
+
+        // 저장  데이터
+        const activeMemoryInfo = sessionStorage.getItem('activeMemoryInfo');
+        const loginUser = sessionStorage.getItem('loginUser');
+        console.log(activeMemoryInfo.memory_code_seq_no);
+        console.log(loginUser.user_seq_no);
+
+        const placeData = datas.find(data => data.placeId === savePlaceId);
+        let reqData = {
+            ...placeData,
+            placeAlias: savePlaceAlias,
+            notes: saveNotes,
+            storageCategory: saveStorageCategory,
+            editRestrict: saveEditRestrict,
+            memoryCodeSeqNo: activeMemoryInfo.memory_code_seq_no,
+            userSeqNo: loginUser.user_seq_no,
+        };
+
+
+        await axiosInstance.post(`/api/places`, reqData)
+            .then(res => {
+                if (res.status === 200) {
+                    // 저장한 항목 아이콘 바꾸기
+alert('a');
+
+                } else {
+                    alert(res.data.resultMsg);
+                }
+            })
+            .catch(error => {
+                alert(error.response.data.resultMsg);
+            });
+    }
+
 
     // 기존 정보 초기화
     const clearAllData = () => {
@@ -37,8 +88,18 @@ export default function MapSearch({ closeEvent }) {
         setSelectedData(null);
     }
 
+    // 장소 저장 정보 초기화
+    const savePlaceClear = () => {
+        setShowPlaceSave(false);
+        setSavePlaceId('');
+        setSavePlaceAlias('');
+        setSaveNotes('');
+        setSaveStorageCategory('PSCC_1');
+        setSaveEditRestrict(false);
+    }
 
     useEffect(() => {
+        savePlaceClear();
         clearAllData();
         setShowMobileMapSearch(false);
         setShowMobileMapList(false);
@@ -58,6 +119,7 @@ export default function MapSearch({ closeEvent }) {
                 const clickData = {
                     placeId: marker.placeId,
                     placeNm: marker.placeNm,
+                    placeCategoryCode: marker.placeCategoryCode,
                     address: marker.address,
                     placeUrl: marker.placeUrl,
                     latitude: marker.getPosition().getLat(),
@@ -87,7 +149,6 @@ export default function MapSearch({ closeEvent }) {
         };
         psRef.current.keywordSearch(keyword, (data, status) => {
             if (status === kakao.maps.services.Status.OK) {
-
                 let filteredData = data;
                 if (newPage > 1) {
                     // 중복된 장소를 필터링하여 새로운 데이터 생성
@@ -95,9 +156,6 @@ export default function MapSearch({ closeEvent }) {
                         !datas.some((existingPlace) => existingPlace.placeId === place.id)
                     ));
                 }
-
-                console.log(filteredData.length);
-                console.log(newPage);
 
                 if (newPage > 1 && filteredData.length === 0) {  // 더이상 중복되지 않은 데이터가 없는 경우에는 목록 추가x
                     setSearchLastCheck(true);
@@ -121,6 +179,7 @@ export default function MapSearch({ closeEvent }) {
                     // 생성한 마커를 지도에 추가
                     marker.placeId = place.id
                     marker.placeNm = place.place_name;
+                    marker.placeCategoryCode = place.category_group_code;
                     marker.address = place.address_name;
                     marker.placeUrl = place.place_url;
 
@@ -134,6 +193,7 @@ export default function MapSearch({ closeEvent }) {
                     {
                         placeId: place.id,
                         placeNm: place.place_name,
+                        placeCategoryCode: place.category_group_code,
                         address: place.address_name,
                         placeUrl: place.place_url,
                         latitude: place.y,  // 위도
@@ -249,7 +309,7 @@ export default function MapSearch({ closeEvent }) {
                                             </div>
 
                                         </div>
-                                        <button className='mr-4' onClick={() => setShowPlaceSave(true)}>
+                                        <button className='mr-4' onClick={() => { setSavePlaceId(data.placeId); setSavePlaceAlias(data.placeNm); setShowPlaceSave(true) }}>
                                             <FaRegStar className='size-5' />
                                         </button>
                                     </div>
@@ -290,7 +350,7 @@ export default function MapSearch({ closeEvent }) {
                     />
 
                     {showMobileMapSearch &&
-                        <button onClick={() => { setShowMobileMapSearch(false); setShowMobileMapList(false); closeEvent('mapSearch'); clearAllData() }}>
+                        <button onClick={() => { setShowMobileMapSearch(false); setShowMobileMapList(false); closeEvent('mapSearch'); clearAllData(); setKeyword('') }}>
                             <AiOutlineClose className='size-5' />
                         </button>
                     }
@@ -316,7 +376,7 @@ export default function MapSearch({ closeEvent }) {
                                                 <p>{data.address}</p>
                                             </div>
                                         </div>
-                                        <button className='mr-4' onClick={() => setShowPlaceSave(true)}>
+                                        <button className='mr-4' onClick={() => { setSavePlaceId(data.placeId); setSavePlaceAlias(data.placeNm); setShowPlaceSave(true) }}>
                                             <FaRegStar className='size-5' />
                                         </button>
                                     </div>
@@ -333,9 +393,16 @@ export default function MapSearch({ closeEvent }) {
                     </div>
                 </div>
             }
+            {showPlaceSave && <PlaceSave
+                onClose={() => { savePlaceClear(); }}
+                placeAlias={savePlaceAlias} setPlaceAlias={setSavePlaceAlias}
+                notes={saveNotes} setNotes={setSaveNotes}
+                storageCategory={saveStorageCategory} setStorageCategory={setSaveStorageCategory}
+                editRestrict={saveEditRestrict} setEditRestrict={setSaveEditRestrict}
+                handleSavePlace={handleSavePlace}
+            />
 
-
-            {showPlaceSave && <PlaceSave onClose={() => setShowPlaceSave(false)} />}
+            }
 
         </>
 

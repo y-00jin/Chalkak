@@ -67,7 +67,7 @@ export default function Sidebar() {
                             <button>
                                 <GoStar className='size-7' />
                             </button>
-                            저장
+                            즐겨찾기
                         </div>
 
                         <div className={`map-menu-item ${activeMenu === 'memoryInfo' ? 'map-menu-item-active' : ''}  `}
@@ -158,7 +158,7 @@ export default function Sidebar() {
                             </button>
                             <button className="map-mobile-menu-item" onClick={() => handleMenuClick('placeStorage')}>
                                 <GoStar />
-                                저장
+                                즐겨찾기
                             </button>
                             <button className="map-mobile-menu-item" onClick={() => handleMenuClick('memoryInfo')}>
                                 <IoInformationCircleOutline />

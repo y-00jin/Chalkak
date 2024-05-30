@@ -11,6 +11,7 @@ router.post('/login', async (req, res) => {
     let resultMsg = "로그인 중 문제가 발생했습니다. 다시 시도해주세요.";
     let status = 500;
     let redirectUrl = "/";
+    let resultUserInfo = null;
 
     try {
 
@@ -22,10 +23,12 @@ router.post('/login', async (req, res) => {
             const result = await queries.insertUser(userInfo.email, userInfo.user_nm, userInfo.social_type, userInfo.social_id);  // 회원가입
             req.session.loginUser = result.result ? result.userInfo : null;    // 회원가입 성공 시 세션 저장
             status = result.result ? 200 : 500;
+            resultUserInfo = result.result ? result.userInfo : null; 
             redirectUrl = result.result ? '/memories/connection' : '/'; // 회원가입 성공 시 리다이렉트 경로
         } else {    // 기존 회원 -> 로그인
             req.session.loginUser = resUsers[0]; // 세션 저장
             status = 200;
+            resultUserInfo = resUsers[0];
             redirectUrl = '/memories/connection';
             resultMsg = '';
         }
@@ -33,7 +36,7 @@ router.post('/login', async (req, res) => {
     } catch (error) {
         // 오류 발생 시 500 에러 응답
     } finally {
-        res.status(status).json({ redirectUrl: redirectUrl, resultMsg : resultMsg});
+        res.status(status).json({ redirectUrl: redirectUrl, resultMsg : resultMsg, resultUserInfo : resultUserInfo});
     }
 
 });

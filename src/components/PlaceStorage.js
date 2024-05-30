@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AiOutlineClose } from "react-icons/ai";
 import { Scrollbars } from 'react-custom-scrollbars-2';
 import { SiMaplibre } from "react-icons/si";
 import { FaPencilAlt } from "react-icons/fa";
 import useMobile from 'components/UseMobile.js';
+import PlaceSave from './PlaceSave';
 
 export default function PlaceStorage({ closeEvent }) {
-    
+
     const isMobile = useMobile();
-    const [activeTab, setActiveTab] = useState('save');
+    const [activeTab, setActiveTab] = useState('PSCC_1');
 
     const [placeList, setPlaceList] = useState([
         {
@@ -55,9 +56,28 @@ export default function PlaceStorage({ closeEvent }) {
         },
     ]);
 
+    // 장소 저장에 필요한 데이터
+    const [showPlaceSave, setShowPlaceSave] = useState(false);  // 저장
+    const [savePlaceId, setSavePlaceId] = useState(null);
+    const [savePlaceAlias, setSavePlaceAlias] = useState('');
+    const [saveNotes, setSaveNotes] = useState('');
+    const [saveStorageCategory, setSaveStorageCategory] = useState('PSCC_1');
+    const [saveEditRestrict, setSaveEditRestrict] = useState(false);
 
+    const handleSavePlace = async () => {
+        console.log(savePlaceId);
+        console.log(savePlaceAlias);
+        console.log(saveNotes);
+        console.log(saveStorageCategory);
+        console.log(saveEditRestrict);
+    }
+
+    useEffect(() => {
+        setShowPlaceSave(false);
+    },[])
 
     return (
+        <>
             <div className={`${!isMobile ? 'sidebar-content-box px-2 py-5' : 'menu-mobile-content-box'}`}>
                 {isMobile &&
                     <div className='menu-mobile-close-btn-wrapper'>
@@ -69,11 +89,11 @@ export default function PlaceStorage({ closeEvent }) {
 
                 <div>
                     <ul className='place-storage-tab-box' >
-                        <li className={`place-storage-tab-item  ${activeTab === 'save' ? 'place-storage-tab-item-active' : ''}`}
-                        ><button className='w-full' onClick={() => setActiveTab('save')}>저장</button>
+                        <li className={`place-storage-tab-item  ${activeTab === 'PSCC_1' ? 'place-storage-tab-item-active' : ''}`}
+                        ><button className='w-full' onClick={() => {setActiveTab('PSCC_1'); setSaveStorageCategory('PSCC_1')}}>저장 장소</button>
                         </li>
-                        <li className={`place-storage-tab-item  ${activeTab === 'record' ? 'place-storage-tab-item-active' : ''}`}
-                        ><button className='w-full' onClick={() => setActiveTab('record')}>기록</button>
+                        <li className={`place-storage-tab-item  ${activeTab === 'PSCC_2' ? 'place-storage-tab-item-active' : ''}`}
+                        ><button className='w-full' onClick={() => {setActiveTab('PSCC_2'); setSaveStorageCategory('PSCC_2')}}>추억 장소</button>
                         </li>
                     </ul>
                 </div>
@@ -89,13 +109,13 @@ export default function PlaceStorage({ closeEvent }) {
                                     <p className='text-sm text-gray-500'>{data.address}</p>
                                     <p className='text-sm text-gray-500'>{data.notes}</p>
                                 </div>
-                                
+
                                 <div className='flex gap-3 float-right text-gray-400'>
-                                    <button>
-                                        <FaPencilAlt/>
+                                    <button onClick={() => { setSavePlaceId(data.place_seq_no); setSavePlaceAlias(data.place_alias); setSaveNotes(data.notes); setShowPlaceSave(true) }}>
+                                        <FaPencilAlt />
                                     </button>
-                                    
-                                    <AiOutlineClose/>
+
+                                    <AiOutlineClose />
                                 </div>
 
 
@@ -110,6 +130,18 @@ export default function PlaceStorage({ closeEvent }) {
 
 
             </div>
+
+            {showPlaceSave && <PlaceSave
+                onClose={() => { setShowPlaceSave(false); setSavePlaceId(null); }}
+                placeAlias={savePlaceAlias} setPlaceAlias={setSavePlaceAlias}
+                notes={saveNotes} setNetes={setSaveNotes}
+                storageCategory={saveStorageCategory} setStorageCategory={setSaveStorageCategory}
+                editRestrict={saveEditRestrict} setEditRestrict={setSaveEditRestrict}
+                handleSavePlace={handleSavePlace}
+            />
+            }
+
+        </>
 
     )
 }
