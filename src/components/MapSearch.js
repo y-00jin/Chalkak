@@ -25,6 +25,8 @@ export default function MapSearch({ closeEvent }) {
     const [searchLastCheck, setSearchLastCheck] = useState(false);  // 검색 마지막 완료 
     const kakao = window.kakao;
 
+    const itemRefs = useRef({});
+
     // 기존 정보 초기화
     const clearAllData = () => {
         setSearchLastCheck(false);  // 검색 초기화
@@ -35,9 +37,11 @@ export default function MapSearch({ closeEvent }) {
         setSelectedData(null);
     }
 
+
     useEffect(() => {
         clearAllData();
         setShowMobileMapSearch(false);
+        setShowMobileMapList(false);
         setKeyword('');
     }, []);
 
@@ -47,16 +51,30 @@ export default function MapSearch({ closeEvent }) {
             return;
         }
 
+        // 마커 클릭리스너 추가
         markers.forEach(marker => {
             kakao.maps.event.addListener(marker, 'click', () => {
-                handlePlaceDataClick({
+
+                const clickData = {
                     placeId: marker.placeId,
                     placeNm: marker.placeNm,
                     address: marker.address,
                     placeUrl: marker.placeUrl,
                     latitude: marker.getPosition().getLat(),
                     longitude: marker.getPosition().getLng()
-                });
+                };
+
+                handlePlaceDataClick(clickData);
+                if (isMobile) {
+                    setShowMobileMapList(true);
+                    setShowMobileMapSearch(true);
+                }
+
+                setTimeout(() => {
+                    if (itemRefs.current[clickData.placeId]) {
+                        itemRefs.current[clickData.placeId].scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }, 100);
             });
         });
     }, [markers]);
@@ -68,15 +86,20 @@ export default function MapSearch({ closeEvent }) {
             page: newPage
         };
         psRef.current.keywordSearch(keyword, (data, status) => {
-
             if (status === kakao.maps.services.Status.OK) {
 
-                // 중복된 장소를 필터링하여 새로운 데이터 생성
-                const filteredData = data.filter((place) => (
-                    !datas.some((existingPlace) => existingPlace.placeId === place.id)
-                ));
+                let filteredData = data;
+                if (newPage > 1) {
+                    // 중복된 장소를 필터링하여 새로운 데이터 생성
+                    filteredData = data.filter((place) => (
+                        !datas.some((existingPlace) => existingPlace.placeId === place.id)
+                    ));
+                }
 
-                if(filteredData.length === 0){  // 더이상 중복되지 않은 데이터가 없는 경우에는 목록 추가x
+                console.log(filteredData.length);
+                console.log(newPage);
+
+                if (newPage > 1 && filteredData.length === 0) {  // 더이상 중복되지 않은 데이터가 없는 경우에는 목록 추가x
                     setSearchLastCheck(true);
                     return;
                 }
@@ -118,11 +141,12 @@ export default function MapSearch({ closeEvent }) {
                     }))])
 
                 // 검색 결과 중 첫 번째 장소의 위치를 기준으로 지도의 중심을 설정
-                if (filteredData.length > 0 && pageNumber === 1) {
+                if (filteredData.length > 0 && newPage === 1) {
                     const firstPlace = filteredData[0];
                     const centerPosition = new kakao.maps.LatLng(firstPlace.y, firstPlace.x);
                     map.panTo(centerPosition);
                 }
+
             } else {
                 clearAllData();
             }
@@ -132,15 +156,15 @@ export default function MapSearch({ closeEvent }) {
 
     // 장소 검색
     const handleEnter = (event) => {
-
         if (event.key === 'Enter') {
             // 기존의 마커들 제거
             clearAllData();
-            // alert(event.target.value);
+
             if (keyword.trim() !== '') {
                 if (!psRef.current) {
                     psRef.current = new window.kakao.maps.services.Places();    // psRef == null이면 Places 생성
                 };
+
                 handleSearch(1);
             }
         }
@@ -206,14 +230,16 @@ export default function MapSearch({ closeEvent }) {
                         onChange={(e) => setKeyword(e.target.value)}
                     />
 
-                    <div className='place-search-box'>
-                        <Scrollbars thumbSize={85} onScrollFrame={(values) => { handleScrollToBottom(values); }}>
+                    <div className='place-search-box '>
+                        <Scrollbars thumbSize={85} onScrollFrame={(values) => { handleScrollToBottom(values); }} >
                             {datas.length === 0 &&
-                                <span>검색 결과가 존재하지 않습니다.</span>
+                                <span className='flex mt-5'>검색 결과가 존재하지 않습니다.</span>
                             }
 
                             {datas.length !== 0 && datas.map(data => (
-                                <div key={data.placeId} className='border-b-gray-200 py-5 border-b '>
+                                <div key={data.placeId} className='border-b-gray-200 py-5 border-b '
+                                    ref={(el) => (itemRefs.current[data.placeId] = el)}
+                                >
                                     <div className='place-search-item'>
                                         <div className='place-search-item flex-1' onClick={() => handlePlaceDataClick(data)}>
                                             <SiMaplibre className='size-10 text-slate-300' />
@@ -277,12 +303,11 @@ export default function MapSearch({ closeEvent }) {
                     <div className='mobile-place-box'>
                         <Scrollbars thumbSize={85} onScrollFrame={(values) => { handleScrollToBottom(values); }}>
                             {datas.length === 0 &&
-                                <span>검색 결과가 존재하지 않습니다.</span>
+                                <span className='flex mt-5'>검색 결과가 존재하지 않습니다.</span>
                             }
 
                             {datas.length !== 0 && datas.map(data => (
-
-                                <div key={data.placeId} className='border-b-gray-200 py-5 border-b '>
+                                <div key={data.placeId} className='border-b-gray-200 py-5 border-b ' ref={(el) => (itemRefs.current[data.placeId] = el)}>
                                     <div className='place-search-item'>
                                         <div className='place-search-item flex-1' onClick={() => handlePlaceDataClick(data)}>
                                             <SiMaplibre className='size-10 text-slate-300' />

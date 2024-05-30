@@ -40,7 +40,7 @@ export default function Sidebar() {
         <>
             {/* PC 환경 - 사이드바와 지도 */}
             <div>
-                <div className='map-sidebar-box'>
+                <div className='map-sidebar-box '>
 
                     {/* 사이드바 열림/닫힘 버튼 */}
                     <button className={`map-sidebar-content-toggle ${isSidebarOpen ? 'left-[460px]' : 'left-20'}`} onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
