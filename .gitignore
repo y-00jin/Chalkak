@@ -34,4 +34,4 @@ dbConfig.js
 swagger-output.json
 
 # lock 파일
-*.lock
+yarn.lock
