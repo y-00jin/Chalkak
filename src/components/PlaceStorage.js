@@ -74,6 +74,8 @@ export default function PlaceStorage({ closeEvent }) {
 
     useEffect(() => {
         setShowPlaceSave(false);
+
+        // 데이터 조회
     },[])
 
     return (
