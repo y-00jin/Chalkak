@@ -443,7 +443,7 @@ const insertPlace = async (placeData) => {
 
     const queryText = `INSERT INTO place
     (place_seq_no, memory_code_seq_no, user_seq_no, place_id, place_nm, place_category_code, address, place_url, longitude, latitude, place_alias, notes, storage_category, edit_restrict)
-    VALUES(nextval('sq_place'), $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13);`;
+    VALUES(nextval('sq_place'), $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *`;
 
     const {
       memoryCodeSeqNo, userSeqNo, placeId, placeNm, placeCategoryCode, address, placeUrl, longitude, latitude, placeAlias, notes, storageCategory, editRestrict

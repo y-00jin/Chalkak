@@ -12,7 +12,7 @@ router.post('/', async (req, res) => {
 
     let status = 500;
     let resultMsg = '장소 저장 중 문제가 발생했습니다. 다시 시도해주세요.';
-
+    let placeInfo = null;
     try {
 
         await pool.query('BEGIN'); // 트랜잭션 시작
@@ -48,6 +48,8 @@ router.post('/', async (req, res) => {
             status = 400;
             throw new Error(resultMsg);
         }
+        placeInfo = insertPlaceRes.placeInfo;
+        console.log(placeInfo);
         status = 200;
         resultMsg = "";
 
@@ -56,7 +58,7 @@ router.post('/', async (req, res) => {
     } catch (error) {
         await pool.query('ROLLBACK'); // 트랜잭션 롤백
     } finally {
-        res.status(status).json({ resultMsg: resultMsg });
+        res.status(status).json({ resultMsg: resultMsg, placeInfo: placeInfo });
     }
 
 });

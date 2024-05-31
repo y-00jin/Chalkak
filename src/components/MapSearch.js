@@ -10,9 +10,7 @@ import PlaceSave from './PlaceSave';
 import useMobile from 'components/UseMobile.js';
 import { MapContext } from 'context/MapContext';
 import { IoInformationCircleOutline } from "react-icons/io5";
-import { MdOutlineInfo } from "react-icons/md";
 import axiosInstance from 'utils/axiosInstance';
-import { getSavedPlaceList } from 'utils/commonFunctionsReact';
 
 export default function MapSearch({ closeEvent }) {
 
@@ -64,18 +62,27 @@ export default function MapSearch({ closeEvent }) {
             userSeqNo: loginUser.user_seq_no,
         };
 
-
+        // 장소정보 저장
         await axiosInstance.post(`/api/places`, reqData)
             .then(res => {
                 savePlaceClear();   // 저장 정보 초기화
                 if (res.data.resultMsg !== '') {
                     alert(res.data.resultMsg);
-                } else{
-                    getSavedPlaceList(activeMemoryInfo.memory_code_seq_no);
+                } else {
 
-                    const starBtn = document.getElementById(`starBtn_${savePlaceId}`);
+                    let sessionPlaceListStr = sessionStorage.getItem('activeMemorySavedPlaceList');
+                    let sessionPlaceList = [];
+                    if (sessionPlaceListStr !== null && sessionPlaceListStr !== 'null') {
+                        sessionPlaceList = JSON.parse(sessionPlaceListStr);
+                    }
+
+                    // 세션 UPDATE
+                    sessionPlaceList.push(res.data.placeInfo);
+                    sessionStorage.setItem('activeMemorySavedPlaceList', JSON.stringify(sessionPlaceList));
+
+                    const starBtn = document.getElementById(`starBtn_${savePlaceId}`);  // 스타일 변경
                     if (starBtn) {
-                      starBtn.classList.add('text-[#FFE400]'); // 클래스 추가
+                        starBtn.classList.add('text-[#FFE400]'); // 클래스 추가
                     }
                 }
             })
@@ -195,7 +202,7 @@ export default function MapSearch({ closeEvent }) {
                     return marker;
                 });
                 setMarkers((prevMarkers) => [...prevMarkers, ...newMarkers]);
-
+                
                 setDatas((prevDatas) => [...prevDatas,
                 ...filteredData.map((place) => (
                     {
@@ -328,15 +335,8 @@ export default function MapSearch({ closeEvent }) {
 
                                         </div>
                                         <button className='mr-4' id={`starBtn_${data.placeId}`} onClick={() => { setSavePlaceId(data.placeId); setSavePlaceAlias(data.placeNm); setShowPlaceSave(true) }}>
-                                            {/* <FaRegStar className={`size-6 ${sessionStorage.getItem('activeMemorySavedPlaceList').length > 0  && JSON.parse(sessionStorage.getItem('activeMemorySavedPlaceList')).some(place => place.place_id === data.placeId) ? 'text-[#FFE400]':'' }`} /> */}
-                                            {/* {sessionStorage.getItem('activeMemorySavedPlaceList') && JSON.parse(sessionStorage.getItem('activeMemorySavedPlaceList')).some(place => place.place_id === data.placeId) ? (
-                                                <FaStar className='size-6 text-[#FFE400] ' /> // 저장된 장소 목록에 해당하는 경우
-                                            ) : (
-                                                <FaRegStar className='size-5' /> // 저장된 장소 목록에 해당하지 않는 경우
-                                            )} */}
-                                             <FaRegStar className='size-5' />
-
-                                            
+                                            {/* <FaRegStar className={`size-6 ${data.saveCheck ? 'text-[#FFE400]' : ''}`} /> */}
+                                            <FaRegStar className={`size-6 ${sessionStorage.getItem('activeMemorySavedPlaceList') !== 'null' && JSON.parse(sessionStorage.getItem('activeMemorySavedPlaceList')).some(place => place.place_id === data.placeId) ? 'text-[#FFE400]' : ''}`} />
                                         </button>
                                     </div>
                                     <div className='ml-12 mt-2 ' onClick={() => openPlaceUrl(data.placeUrl)}>
@@ -403,7 +403,7 @@ export default function MapSearch({ closeEvent }) {
                                             </div>
                                         </div>
                                         <button className='mr-4' onClick={() => { setSavePlaceId(data.placeId); setSavePlaceAlias(data.placeNm); setShowPlaceSave(true) }}>
-                                            <FaRegStar className='size-5' />
+                                            <FaRegStar className={`size-6 ${sessionStorage.getItem('activeMemorySavedPlaceList') !== 'null' && JSON.parse(sessionStorage.getItem('activeMemorySavedPlaceList')).some(place => place.place_id === data.placeId) ? 'text-[#FFE400]' : ''}`} />
                                         </button>
                                     </div>
                                     <div className='ml-12 mt-2 ' onClick={() => openPlaceUrl(data.placeUrl)}>
