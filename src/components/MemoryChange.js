@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import useMobile from 'components/UseMobile.js';
 import { MdOutlineChecklist } from "react-icons/md";
 import axiosInstance from 'utils/axiosInstance';
+import { getSavedPlaceList } from 'utils/commonFunctionsReact';
 
 export default function MemoryChange({ closeEvent }) {
 
@@ -88,6 +89,8 @@ export default function MemoryChange({ closeEvent }) {
                     // SESSION UPDATE
                     const activeMemoryInfo = res.data.memoryInfo;
                     sessionStorage.setItem("activeMemoryInfo", JSON.stringify(activeMemoryInfo));
+                    // 저장 장소 세션 UPDATE
+                    getSavedPlaceList(activeMemoryInfo.memory_code_seq_no);
 
                     // 화면 UPDATE
                     setMemoryCodeSeqNo(activeMemoryInfo.memory_code_seq_no);

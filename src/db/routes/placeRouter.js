@@ -49,7 +49,6 @@ router.post('/', async (req, res) => {
             throw new Error(resultMsg);
         }
         placeInfo = insertPlaceRes.placeInfo;
-        console.log(placeInfo);
         status = 200;
         resultMsg = "";
 

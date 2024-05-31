@@ -335,7 +335,6 @@ export default function MapSearch({ closeEvent }) {
 
                                         </div>
                                         <button className='mr-4' id={`starBtn_${data.placeId}`} onClick={() => { setSavePlaceId(data.placeId); setSavePlaceAlias(data.placeNm); setShowPlaceSave(true) }}>
-                                            {/* <FaRegStar className={`size-6 ${data.saveCheck ? 'text-[#FFE400]' : ''}`} /> */}
                                             <FaRegStar className={`size-6 ${sessionStorage.getItem('activeMemorySavedPlaceList') !== 'null' && JSON.parse(sessionStorage.getItem('activeMemorySavedPlaceList')).some(place => place.place_id === data.placeId) ? 'text-[#FFE400]' : ''}`} />
                                         </button>
                                     </div>
