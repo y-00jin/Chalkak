@@ -38,6 +38,23 @@ export default function MapSearch({ closeEvent }) {
     const [saveStorageCategory, setSaveStorageCategory] = useState('PSCC_1');
     const [saveEditRestrict, setSaveEditRestrict] = useState(false);
 
+    const [activeMemorySavedPlaceList, setActiveMemorySavedPlaceList] = useState(null);
+
+    // 장소 정보 가져오기
+    const getPlaceList = async () => {
+        try {
+            const plRes = await axiosInstance.get(`/api/places/active`, {
+                params: {
+                    storageCategory: undefined
+                }
+            });
+            setActiveMemorySavedPlaceList(plRes.data.placeList);
+
+        } catch (error) {
+            setActiveMemorySavedPlaceList(null);
+        }
+    }
+
 
     // 장소 저장
     const handleSavePlace = async () => {
@@ -62,6 +79,8 @@ export default function MapSearch({ closeEvent }) {
             userSeqNo: loginUser.user_seq_no,
         };
 
+        
+
         // 장소정보 저장
         await axiosInstance.post(`/api/places`, reqData)
             .then(res => {
@@ -70,16 +89,21 @@ export default function MapSearch({ closeEvent }) {
                     alert(res.data.resultMsg);
                 } else {
 
-                    let sessionPlaceListStr = sessionStorage.getItem('activeMemorySavedPlaceList');
-                    let sessionPlaceList = [];
-                    if (sessionPlaceListStr !== null && sessionPlaceListStr !== 'null') {
-                        sessionPlaceList = JSON.parse(sessionPlaceListStr);
+                    const getPlaceList = async () => {
+                        try {
+                            const plRes = await axiosInstance.get(`/api/places/active`, {
+                                params: {
+                                    storageCategory: undefined
+                                }
+                            });
+                            console.log(plRes.data);
+                            setActiveMemorySavedPlaceList(plRes.data.placeList);
+            
+                        } catch (error) {
+                            setActiveMemorySavedPlaceList(null);
+                        }
                     }
-
-                    // 세션 UPDATE
-                    sessionPlaceList.push(res.data.placeInfo);
-                    sessionStorage.setItem('activeMemorySavedPlaceList', JSON.stringify(sessionPlaceList));
-
+                    getPlaceList();
                     const starBtn = document.getElementById(`starBtn_${savePlaceId}`);  // 스타일 변경
                     if (starBtn) {
                         starBtn.classList.add('text-[#FFE400]'); // 클래스 추가
@@ -114,6 +138,7 @@ export default function MapSearch({ closeEvent }) {
     }
 
     useEffect(() => {
+        getPlaceList();
         savePlaceClear();
         clearAllData();
         setShowMobileMapSearch(false);
@@ -335,7 +360,7 @@ export default function MapSearch({ closeEvent }) {
 
                                         </div>
                                         <button className='mr-4' id={`starBtn_${data.placeId}`} onClick={() => { setSavePlaceId(data.placeId); setSavePlaceAlias(data.placeNm); setShowPlaceSave(true) }}>
-                                            <FaRegStar className={`size-6 ${sessionStorage.getItem('activeMemorySavedPlaceList') !== 'null' && JSON.parse(sessionStorage.getItem('activeMemorySavedPlaceList')).some(place => place.place_id === data.placeId) ? 'text-[#FFE400]' : ''}`} />
+                                            <FaRegStar className={`size-6 ${activeMemorySavedPlaceList !== 'null' && activeMemorySavedPlaceList.length > 0 && activeMemorySavedPlaceList.some(place => place.place_id === data.placeId) ? 'text-[#FFE400]' : ''}`} />
                                         </button>
                                     </div>
                                     <div className='ml-12 mt-2 ' onClick={() => openPlaceUrl(data.placeUrl)}>
@@ -402,7 +427,7 @@ export default function MapSearch({ closeEvent }) {
                                             </div>
                                         </div>
                                         <button className='mr-4' onClick={() => { setSavePlaceId(data.placeId); setSavePlaceAlias(data.placeNm); setShowPlaceSave(true) }}>
-                                            <FaRegStar className={`size-6 ${sessionStorage.getItem('activeMemorySavedPlaceList') !== 'null' && JSON.parse(sessionStorage.getItem('activeMemorySavedPlaceList')).some(place => place.place_id === data.placeId) ? 'text-[#FFE400]' : ''}`} />
+                                            <FaRegStar className={`size-6 ${activeMemorySavedPlaceList !== 'null' && activeMemorySavedPlaceList.length > 0 && activeMemorySavedPlaceList.some(place => place.place_id === data.placeId) ? 'text-[#FFE400]' : ''}`} />
                                         </button>
                                     </div>
                                     <div className='ml-12 mt-2 ' onClick={() => openPlaceUrl(data.placeUrl)}>

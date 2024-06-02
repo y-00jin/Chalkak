@@ -40,7 +40,6 @@ export async function handleLogout() {
         });
 }
 
-
 // 활성화 추억 정보 세션에 저장
 export async function activeMemoryInfoSaveSession(activeMemoryInfo) {
     try {
@@ -54,28 +53,9 @@ export async function activeMemoryInfoSaveSession(activeMemoryInfo) {
         };
         sessionStorage.setItem('activeMemoryInfo', JSON.stringify(updatedActiveMemoryInfo));
 
-        // 두 번째 요청: placeList 조회
-        const res2 = await axiosInstance.get(`/api/places/${updatedActiveMemoryInfo.memory_code_seq_no}`);
-        // 세션에 placeList 저장
-        sessionStorage.setItem('activeMemorySavedPlaceList', JSON.stringify(res2.data.placeList));
-
     } catch (error) {
 
     }
 
 
-}
-
-
-// 즐겨찾기 장소 목록 조회 후
-export async function getSavedPlaceList(memory_code_seq_no) {
-
-    try {
-        // 두 번째 요청: placeList 조회
-        const res2 = await axiosInstance.get(`/api/places/${memory_code_seq_no}`);
-        // 세션에 placeList 저장
-        sessionStorage.setItem('activeMemorySavedPlaceList', JSON.stringify(res2.data.placeList));
-
-    } catch (error) {
-    }
 }

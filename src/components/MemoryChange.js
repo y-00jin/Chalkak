@@ -89,8 +89,6 @@ export default function MemoryChange({ closeEvent }) {
                     // SESSION UPDATE
                     const activeMemoryInfo = res.data.memoryInfo;
                     sessionStorage.setItem("activeMemoryInfo", JSON.stringify(activeMemoryInfo));
-                    // 저장 장소 세션 UPDATE
-                    getSavedPlaceList(activeMemoryInfo.memory_code_seq_no);
 
                     // 화면 UPDATE
                     setMemoryCodeSeqNo(activeMemoryInfo.memory_code_seq_no);

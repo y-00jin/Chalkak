@@ -63,7 +63,7 @@ router.post('/', async (req, res) => {
 });
 
 // 장소 목록 조회
-router.get('/:memoryCodeSeqNo', async (req, res) => {
+router.get('/memoryCode/:memoryCodeSeqNo', async (req, res) => {
     //#swagger.tags = ["Place"]
     //#swagger.summary = "추억 코드로 저장 장소 목록 조회"
     let placeList = null;
@@ -75,6 +75,29 @@ router.get('/:memoryCodeSeqNo', async (req, res) => {
 
     } catch (error) {
 
+    } finally {
+        res.json({ placeList: placeList });
+    }
+
+});
+
+// 활성화 추억 장소 목록 조회
+router.get('/active', async (req, res) => {
+    //#swagger.tags = ["Place"]
+    //#swagger.summary = "활성화 추억 저장 장소 목록 조회"
+    let placeList = null;
+    let status = 500;
+
+    try {
+
+        let {storageCategory} = req.query;
+
+        const loginUser = req.session.loginUser;
+        const activeMemoryInfo = await queries.getMemory(undefined, undefined, loginUser.user_seq_no, undefined, true);    // 활성화 된 추억 조회
+        placeList = await queries.getPlaces(undefined, activeMemoryInfo.memory_code_seq_no, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, storageCategory, undefined);
+
+    } catch (error) {
+        status == 500;
     } finally {
         res.json({ placeList: placeList });
     }
