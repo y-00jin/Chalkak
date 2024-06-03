@@ -322,10 +322,11 @@
 
 /* components > MapSearch, MemoryChange, MemoryInfo ### */
 .place-storage-tab-box{
-  @apply flex justify-between items-center text-center text-xl mb-8;
+  @apply flex justify-between items-center text-center text-xl mb-5;
+  
 }
 .place-storage-tab-item{
-  @apply w-[50%] pb-5  text-gray-400 border-b border-gray-400;
+  @apply w-[50%] pb-3  text-gray-400 border-b border-gray-400;
 }
 .place-storage-tab-item-active{
   @apply text-[#96DBF4] border-b border-[#96DBF4];
@@ -334,7 +335,8 @@
   @apply flex flex-col min-h-[82%];
 }
 .place-storage-item{
-  @apply flex gap-3 items-center p-3 border-b-gray-200 py-5 border-b;
+  /* @apply flex gap-3 items-center p-3 border-b-gray-200 py-5 border-b; */
+  @apply flex gap-3 items-center;
 }
 
 

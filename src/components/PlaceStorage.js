@@ -7,7 +7,7 @@ import useMobile from 'components/UseMobile.js';
 import PlaceSave from './PlaceSave';
 import axiosInstance from 'utils/axiosInstance';
 import { MapContext } from 'context/MapContext';
-
+import { IoInformationCircleOutline } from "react-icons/io5";
 export default function PlaceStorage({ closeEvent }) {
 
     const isMobile = useMobile();
@@ -18,6 +18,7 @@ export default function PlaceStorage({ closeEvent }) {
     const kakao = window.kakao;
     const itemRefs = useRef({});
     const { showMobileMapSearch, setShowMobileMapSearch, map, psRef, markers, setMarkers, currentPosition } = useContext(MapContext);
+
     // 추억 정보 가져오기
     const getPlaceList = async (storageCategory) => {
         try {
@@ -27,7 +28,6 @@ export default function PlaceStorage({ closeEvent }) {
                 }
             });
             setPlaceList(res.data.placeList);
-
         } catch (error) {
             setPlaceList(null);
         }
@@ -35,11 +35,12 @@ export default function PlaceStorage({ closeEvent }) {
 
     // 장소목록
     useEffect(() => {
-        setShowPlaceSave(false);
+        savePlaceClear();
     }, []);
 
     // 탭 변경
     const changeActiveTab = (storageCategory) => {
+        setSelectedData(null);
         setActiveTab(storageCategory);
         setSaveStorageCategory(storageCategory);
     };
@@ -53,65 +54,6 @@ export default function PlaceStorage({ closeEvent }) {
         getPlaceList(activeTab);
     }, [activeTab]);
 
-    // 마커
-    useEffect(() => {
-        if (placeList === null)
-            return;
-
-
-        const newMarkers = placeList.map((place) => {
-            const markerPosition = new kakao.maps.LatLng(place.latitude, place.longitude);
-            const markerImage = new kakao.maps.MarkerImage(
-                `${process.env.PUBLIC_URL}/images/marker_search.png`, // 마커 이미지 경로
-                new kakao.maps.Size(32, 32)
-            );
-
-            const marker = new kakao.maps.Marker({
-                position: markerPosition,
-                image: markerImage // 마커 이미지 설정
-            });
-
-            // 생성한 마커를 지도에 추가
-            marker.placeId = place.place_id;
-            marker.placeNm = place.place_nm;
-            marker.placeCategoryCode = place.place_category_code;
-            marker.address = place.address_name;
-            marker.placeUrl = place.place_url;
-
-            // 이벤트
-            kakao.maps.event.addListener(marker, 'click', () => {
-
-                const clickData = {
-                    placeId: marker.placeId,
-                    placeNm: marker.placeNm,
-                    placeCategoryCode: marker.placeCategoryCode,
-                    address: marker.address,
-                    placeUrl: marker.placeUrl,
-                    latitude: marker.getPosition().getLat(),
-                    longitude: marker.getPosition().getLng()
-                };
-
-                handlePlaceDataClick(clickData);
-                setTimeout(() => {
-                    if (itemRefs.current[clickData.placeId]) {
-                        itemRefs.current[clickData.placeId].scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }
-                }, 100);
-            });
-
-            marker.setMap(map);
-            return marker;
-        });
-        setMarkers(newMarkers);
-
-        // 마커가 모두 추가된 후에 map.panTo 호출
-        if (newMarkers.length > 0) {
-
-            const centerPosition = new kakao.maps.LatLng(newMarkers[0].getPosition().getLat(), newMarkers[0].getPosition().getLng());
-            map.panTo(centerPosition);
-        }
-
-    }, [placeList]);
 
     // 장소 정보 클릭했을 때
     const handlePlaceDataClick = async (data) => {
@@ -123,7 +65,7 @@ export default function PlaceStorage({ closeEvent }) {
 
         // 클릭된 장소의 좌표와 마커의 좌표를 비교하여 색상을 변경
         markers.forEach(marker => {
-            if (marker.placeId === data.place_id) {  // 클릭한 정보 마커 변경
+            if (marker.place_seq_no === data.place_seq_no) {  // 클릭한 정보 마커 변경
                 marker.setImage(new kakao.maps.MarkerImage(
                     `${process.env.PUBLIC_URL}/images/marker_search_current.png`, // 마커 이미지 경로
                     new kakao.maps.Size(32, 32)
@@ -139,32 +81,167 @@ export default function PlaceStorage({ closeEvent }) {
         });
     };
 
+    // 마커 이벤트
+    useEffect(() => {
+        if (markers.length <= 0) {
+            return;
+        }
+
+        // 마커 클릭리스너 추가
+        markers.forEach(marker => {
+            kakao.maps.event.addListener(marker, 'click', () => {
+
+                const clickData = {
+                    place_seq_no: marker.place_seq_no,
+                    place_id: marker.place_id,
+                    place_nm: marker.place_nm,
+                    place_category_code: marker.place_category_code,
+                    address: marker.address,
+                    place_url: marker.place_url,
+                    latitude: marker.getPosition().getLat(),
+                    longitude: marker.getPosition().getLng()
+                };
+
+                handlePlaceDataClick(clickData);
+                setTimeout(() => {
+                    if (itemRefs.current[clickData.place_seq_no]) {
+                        itemRefs.current[clickData.place_seq_no].scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }, 100);
+            });
+        });
+    }, [markers]);
+
+
+    // 마커
+    useEffect(() => {
+        if (placeList === null)
+            return;
+
+        const newMarkers = placeList.map((place) => {
+            const markerPosition = new kakao.maps.LatLng(place.latitude, place.longitude);
+            const markerImage = new kakao.maps.MarkerImage(
+                `${process.env.PUBLIC_URL}/images/marker_search.png`, // 마커 이미지 경로
+                new kakao.maps.Size(32, 32)
+            );
+
+            const marker = new kakao.maps.Marker({
+                position: markerPosition,
+                image: markerImage // 마커 이미지 설정
+            });
+
+            // 생성한 마커를 지도에 추가
+            marker.place_seq_no = place.place_seq_no;
+            marker.place_id = place.place_id;
+            marker.place_nm = place.place_nm;
+            marker.place_category_code = place.place_category_code;
+            marker.address = place.address;
+            marker.place_url = place.place_url;
+
+            marker.setMap(map);
+            return marker;
+        });
+        setMarkers(newMarkers);
+
+        // 마커가 모두 추가된 후에 map.panTo 호출
+        if (newMarkers.length > 0) {
+            const centerPosition = new kakao.maps.LatLng(newMarkers[0].getPosition().getLat(), newMarkers[0].getPosition().getLng());
+            map.panTo(centerPosition);
+        }
+
+    }, [placeList]);
+
 
     // 장소 저장에 필요한 데이터
     const [showPlaceSave, setShowPlaceSave] = useState(false);  // 저장
-    const [savePlaceId, setSavePlaceId] = useState(null);
+    const [savePlaceSeqNo, setSavePlaceSeqNo] = useState(null);
     const [savePlaceAlias, setSavePlaceAlias] = useState('');
     const [saveNotes, setSaveNotes] = useState('');
     const [saveStorageCategory, setSaveStorageCategory] = useState('PSCC_1');
     const [saveEditRestrict, setSaveEditRestrict] = useState(false);
+    const [saveVisibleEditRestrict, setSaveVisibleEditRestrict] = useState(true);
 
-    const handleSavePlace = async () => {
-        console.log(savePlaceId);
-        console.log(savePlaceAlias);
-        console.log(saveNotes);
-        console.log(saveStorageCategory);
-        console.log(saveEditRestrict);
+    // 장소 저장 정보 초기화
+    const savePlaceClear = () => {
+        setShowPlaceSave(false);
+        setSavePlaceSeqNo(null);
+        setSavePlaceAlias('');
+        setSaveNotes('');
+        setSaveStorageCategory('PSCC_1');
+        setSaveEditRestrict(false);
+        setSaveVisibleEditRestrict(true);
     }
 
-    useEffect(() => {
-        if (map && placeList !== null && placeList.length > 0) {
-            // 검색 결과 중 첫 번째 장소의 위치를 기준으로 지도의 중심을 설정
-            const centerPosition = new kakao.maps.LatLng(placeList[0].latitude, placeList[0].longitude);
-            map.panTo(centerPosition);
+    // 저장 컴포넌트 열기
+    const openSavePlace = async (data) => {
+        setSavePlaceSeqNo(data.place_seq_no);
+        setSavePlaceAlias(data.place_alias);
+        setSaveNotes(data.notes);
+        setSaveStorageCategory(data.storage_category);
+        setSaveEditRestrict(data.edit_restrict);
+
+        const loginUser = JSON.parse(sessionStorage.getItem('loginUser'));
+        if (data.user_seq_no !== loginUser.user_seq_no) {
+            setSaveVisibleEditRestrict(false);
         }
-    }, [placeList, map]);
+
+        setShowPlaceSave(true);
+    }
+
+    // 저장
+    const handleSavePlace = async () => {
+
+        if (savePlaceAlias === '') {
+            alert('장소 명을 입력하세요.');
+            return;
+        }
+
+        // 저장  데이터
+        let reqData = {
+            place_seq_no: savePlaceSeqNo,
+            place_alias: savePlaceAlias,
+            notes: saveNotes,
+            storage_category: saveStorageCategory,
+            edit_restrict: saveEditRestrict
+        };
+
+        // 장소정보 저장
+        await axiosInstance.put(`/api/places/place`, reqData)
+            .then(res => {
+                savePlaceClear();   // 저장 정보 초기화
+                if (res.data.resultMsg !== '') {
+                    alert(res.data.resultMsg);
+                } else {
+
+                    markers.forEach(marker => marker.setMap(null));
+                    setMarkers([]);
+
+                    getPlaceList(activeTab);
+                }
+            })
+            .catch(error => {
+                savePlaceClear();   // 저장 정보 초기화
+                alert(error.response.data.resultMsg);
+            });
 
 
+    }
+
+    // 상세정보
+    const openPlaceUrl = (data) => {
+        let placeUrl = data;
+        if (isMobile) {
+            const parts = data.split('.com');
+            placeUrl = parts[0] + '.com/m' + parts[1];
+            // const remainingUrl = parts.length > 1 ? parts[1] : '';
+        }
+        window.open(placeUrl, '_blank')
+    }
+
+    // 장소 삭제
+    const deletePlace = async (data) => {
+        console.log(data);
+    }
 
     return (
         <>
@@ -188,27 +265,41 @@ export default function PlaceStorage({ closeEvent }) {
                     </ul>
                 </div>
 
-                <div className='place-storage-box'>
-                    <Scrollbars thumbSize={85}>
+                <div className='place-storage-box' >
+                    <Scrollbars thumbSize={85}  >
 
-                        {placeList !== null && placeList.map((data, index) => (
-                            <div key={data.place_seq_no} className='place-storage-item' ref={(el) => (itemRefs.current[data.placeId] = el)}>
-                                <SiMaplibre className='size-12 text-slate-300' />
-                                <div className={`flex-1 cursor-pointer ${selectedData !== null && selectedData.place_id === data.place_id ? 'text-[#96DBF4]' : ''}`}  onClick={() => handlePlaceDataClick(data)}>
-                                    <p className='text-lg'>{data.place_alias}</p>
-                                    <p className='text-sm '>{data.address}</p>
-                                    <p className='text-sm '>{data.notes}</p>
+                        {placeList !== null && placeList.map((data) => (
+                            <div key={data.place_seq_no} className='border-b-gray-200 border-b py-5' ref={(el) => (itemRefs.current[data.place_seq_no] = el)}>
+                                <div className='place-storage-item'>
+
+                                    <SiMaplibre className='size-10' style={{ color: data.symbol_color_code }} />
+                                    <div className={`flex-1 cursor-pointer ${selectedData !== null && selectedData.place_seq_no === data.place_seq_no ? 'text-[#96DBF4]' : ''}`} onClick={() => handlePlaceDataClick(data)}>
+                                        <p className='text-lg'>{data.place_alias}</p>
+                                        <p className='text-sm ' title={`${data.address}`}>{data.address.length > 25 ? `${data.address.substring(0, 25)}...` : data.address}</p>
+                                        <p className='text-sm ' title={`${data.notes}`} >{data.notes.length > 25 ? `${data.notes.substring(0, 25)}...` : data.notes}</p>
+                                    </div>
+
+                                    {(data.edit_restrict === false || (data.edit_restrict === true && data.user_seq_no === JSON.parse(sessionStorage.getItem('loginUser')).user_seq_no)) &&
+                                        <div className='flex gap-3 float-right text-gray-400 mr-3'>
+                                            <button onClick={() => { openSavePlace(data); }}>
+                                                <FaPencilAlt />
+                                            </button>
+                                            <button onClick={() => { deletePlace(data);}}>
+                                                <AiOutlineClose />
+                                            </button>
+                                            
+                                        </div>
+                                    }
                                 </div>
 
-                                <div className='flex gap-3 float-right text-gray-400'>
-                                    <button onClick={() => { setSavePlaceId(data.place_seq_no); setSavePlaceAlias(data.place_alias); setSaveNotes(data.notes); setShowPlaceSave(true) }}>
-                                        <FaPencilAlt />
-                                    </button>
-
-                                    <AiOutlineClose />
-                                </div>
-
-
+                                {data.place_url !== '' &&
+                                    <div className={`ml-12 mt-1 ${selectedData !== null && selectedData.place_seq_no === data.place_seq_no ? 'text-[#96DBF4]' : 'text-gray-600'} `}>
+                                        <button className='flex gap-1 items-center cursor-pointer text-sm' onClick={() => openPlaceUrl(data.place_url)}>
+                                            <IoInformationCircleOutline className='size-3' />
+                                            상세 정보
+                                        </button>
+                                    </div>
+                                }
                             </div>
                         ))}
                         {placeList === null &&
@@ -217,21 +308,16 @@ export default function PlaceStorage({ closeEvent }) {
                             </div>
                         }
                     </Scrollbars>
-
-
-                </div>
-
-
-
-
-            </div>
+                </div >
+            </div >
 
             {showPlaceSave && <PlaceSave
-                onClose={() => { setShowPlaceSave(false); setSavePlaceId(null); }}
+                onClose={() => { savePlaceClear(); }}
                 placeAlias={savePlaceAlias} setPlaceAlias={setSavePlaceAlias}
-                notes={saveNotes} setNetes={setSaveNotes}
+                notes={saveNotes} setNotes={setSaveNotes}
                 storageCategory={saveStorageCategory} setStorageCategory={setSaveStorageCategory}
                 editRestrict={saveEditRestrict} setEditRestrict={setSaveEditRestrict}
+                visibleEditRestrict={saveVisibleEditRestrict}
                 handleSavePlace={handleSavePlace}
             />
             }

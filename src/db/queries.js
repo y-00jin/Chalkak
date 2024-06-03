@@ -463,7 +463,18 @@ const insertPlace = async (placeData) => {
 // 장소 목록 조회
 const getPlaces = async (placeSeqNo, memoryCodeSeqNo, userSeqNo, placeId, placeNm, placeCategoryCode, address, placeUrl, longitude, latitude, placeAlias, notes, storageCategory, editRestrict) => {
   try {
-    let queryText = 'SELECT * FROM place WHERE 1 = 1';
+    // let queryText = 'SELECT * FROM place WHERE 1 = 1';
+    let queryText = `SELECT cc.common_code_nm as symbol_color_code, p.* 
+    FROM place p 
+    JOIN
+      common_code cc ON cc.common_code = (
+        SELECT m.symbol_color_code 
+        FROM memory m 
+        WHERE p.memory_code_seq_no = m.memory_code_seq_no 
+          AND m.user_seq_no = p.user_seq_no
+      )
+    WHERE 1 = 1
+    `;
     const queryParams = [];
 
     // 매개변수가 주어진 경우에만 해당 조건을 추가
@@ -527,6 +538,137 @@ const getPlaces = async (placeSeqNo, memoryCodeSeqNo, userSeqNo, placeId, placeN
   }
 };
 
+
+const getPlace = async (placeSeqNo, memoryCodeSeqNo, userSeqNo, placeId, placeNm, placeCategoryCode, address, placeUrl, longitude, latitude, placeAlias, notes, storageCategory, editRestrict) => {
+  try {
+    let queryText = 'SELECT * FROM place WHERE 1 = 1';
+    const queryParams = [];
+
+    // 매개변수가 주어진 경우에만 해당 조건을 추가
+    if (placeSeqNo !== undefined) {
+      queryText += ` AND place_seq_no = $${queryParams.push(placeSeqNo)}`;
+    }
+    if (memoryCodeSeqNo !== undefined) {
+      queryText += ` AND memory_code_seq_no = $${queryParams.push(memoryCodeSeqNo)}`;
+    }
+    if (userSeqNo !== undefined) {
+      queryText += ` AND user_seq_no = $${queryParams.push(userSeqNo)}`;
+    }
+    if (placeId !== undefined ) {
+      queryText += ` AND place_id = $${queryParams.push(placeId)}`;
+    }
+    if (placeNm !== undefined ) {
+      queryText += ` AND place_nm = $${queryParams.push(placeNm)}`;
+    }
+    if (placeCategoryCode !== undefined) {
+      queryText += ` AND place_category_code = $${queryParams.push(placeCategoryCode)}`;
+    }
+    if (address !== undefined ) {
+      queryText += ` AND address = $${queryParams.push(address)}`;
+    }
+    if (placeUrl !== undefined ) {
+      queryText += ` AND place_url = $${queryParams.push(placeUrl)}`;
+    }
+    if (longitude !== undefined) {
+      queryText += ` AND longitude = $${queryParams.push(longitude)}`;
+    }
+    if (latitude !== undefined) {
+      queryText += ` AND latitude = $${queryParams.push(latitude)}`;
+    }
+    if (placeAlias !== undefined ) {
+      queryText += ` AND place_alias = $${queryParams.push(placeAlias)}`;
+    }
+    if (notes !== undefined) {
+      queryText += ` AND notes = $${queryParams.push(notes)}`;
+    }
+    if (storageCategory !== undefined ) {
+      queryText += ` AND storage_category = $${queryParams.push(storageCategory)}`;
+    }
+    if (editRestrict !== undefined) {
+      queryText += ` AND edit_restrict = $${queryParams.push(editRestrict)}`;
+    }
+
+    queryText += ' order by place_seq_no desc';
+
+    // 쿼리 실행
+    const result = await pool.query(queryText, queryParams);
+
+    if (result.rows.length < 1) {
+      return null;
+    } else if (result.rows.length > 1) {
+      throw new Error();
+    } else {
+      return result.rows[0];
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
+
+
+// 수정
+const updatePlace = async (placeSeqNo, memoryCodeSeqNo, userSeqNo, placeId, placeNm, placeCategoryCode, address, placeUrl, longitude, latitude, placeAlias, notes, storageCategory, editRestrict) => {
+
+  try {
+    let queryText = 'UPDATE place SET ';
+    const queryParams = [];
+
+    if (memoryCodeSeqNo !== undefined) {
+      queryText += `memory_code_seq_no = $${queryParams.push(memoryCodeSeqNo)}, `;
+    }
+    if (userSeqNo !== undefined) {
+      queryText += `user_seq_no = $${queryParams.push(userSeqNo)}, `;
+    }
+    if (placeId !== undefined) {
+      queryText += `place_id = $${queryParams.push(placeId)}, `;
+    }
+    if (placeNm !== undefined) {
+      queryText += `place_nm = $${queryParams.push(placeNm)}, `;
+    }
+    if (placeCategoryCode !== undefined) {
+      queryText += `place_category_code = $${queryParams.push( placeCategoryCode)}, `;
+    }
+    if (address !== undefined) {
+      queryText += `address = $${queryParams.push( address)}, `;
+    }
+    if (placeUrl !== undefined) {
+      queryText += `place_url = $${queryParams.push(placeUrl )}, `;
+    }
+    if (longitude !== undefined) {
+      queryText += `longitude = $${queryParams.push(longitude)}, `;
+    }
+    if (latitude !== undefined) {
+      queryText += `latitude = $${queryParams.push( latitude)}, `;
+    }
+    if (placeAlias !== undefined) {
+      queryText += `place_alias = $${queryParams.push( placeAlias)}, `;
+    }
+    if (notes !== undefined) {
+      queryText += `notes = $${queryParams.push(notes )}, `;
+    }
+    if ( storageCategory!== undefined) {
+      queryText += `storage_category = $${queryParams.push(storageCategory )}, `;
+    }
+    if (editRestrict !== undefined) {
+      queryText += `edit_restrict = $${queryParams.push(editRestrict )}, `;
+    }
+
+    // 마지막 쉼표 제거
+    queryText = queryText.slice(0, -2);
+    queryText += ` WHERE place_seq_no = $${queryParams.push(placeSeqNo)} RETURNING * `;
+
+    // 쿼리 실행
+    const result = await pool.query(queryText, queryParams);
+
+    // 결과 반환
+    return { result: result.rows.length > 0 ? true : false, placeInfo: result.rows.length > 0 ? result.rows[0] : null };
+  } catch (error) {
+    return { result: false, placeInfo: null };
+  }
+};
+
+
 // place ##
 
 
@@ -538,5 +680,5 @@ module.exports = {
   getMemory, insertMemory, updateMemoryActiveNotThis, getMemorys, updateMemory, getUsersByMemoryCode, getMemorysInactive, deleteMemory,
   getMemoryCode, getMemoryCodes, insertMemoryCode, updateMemoryCode, deleteMemoryCode,
   getMemorySymbolColorCodeChoice,
-  insertPlace, getPlaces
+  insertPlace, getPlaces, getPlace, updatePlace
 };

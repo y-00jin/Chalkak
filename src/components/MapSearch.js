@@ -65,24 +65,19 @@ export default function MapSearch({ closeEvent }) {
         }
 
         // 저장  데이터
-        const activeMemoryInfo = JSON.parse(sessionStorage.getItem('activeMemoryInfo'));
-        const loginUser = JSON.parse(sessionStorage.getItem('loginUser'));
-
+        // const activeMemoryInfo = JSON.parse(sessionStorage.getItem('activeMemoryInfo'));
         const placeData = datas.find(data => data.placeId === savePlaceId);
         let reqData = {
             ...placeData,
             placeAlias: savePlaceAlias,
             notes: saveNotes,
             storageCategory: saveStorageCategory,
-            editRestrict: saveEditRestrict,
-            memoryCodeSeqNo: activeMemoryInfo.memory_code_seq_no,
-            userSeqNo: loginUser.user_seq_no,
+            editRestrict: saveEditRestrict
+            // memoryCodeSeqNo: activeMemoryInfo.memory_code_seq_no
         };
 
-        
-
         // 장소정보 저장
-        await axiosInstance.post(`/api/places`, reqData)
+        await axiosInstance.post(`/api/places/place`, reqData)
             .then(res => {
                 savePlaceClear();   // 저장 정보 초기화
                 if (res.data.resultMsg !== '') {
@@ -96,7 +91,6 @@ export default function MapSearch({ closeEvent }) {
                                     storageCategory: undefined
                                 }
                             });
-                            console.log(plRes.data);
                             setActiveMemorySavedPlaceList(plRes.data.placeList);
             
                         } catch (error) {
@@ -196,7 +190,6 @@ export default function MapSearch({ closeEvent }) {
                         !datas.some((existingPlace) => existingPlace.placeId === place.id)
                     ));
                 }
-
                 if (newPage > 1 && filteredData.length === 0) {  // 더이상 중복되지 않은 데이터가 없는 경우에는 목록 추가x
                     setSearchLastCheck(true);
                     return;
@@ -321,12 +314,14 @@ export default function MapSearch({ closeEvent }) {
     // 스크롤이 가장 아래로 내려왔을 때 실행되는 메서드
     const handleScrollToBottom = (values) => {
         const { scrollTop, scrollHeight, clientHeight } = values;
+        setTimeout(() => {
+            if (scrollTop !== 0 && searchLastCheck === false && Math.abs(scrollHeight - scrollTop - clientHeight) <= 1) {
+                let newPageNumber = pageNumber + 1;
+                handleSearch(newPageNumber);
+                setPageNumber(newPageNumber);
+            }
 
-        if (scrollTop !== 0 && searchLastCheck === false && Math.abs(scrollHeight - scrollTop - clientHeight) <= 1) {
-            let newPageNumber = pageNumber + 1;
-            handleSearch(newPageNumber);
-            setPageNumber(newPageNumber);
-        }
+        }, 200);
     };
 
     return (
@@ -363,8 +358,8 @@ export default function MapSearch({ closeEvent }) {
                                             <FaRegStar className={`size-6 ${activeMemorySavedPlaceList !== 'null' && activeMemorySavedPlaceList.length > 0 && activeMemorySavedPlaceList.some(place => place.place_id === data.placeId) ? 'text-[#FFE400]' : ''}`} />
                                         </button>
                                     </div>
-                                    <div className='ml-12 mt-2 ' onClick={() => openPlaceUrl(data.placeUrl)}>
-                                        <button className='flex gap-1 items-center cursor-pointer'>
+                                    <div className='ml-12 mt-2 '>
+                                        <button className='flex gap-1 items-center cursor-pointer' onClick={() => openPlaceUrl(data.placeUrl)}>
                                             <IoInformationCircleOutline className='size-4' />
                                             상세 정보
                                         </button>
@@ -430,12 +425,16 @@ export default function MapSearch({ closeEvent }) {
                                             <FaRegStar className={`size-6 ${activeMemorySavedPlaceList !== 'null' && activeMemorySavedPlaceList.length > 0 && activeMemorySavedPlaceList.some(place => place.place_id === data.placeId) ? 'text-[#FFE400]' : ''}`} />
                                         </button>
                                     </div>
-                                    <div className='ml-12 mt-2 ' onClick={() => openPlaceUrl(data.placeUrl)}>
-                                        <button className='flex gap-1 items-center cursor-pointer'>
-                                            <IoInformationCircleOutline className='size-4' />
-                                            상세 정보
-                                        </button>
-                                    </div>
+
+                                    {data.placeUrl !== '' &&
+                                        <div className='ml-12 mt-2 ' > 
+                                            <button className='flex gap-1 items-center cursor-pointer' onClick={() => openPlaceUrl(data.placeUrl)}>
+                                                <IoInformationCircleOutline className='size-4' />
+                                                상세 정보
+                                            </button>
+                                        </div>
+                                    }
+                                    
 
                                 </div>
 
@@ -450,6 +449,7 @@ export default function MapSearch({ closeEvent }) {
                 notes={saveNotes} setNotes={setSaveNotes}
                 storageCategory={saveStorageCategory} setStorageCategory={setSaveStorageCategory}
                 editRestrict={saveEditRestrict} setEditRestrict={setSaveEditRestrict}
+                visibleEditRestrict={true}
                 handleSavePlace={handleSavePlace}
             />
 

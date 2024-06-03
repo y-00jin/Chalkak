@@ -56,6 +56,8 @@ export async function activeMemoryInfoSaveSession(activeMemoryInfo) {
     } catch (error) {
 
     }
+}
 
-
+export function limitText(str, limitStrLength){
+    return str.length > limitStrLength ? str.substring(0, limitStrLength) + '...' : str;
 }
