@@ -41,22 +41,22 @@ export async function handleLogout() {
 }
 
 // 활성화 추억 정보 세션에 저장
-export async function activeMemoryInfoSaveSession(activeMemoryInfo) {
-    try {
-        // 첫 번째 요청: 추억 코드 정보 조회
-        const res1 = await axiosInstance.get(`/api/memoryCodes/${activeMemoryInfo.memory_code_seq_no}`);
+// export async function activeMemoryInfoSaveSession(activeMemoryInfo) {
+//     try {
+//         // 첫 번째 요청: 추억 코드 정보 조회
+//         const res1 = await axiosInstance.get(`/api/memoryCodes/${activeMemoryInfo.memory_code_seq_no}`);
 
-        // activeMemoryInfo에 res1.data.memoryCodeInfo를 추가합니다.
-        const updatedActiveMemoryInfo = {
-            ...activeMemoryInfo,
-            ...res1.data.memoryCodeInfo
-        };
-        sessionStorage.setItem('activeMemoryInfo', JSON.stringify(updatedActiveMemoryInfo));
+//         // activeMemoryInfo에 res1.data.memoryCodeInfo를 추가합니다.
+//         const updatedActiveMemoryInfo = {
+//             ...activeMemoryInfo,
+//             ...res1.data.memoryCodeInfo
+//         };
+//         sessionStorage.setItem('activeMemoryInfo', JSON.stringify(updatedActiveMemoryInfo));
 
-    } catch (error) {
+//     } catch (error) {
 
-    }
-}
+//     }
+// }
 
 export function limitText(str, limitStrLength){
     return str.length > limitStrLength ? str.substring(0, limitStrLength) + '...' : str;

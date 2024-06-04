@@ -20,9 +20,10 @@ router.get('/connection/active', async (req, res) => {
 
         if (activeMemoryInfo == null) {
             const userMemoryInfo = await queries.getMemorys(undefined, undefined, loginUser.user_seq_no, undefined, undefined);    // 모든 추억 조회
+            
             // 추억 존재X
             if (userMemoryInfo === null) {
-                resultMsg = '활성화된 추억이 존재하지 않습니다.\n새로운 추억을 생성하거나 추억 코드로 연결해주세요.';
+                resultMsg = '최근 접속한 추억 정보가 존재하지 않습니다.\n새로운 추억을 생성하거나 추억 코드로 연결해주세요.';
             } else {
                 // 가장 최근에 만든 추억 활성화 시켜 접속
                 const updateData = userMemoryInfo[0];

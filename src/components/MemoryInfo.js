@@ -28,22 +28,13 @@ export default function MemoryInfo({ closeEvent }) {
 
     useEffect(() => {
 
-        let activeMemoryInfo = null;
-
         // 추억 정보 가져오기
         const getActiveMemoryInfo = async () => {
             try {
 
-                // 세션에서 추억 정보 가져오기
-                const activeMemoryInfoStr = sessionStorage.getItem('activeMemoryInfo');
-                if (activeMemoryInfoStr != null) {
-                    activeMemoryInfo = JSON.parse(activeMemoryInfoStr);
-                } else {
-                    // 세션이 비어있는 경우 추억 정보 조회
-                    const res = await axiosInstance.get(`/api/memories/active`);
-                    activeMemoryInfo = res.data.memoryInfo;
-                    sessionStorage.setItem("activeMemoryInfo", JSON.stringify(activeMemoryInfo));
-                }
+                //  추억 정보 조회
+                const res = await axiosInstance.get(`/api/memories/active`);
+                const activeMemoryInfo = res.data.memoryInfo;
 
                 // 추억 정보 설정
                 setMemoryNm(activeMemoryInfo.memory_nm);
@@ -51,7 +42,7 @@ export default function MemoryInfo({ closeEvent }) {
                 setMemoryCodeSeqNo(activeMemoryInfo.memory_code_seq_no);
                 setMemorySeqNo(activeMemoryInfo.memory_seq_no);
             } catch (error) {
-                console.error('Error fetching or setting active memory info:', error);
+
             }
         };
         getActiveMemoryInfo();
@@ -102,11 +93,6 @@ export default function MemoryInfo({ closeEvent }) {
         await axiosInstance.put(`/api/memoryCodes/${memoryCodeSeqNo}`, reqData)
             .then(res => {
                 if (res.status === 200) {
-
-                    // SESSION UPDATE
-                    const updateMemoryCodeInfo = res.data.memoryCodeInfo;
-                    sessionStorage.setItem("activeMemoryInfo", JSON.stringify(updateMemoryCodeInfo));
-
                     // 화면 UPDATE
                     setMemoryNm(editedMemoryNm); // 수정된 값을 적용
                     setMemoryNmEdit(false); // 수정 모드 종료
@@ -133,8 +119,6 @@ export default function MemoryInfo({ closeEvent }) {
             try {
                 const res = await axiosInstance.delete(`/api/memories/${memorySeqNo}`);
                 if (res.status === 200 && res.data.redirectUrl !== '') {
-                    // 세션 삭제
-                    sessionStorage.removeItem('activeMemoryInfo');
                     navigate('/memories/connection');   // 링크 이동
                 } else {
                     alert(res.data.resultMsg);

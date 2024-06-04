@@ -25,26 +25,18 @@ export default function MemoryChange({ closeEvent }) {
 
             // 추억 정보 가져오기
             const getActiveMemoryInfo = async () => {
-                let activeMemoryInfo = null;
                 try {
     
-                    // 세션에서 추억 정보 가져오기
-                    const activeMemoryInfoStr = sessionStorage.getItem('activeMemoryInfo');
-                    if (activeMemoryInfoStr != null) {
-                        activeMemoryInfo = JSON.parse(activeMemoryInfoStr);
-                    } else {
-                        // 세션이 비어있는 경우 추억 정보 조회
-                        const res = await axiosInstance.get(`/api/memories/active`);
-                        activeMemoryInfo = res.data.memoryInfo;
-                        sessionStorage.setItem("activeMemoryInfo", JSON.stringify(activeMemoryInfo));
-                    }
+                    // 세션이 비어있는 경우 추억 정보 조회
+                    const res = await axiosInstance.get(`/api/memories/active`);
+                    const activeMemoryInfo = res.data.memoryInfo;
     
                     // 추억 정보 설정
                     setMemoryNm(activeMemoryInfo.memory_nm);
                     setMemoryCode(activeMemoryInfo.memory_code);
                     setMemoryCodeSeqNo(activeMemoryInfo.memory_code_seq_no);
                 } catch (error) {
-                    console.error('Error fetching or setting active memory info:', error);
+                    
                 }
             };
     
@@ -83,12 +75,8 @@ export default function MemoryChange({ closeEvent }) {
         await axiosInstance.put(`/api/memories/${selectedMemorySeqNo}/active`, null)
             .then(res => {
                 if (res.status === 200) {
-
-                    // SESSION UPDATE
-                    const activeMemoryInfo = res.data.memoryInfo;
-                    sessionStorage.setItem("activeMemoryInfo", JSON.stringify(activeMemoryInfo));
-
                     // 화면 UPDATE
+                    const activeMemoryInfo = res.data.memoryInfo;
                     setMemoryCodeSeqNo(activeMemoryInfo.memory_code_seq_no);
                 } else {
                     alert(res.data.resultMsg);
@@ -133,8 +121,6 @@ export default function MemoryChange({ closeEvent }) {
                 const res = await axiosInstance.delete(`/api/memories/${deleteMemoryInfo.memory_seq_no}`);
                 if (res.status === 200) {
                     if (res.data.redirectUrl !== '') {
-                        // 세션 삭제
-                        sessionStorage.removeItem('activeMemoryInfo');
                         navigate('/memories/connection');   // 링크 이동
                     } else {
                         const res = await axiosInstance.get(`/api/memories/inactive`);

@@ -83,7 +83,7 @@
 /* google 버튼 */
 .login-btn-google-new{
   /* @apply bg-[#5591F5] hover:bg-[#5591F5]/90; */
-  @apply bg-[#F7F7F7] hover:bg-[#F7F7F7]/90;
+  @apply bg-[#F7F7F7] hover:bg-[#F7F7F7]/90 p-2;
 }
 /* pages > memory > login ### */
 

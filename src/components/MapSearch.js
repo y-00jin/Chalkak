@@ -65,7 +65,6 @@ export default function MapSearch({ closeEvent }) {
         }
 
         // 저장  데이터
-        // const activeMemoryInfo = JSON.parse(sessionStorage.getItem('activeMemoryInfo'));
         const placeData = datas.find(data => data.placeId === savePlaceId);
         let reqData = {
             ...placeData,
@@ -73,7 +72,6 @@ export default function MapSearch({ closeEvent }) {
             notes: saveNotes,
             storageCategory: saveStorageCategory,
             editRestrict: saveEditRestrict
-            // memoryCodeSeqNo: activeMemoryInfo.memory_code_seq_no
         };
 
         // 장소정보 저장

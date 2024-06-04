@@ -1,7 +1,7 @@
 import MemoryWrite from "components/MemoryWrite";
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { loginCheck, activeMemoryInfoSaveSession, handleLogout } from 'utils/commonFunctionsReact';
+import { loginCheck, handleLogout } from 'utils/commonFunctionsReact';
 import axiosInstance from 'utils/axiosInstance';
 
 export default function MemoryConnection() {
@@ -26,7 +26,7 @@ export default function MemoryConnection() {
             .then(res => {
                 if (res.status === 200) {
                     if (res.data.resultMsg === null || res.data.resultMsg === undefined) {
-                        activeMemoryInfoSaveSession(res.data.activeMemoryInfo);
+                        // activeMemoryInfoSaveSession(res.data.activeMemoryInfo);
                         navigate('/map');
                     } else {
                         alert(res.data.resultMsg);
@@ -53,7 +53,7 @@ export default function MemoryConnection() {
         axiosInstance.post(`/api/memories/connection/code`, reqData)
             .then(res => {
                 if (res.status === 200) {
-                    activeMemoryInfoSaveSession(res.data.activeMemoryInfo);
+                    // activeMemoryInfoSaveSession(res.data.activeMemoryInfo);
                     navigate('/map');
                 } else {
                     alert(res.data.resultMsg);
