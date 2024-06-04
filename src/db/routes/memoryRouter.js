@@ -300,15 +300,23 @@ router.delete('/:memorySeqNo', async (req, res) => {
             throw new Error(resultMsg);
         }
 
-        // 삭제
+        // place 삭제
+        const deletePlaceData = {
+            memoryCodeSeqNo : memoryRes.memory_code_seq_no,
+            userSeqNo: loginUser.user_seq_no
+        }
+        const placeDeleteRes = await queries.deletePlace(deletePlaceData);
+        if (!placeDeleteRes) {
+            throw new Error(resultMsg);
+        }
+
+        // memory 삭제
         const memoryDeleteRes = await queries.deleteMemory(memoryRes.memory_seq_no);
         if (!memoryDeleteRes) {
             throw new Error(resultMsg);
         }
 
-        // 장소 삭제
-
-        // 마지막 사용자인 경우 코드 삭제  
+        // 마지막 사용자인 경우 memory_code 삭제  
         const memoryCodeDelCheck = await queries.getUsersByMemoryCode(memoryRes.memory_code_seq_no);
         if (memoryCodeDelCheck == null) {
             const memoryCodeDeleteRes = await queries.deleteMemoryCode(memoryRes.memory_code_seq_no);

@@ -58,7 +58,31 @@
 }
 /* google 버튼 */
 .login-btn-google{
-  @apply bg-[#4285F4] hover:bg-[#4285F4]/90;
+  @apply bg-[#EB4235] hover:bg-[#EB4235]/90;
+}
+
+/* 로그인 버튼 박스 */
+.login-btn-box-new{
+  @apply mt-14 mx-auto w-[90%] max-w-sm flex flex-col;
+}
+.login-btn-box-items-new{
+  @apply flex gap-8 mt-9 w-full text-center items-center justify-center;
+}
+/* 로그인 버튼 */
+.login-btn-new{
+  @apply p-3 rounded-full text-white w-14 h-14 items-center justify-center  flex;
+}
+/* kakao 버튼 */
+.login-btn-kakao-new{
+  @apply text-black bg-[#fef01b] hover:bg-[#fef01b]/90;
+}
+/* naver 버튼 */
+.login-btn-naver-new{
+  @apply bg-[#2db400] hover:bg-[#2db400]/90;
+}
+/* google 버튼 */
+.login-btn-google-new{
+  @apply bg-[#5591F5] hover:bg-[#5591F5]/90;
 }
 /* pages > memory > login ### */
 

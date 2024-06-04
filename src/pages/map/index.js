@@ -1,7 +1,6 @@
 import Map from 'components/Map';
 import Sidebar from 'components/Sidebar';
 import React, { useEffect, useState, useContext } from 'react';
-import { GoStar } from "react-icons/go";
 import { TfiPencilAlt } from "react-icons/tfi";
 import useMobile from 'components/UseMobile.js';
 import { loginCheck } from 'utils/commonFunctionsReact';
@@ -14,13 +13,13 @@ export default function MapHome() {
   const { showMobileMapSearch, currentPosition, map } = useContext(MapContext);
 
   // ## 페이지 제한
-  // const [isLoading, setIsLoading] = useState(true); // 로딩 상태
-  // useEffect(() => {
-  //   loginCheck().then(() => setIsLoading(false)); // 로그인 체크 후 로딩 상태 변경
-  // }, [])
-  // if (isLoading) {
-  //   return null; // 로딩 중에는 아무것도 렌더링하지 않음
-  // }
+  const [isLoading, setIsLoading] = useState(true); // 로딩 상태
+  useEffect(() => {
+    loginCheck().then(() => setIsLoading(false)); // 로그인 체크 후 로딩 상태 변경
+  }, [])
+  if (isLoading) {
+    return null; // 로딩 중에는 아무것도 렌더링하지 않음
+  }
   // 페이지 제한 ##
 
   const moveCurrentLocation = () => {

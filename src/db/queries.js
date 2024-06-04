@@ -669,6 +669,84 @@ const updatePlace = async (placeSeqNo, memoryCodeSeqNo, userSeqNo, placeId, plac
 };
 
 
+const deletePlace = async (conditions) => {
+  try {
+    let queryText = 'DELETE FROM place WHERE ';
+    const queryParams = [];
+    const conditionStrings = [];
+
+    if (conditions.placeSeqNo !== undefined) {
+      conditionStrings.push(`place_seq_no = $${queryParams.push(conditions.placeSeqNo)}`);
+    }
+    if (conditions.memoryCodeSeqNo !== undefined) {
+      conditionStrings.push(`memory_code_seq_no = $${queryParams.push(conditions.memoryCodeSeqNo)}`);
+    }
+    if (conditions.userSeqNo !== undefined) {
+      conditionStrings.push(`user_seq_no = $${queryParams.push(conditions.userSeqNo)}`);
+    }
+    if (conditions.placeId !== undefined) {
+      conditionStrings.push(`place_id = $${queryParams.push(conditions.placeId)}`);
+    }
+    if (conditions.placeNm !== undefined) {
+      conditionStrings.push(`place_nm = $${queryParams.push(conditions.placeNm)}`);
+    }
+    if (conditions.placeCategoryCode !== undefined) {
+      conditionStrings.push(`place_category_code = $${queryParams.push(conditions.placeCategoryCode)}`);
+    }
+    if (conditions.address !== undefined) {
+      conditionStrings.push(`address = $${queryParams.push(conditions.address)}`);
+    }
+    if (conditions.placeUrl !== undefined) {
+      conditionStrings.push(`place_url = $${queryParams.push(conditions.placeUrl)}`);
+    }
+    if (conditions.longitude !== undefined) {
+      conditionStrings.push(`longitude = $${queryParams.push(conditions.longitude)}`);
+    }
+    if (conditions.latitude !== undefined) {
+      conditionStrings.push(`latitude = $${queryParams.push(conditions.latitude)}`);
+    }
+    if (conditions.placeAlias !== undefined) {
+      conditionStrings.push(`place_alias = $${queryParams.push(conditions.placeAlias)}`);
+    }
+    if (conditions.notes !== undefined) {
+      conditionStrings.push(`notes = $${queryParams.push(conditions.notes)}`);
+    }
+    if (conditions.storageCategory !== undefined) {
+      conditionStrings.push(`storage_category = $${queryParams.push(conditions.storageCategory)}`);
+    }
+    if (conditions.editRestrict !== undefined) {
+      conditionStrings.push(`edit_restrict = $${queryParams.push(conditions.editRestrict)}`);
+    }
+
+    if (conditionStrings.length > 0) {
+      queryText += conditionStrings.join(' AND ');
+
+      // 쿼리 실행
+      const result = await pool.query(queryText, queryParams);
+      return result.rowCount > 0 ? true : false;
+    } else {
+      throw new Error('No conditions provided for deletion.');
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
+// const deletePlace = async (placeSeqNo) => {
+//   try {
+
+//     let queryText = `DELETE FROM place 
+//     WHERE place_seq_no = $1 
+//     `;
+
+//     // 쿼리 실행
+//     const result = await pool.query(queryText, [placeSeqNo]);
+//     return result.rowCount > 0 ? true : false;
+
+//   } catch (error) {
+//     throw error;
+//   }
+// };
 // place ##
 
 
@@ -680,5 +758,5 @@ module.exports = {
   getMemory, insertMemory, updateMemoryActiveNotThis, getMemorys, updateMemory, getUsersByMemoryCode, getMemorysInactive, deleteMemory,
   getMemoryCode, getMemoryCodes, insertMemoryCode, updateMemoryCode, deleteMemoryCode,
   getMemorySymbolColorCodeChoice,
-  insertPlace, getPlaces, getPlace, updatePlace
+  insertPlace, getPlaces, getPlace, updatePlace, deletePlace
 };

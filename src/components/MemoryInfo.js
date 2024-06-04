@@ -36,9 +36,7 @@ export default function MemoryInfo({ closeEvent }) {
 
                 // 세션에서 추억 정보 가져오기
                 const activeMemoryInfoStr = sessionStorage.getItem('activeMemoryInfo');
-
                 if (activeMemoryInfoStr != null) {
-                    
                     activeMemoryInfo = JSON.parse(activeMemoryInfoStr);
                 } else {
                     // 세션이 비어있는 경우 추억 정보 조회

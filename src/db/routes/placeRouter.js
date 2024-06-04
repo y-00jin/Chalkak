@@ -49,7 +49,6 @@ router.post('/place', async (req, res) => {
         await pool.query('COMMIT'); // 트랜잭션 커밋
 
     } catch (error) {
-        console.log(error);
         await pool.query('ROLLBACK'); // 트랜잭션 롤백
     } finally {
         res.status(status).json({ resultMsg: resultMsg, placeInfo: placeInfo });
@@ -71,7 +70,6 @@ router.put('/place', async (req, res) => {
 
         await pool.query('BEGIN'); // 트랜잭션 시작
         const placeData = req.body;
-        console.log(placeData);
 
         // 활성화 된 추억 정보
         const activeMemoryInfo = await queries.getMemory(undefined, undefined, loginUser.user_seq_no, undefined, true);
@@ -155,6 +153,56 @@ router.get('/active', async (req, res) => {
         res.json({ placeList: placeList });
     }
 
+});
+
+router.delete('/place', async (req, res) => {
+    //#swagger.tags = ["Place"]
+    //#swagger.summary = "장소 삭제"
+
+    const place_seq_no = req.query.placeSeqNo;
+
+    let status = 500;
+    let resultMsg = '장소 삭제중 문제가 발생했습니다. 다시 시도해 주세요.';
+    const loginUser = req.session.loginUser;
+
+    try {
+
+        await pool.query('BEGIN'); // 트랜잭션 시작
+
+        const placeRes = await queries.getPlace(place_seq_no, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined);
+
+        // 장소 정보 확인
+        if(placeRes === null){
+            throw new Error(resultMsg);
+        }
+
+        // 권한 확인
+        const memoryRes = await queries.getMemory(undefined, placeRes.memory_code_seq_no, loginUser.user_seq_no, undefined, undefined);
+        if ((placeRes.edit_restrict === true && placeRes.user_seq_no !== loginUser.user_seq_no) || memoryRes == null) {
+            resultMsg = '장소 정보를 삭제할 권한이 존재하지 않습니다. 확인 후 다시 시도해주세요.';
+            status = 403;
+            throw new Error(resultMsg);
+        }
+
+        const deletePlaceData = {
+            placeSeqNo: place_seq_no
+        }
+
+        // 삭제
+        const deleteRes = await queries.deletePlace(deletePlaceData);
+        if (!deleteRes) {
+            throw new Error(resultMsg);
+        }
+
+        status = 200;
+        resultMsg = '';
+        await pool.query('COMMIT'); // 트랜잭션 커밋
+
+    } catch (error) {
+        await pool.query('ROLLBACK'); // 트랜잭션 롤백
+    } finally {
+        res.status(status).json({ resultMsg: resultMsg });
+    }
 });
 
 module.exports = router;

@@ -14,7 +14,7 @@ export default function MemoryChange({ closeEvent }) {
     const navigate = useNavigate();
     const [memoryNm, setMemoryNm] = useState('');
     const [memoryCode, setMemoryCode] = useState('');
-    const [memoryCodeSeqNo, setMemoryCodeSeqNo] = useState('');
+    const [memoryCodeSeqNo, setMemoryCodeSeqNo] = useState(null);
 
     const [selectedMemorySeqNo, setSelectedMemorySeqNo] = useState('');   // 선택된 정보
     const [deleteMemoryInfo, setDeleteMemoryInfo] = useState(null); // 삭제할 정보
@@ -22,49 +22,47 @@ export default function MemoryChange({ closeEvent }) {
     // 임시 데이터
     const [memoryList, setMemoryList] = useState([]);
 
+
+            // 추억 정보 가져오기
+            const getActiveMemoryInfo = async () => {
+                let activeMemoryInfo = null;
+                try {
+    
+                    // 세션에서 추억 정보 가져오기
+                    const activeMemoryInfoStr = sessionStorage.getItem('activeMemoryInfo');
+                    if (activeMemoryInfoStr != null) {
+                        activeMemoryInfo = JSON.parse(activeMemoryInfoStr);
+                    } else {
+                        // 세션이 비어있는 경우 추억 정보 조회
+                        const res = await axiosInstance.get(`/api/memories/active`);
+                        activeMemoryInfo = res.data.memoryInfo;
+                        sessionStorage.setItem("activeMemoryInfo", JSON.stringify(activeMemoryInfo));
+                    }
+    
+                    // 추억 정보 설정
+                    setMemoryNm(activeMemoryInfo.memory_nm);
+                    setMemoryCode(activeMemoryInfo.memory_code);
+                    setMemoryCodeSeqNo(activeMemoryInfo.memory_code_seq_no);
+                } catch (error) {
+                    console.error('Error fetching or setting active memory info:', error);
+                }
+            };
+    
+            // 추억 목록 가져오기
+            const getMemorysInfo = async () => {
+                try {
+                    const res = await axiosInstance.get(`/api/memories/inactive`);
+                    setMemoryList(res.data.memoryList);
+                } catch (error) {
+                }
+            }
+
+
     // 활성화 추억 정보
     useEffect(() => {
-
-        // 추억 정보 가져오기
-        const getActiveMemoryInfo = async () => {
-            let activeMemoryInfo = null;
-            try {
-
-                // 세션에서 추억 정보 가져오기
-                const activeMemoryInfoStr = sessionStorage.getItem('activeMemoryInfo');
-
-                if (activeMemoryInfoStr != null) {
-                    activeMemoryInfo = JSON.parse(activeMemoryInfoStr);
-                } else {
-                    // 세션이 비어있는 경우 추억 정보 조회
-                    const res = await axiosInstance.get(`/api/memories/active`);
-                    activeMemoryInfo = res.data.memoryInfo;
-                    sessionStorage.setItem("activeMemoryInfo", JSON.stringify(activeMemoryInfo));
-                }
-
-                // 추억 정보 설정
-                setMemoryNm(activeMemoryInfo.memory_nm);
-                setMemoryCode(activeMemoryInfo.memory_code);
-                setMemoryCodeSeqNo(activeMemoryInfo.memory_code_seq_no);
-            } catch (error) {
-                console.error('Error fetching or setting active memory info:', error);
-            }
-        };
-
-        // 추억 목록 가져오기
-        const getMemorysInfo = async () => {
-            try {
-                const res = await axiosInstance.get(`/api/memories/inactive`);
-                setMemoryList(res.data.memoryList);
-            } catch (error) {
-                console.error('Error fetching or setting active memory info:', error);
-            }
-        }
-
         getActiveMemoryInfo();
         getMemorysInfo();
-    }, [memoryCodeSeqNo])
-
+    }, [memoryCodeSeqNo]);
 
     // 클릭 데이터
     const handleItemClick = (index) => {

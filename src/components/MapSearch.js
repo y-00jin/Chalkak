@@ -324,6 +324,14 @@ export default function MapSearch({ closeEvent }) {
         }, 200);
     };
 
+    const checkSavePlace = (data) => {
+
+        if(activeMemorySavedPlaceList === null){
+            return false;
+        }
+        return activeMemorySavedPlaceList.some(place => place.place_id === data.placeId);
+    }
+
     return (
         <>
             {/* PC */}
@@ -355,7 +363,7 @@ export default function MapSearch({ closeEvent }) {
 
                                         </div>
                                         <button className='mr-4' id={`starBtn_${data.placeId}`} onClick={() => { setSavePlaceId(data.placeId); setSavePlaceAlias(data.placeNm); setShowPlaceSave(true) }}>
-                                            <FaRegStar className={`size-6 ${activeMemorySavedPlaceList !== 'null' && activeMemorySavedPlaceList.length > 0 && activeMemorySavedPlaceList.some(place => place.place_id === data.placeId) ? 'text-[#FFE400]' : ''}`} />
+                                            <FaRegStar className={`size-6 ${checkSavePlace(data) ? 'text-[#FFE400]' : ''}`} />
                                         </button>
                                     </div>
                                     <div className='ml-12 mt-2 '>
@@ -422,7 +430,7 @@ export default function MapSearch({ closeEvent }) {
                                             </div>
                                         </div>
                                         <button className='mr-4' onClick={() => { setSavePlaceId(data.placeId); setSavePlaceAlias(data.placeNm); setShowPlaceSave(true) }}>
-                                            <FaRegStar className={`size-6 ${activeMemorySavedPlaceList !== 'null' && activeMemorySavedPlaceList.length > 0 && activeMemorySavedPlaceList.some(place => place.place_id === data.placeId) ? 'text-[#FFE400]' : ''}`} />
+                                            <FaRegStar className={`size-6 ${checkSavePlace(data) ? 'text-[#FFE400]' : ''}`} />
                                         </button>
                                     </div>
 

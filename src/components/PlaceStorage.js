@@ -205,26 +205,42 @@ export default function PlaceStorage({ closeEvent }) {
             edit_restrict: saveEditRestrict
         };
 
+        try {
+            // 장소정보 저장
+            const res = await axiosInstance.put(`/api/places/place`, reqData);
+        
+            savePlaceClear(); // 저장 정보 초기화
+        
+            if (res.data.resultMsg !== '') {
+                alert(res.data.resultMsg);
+            } else {
+                markers.forEach(marker => marker.setMap(null));
+                setMarkers([]);
+                getPlaceList(activeTab);
+            }
+        } catch (error) {
+            savePlaceClear(); // 저장 정보 초기화
+            alert(error.response.data.resultMsg);
+        }
+
         // 장소정보 저장
-        await axiosInstance.put(`/api/places/place`, reqData)
-            .then(res => {
-                savePlaceClear();   // 저장 정보 초기화
-                if (res.data.resultMsg !== '') {
-                    alert(res.data.resultMsg);
-                } else {
+        // await axiosInstance.put(`/api/places/place`, reqData)
+        //     .then(res => {
+        //         savePlaceClear();   // 저장 정보 초기화
+        //         if (res.data.resultMsg !== '') {
+        //             alert(res.data.resultMsg);
+        //         } else {
 
-                    markers.forEach(marker => marker.setMap(null));
-                    setMarkers([]);
+        //             markers.forEach(marker => marker.setMap(null));
+        //             setMarkers([]);
 
-                    getPlaceList(activeTab);
-                }
-            })
-            .catch(error => {
-                savePlaceClear();   // 저장 정보 초기화
-                alert(error.response.data.resultMsg);
-            });
-
-
+        //             getPlaceList(activeTab);
+        //         }
+        //     })
+        //     .catch(error => {
+        //         savePlaceClear();   // 저장 정보 초기화
+        //         alert(error.response.data.resultMsg);
+        //     });
     }
 
     // 상세정보
@@ -240,7 +256,24 @@ export default function PlaceStorage({ closeEvent }) {
 
     // 장소 삭제
     const deletePlace = async (data) => {
-        console.log(data);
+
+        try {
+            const res = await axiosInstance.delete(`/api/places/place`, {
+                params: {
+                    placeSeqNo: data.place_seq_no
+                }
+            });
+
+            if (res.status === 200) {
+                markers.forEach(marker => marker.setMap(null));
+                setMarkers([]);
+                getPlaceList(activeTab);
+            } else {
+                alert(res.data.resultMsg);
+            }
+        } catch (error) {
+            alert(error.response.data.resultMsg);
+        }
     }
 
     return (
@@ -284,10 +317,10 @@ export default function PlaceStorage({ closeEvent }) {
                                             <button onClick={() => { openSavePlace(data); }}>
                                                 <FaPencilAlt />
                                             </button>
-                                            <button onClick={() => { deletePlace(data);}}>
+                                            <button onClick={() => { deletePlace(data); }}>
                                                 <AiOutlineClose />
                                             </button>
-                                            
+
                                         </div>
                                     }
                                 </div>
