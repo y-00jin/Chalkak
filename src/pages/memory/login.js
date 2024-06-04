@@ -1,6 +1,7 @@
 import { RiKakaoTalkFill } from "react-icons/ri";
 import { SiNaver } from "react-icons/si";
 import { FaGoogle } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from 'utils/axiosInstance';
@@ -106,7 +107,7 @@ export default function MemoryLogin() {
                         className="login-btn-new login-btn-google-new"
                         onClick={handleLoginTest2}
                     >
-                        <FaGoogle className="w-6 h-6" />
+                        <FcGoogle className="w-full h-full" />
                     </button>
                 </div>
 
