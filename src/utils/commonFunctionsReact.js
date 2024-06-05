@@ -1,5 +1,6 @@
 import axiosInstance from 'utils/axiosInstance';
 
+
 // 로그인 확인
 export async function loginCheck() {
 
@@ -61,3 +62,5 @@ export async function handleLogout() {
 export function limitText(str, limitStrLength){
     return str.length > limitStrLength ? str.substring(0, limitStrLength) + '...' : str;
 }
+
+  

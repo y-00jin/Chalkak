@@ -24,7 +24,7 @@ app.use(session({
   }
 }));
 
-const port = process.env.REACT_APP_API_PORT; // 포트 설정
+const port = 8088; // 포트 설정
 
 // CORS 사용
 const corsOption = {

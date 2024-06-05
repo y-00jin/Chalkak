@@ -236,6 +236,7 @@ export default function MapSearch({ closeEvent }) {
                     const firstPlace = filteredData[0];
                     const centerPosition = new kakao.maps.LatLng(firstPlace.y, firstPlace.x);
                     map.panTo(centerPosition);
+                    // isMobile?map.setCenter(centerPosition):map.panTo(centerPosition);
                 }
 
             } else {
@@ -279,6 +280,7 @@ export default function MapSearch({ closeEvent }) {
 
         const dataPosition = new kakao.maps.LatLng(data.latitude, data.longitude);
         map.panTo(dataPosition);
+        // isMobile?map.setCenter(dataPosition):map.panTo(dataPosition);
 
         // 클릭된 장소의 좌표와 마커의 좌표를 비교하여 색상을 변경
         markers.forEach(marker => {
@@ -287,7 +289,7 @@ export default function MapSearch({ closeEvent }) {
                     `${process.env.PUBLIC_URL}/images/marker_search_current.png`, // 마커 이미지 경로
                     new kakao.maps.Size(32, 32)
                 ));
-                marker.setZIndex(1000); // 클릭된 마커를 가장 위로 올림
+                marker.setZIndex(10); // 클릭된 마커를 가장 위로 올림
             } else {
                 marker.setImage(new kakao.maps.MarkerImage(
                     `${process.env.PUBLIC_URL}/images/marker_search.png`, // 마커 이미지 경로

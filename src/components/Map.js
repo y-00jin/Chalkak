@@ -1,7 +1,9 @@
 import React, { useEffect, useContext } from 'react';
+import useMobile from 'components/UseMobile.js';
 import { MapContext } from 'context/MapContext';
 
 export default function Map() {
+    const isMobile = useMobile();
 
     const { map, setMap, psRef, currentPosition, setCurrentPosition, DEFAULT_LAT, DEFAULT_LNG } = useContext(MapContext);
 
@@ -53,6 +55,8 @@ export default function Map() {
         if (map && currentPosition.lat !== DEFAULT_LAT && currentPosition.lng !== DEFAULT_LNG) {
             const moveLatLon = new window.kakao.maps.LatLng(currentPosition.lat, currentPosition.lng);
             map.panTo(moveLatLon);
+            // isMobile?map.setCenter(moveLatLon):map.panTo(moveLatLon);
+            
         }
 
         if (map != null) {
@@ -62,7 +66,7 @@ export default function Map() {
 
     return (
         <>
-            <div id="map" className="w-full h-screen"></div>
+            <div id="map" className="w-full h-full"></div>
         </>
     )
 }

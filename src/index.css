@@ -130,7 +130,7 @@
 
 /* ### pages > map > index */
 .map-func-btn{
-  @apply rounded-full bg-white text-black cursor-pointer z-20 shadow-lg text-3xl size-11 flex items-center justify-center p-3; 
+  @apply rounded-full cursor-pointer  shadow-lg text-3xl size-11 flex items-center justify-center p-3 border-none; 
 }
 
 .map-container {

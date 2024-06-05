@@ -8,6 +8,8 @@ import PlaceSave from './PlaceSave';
 import axiosInstance from 'utils/axiosInstance';
 import { MapContext } from 'context/MapContext';
 import { IoInformationCircleOutline } from "react-icons/io5";
+
+
 export default function PlaceStorage({ closeEvent }) {
 
     const isMobile = useMobile();
@@ -62,6 +64,7 @@ export default function PlaceStorage({ closeEvent }) {
 
         const dataPosition = new kakao.maps.LatLng(data.latitude, data.longitude);
         map.panTo(dataPosition);
+        // isMobile?map.setCenter(dataPosition):map.panTo(dataPosition);
 
         // 클릭된 장소의 좌표와 마커의 좌표를 비교하여 색상을 변경
         markers.forEach(marker => {
@@ -70,7 +73,7 @@ export default function PlaceStorage({ closeEvent }) {
                     `${process.env.PUBLIC_URL}/images/marker_search_current.png`, // 마커 이미지 경로
                     new kakao.maps.Size(32, 32)
                 ));
-                marker.setZIndex(1000); // 클릭된 마커를 가장 위로 올림
+                marker.setZIndex(35); // 클릭된 마커를 가장 위로 올림
             } else {
                 marker.setImage(new kakao.maps.MarkerImage(
                     `${process.env.PUBLIC_URL}/images/marker_search.png`, // 마커 이미지 경로
@@ -147,6 +150,7 @@ export default function PlaceStorage({ closeEvent }) {
         if (newMarkers.length > 0) {
             const centerPosition = new kakao.maps.LatLng(newMarkers[0].getPosition().getLat(), newMarkers[0].getPosition().getLng());
             map.panTo(centerPosition);
+            // isMobile?map.setCenter(centerPosition):map.panTo(centerPosition);
         }
 
     }, [placeList]);
