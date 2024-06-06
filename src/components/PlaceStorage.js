@@ -8,7 +8,8 @@ import PlaceSave from './PlaceSave';
 import axiosInstance from 'utils/axiosInstance';
 import { MapContext } from 'context/MapContext';
 import { IoInformationCircleOutline } from "react-icons/io5";
-
+import { RiRoadMapFill } from "react-icons/ri";
+import { FaListUl } from "react-icons/fa6";
 
 export default function PlaceStorage({ closeEvent }) {
 
@@ -212,9 +213,9 @@ export default function PlaceStorage({ closeEvent }) {
         try {
             // 장소정보 저장
             const res = await axiosInstance.put(`/api/places/place`, reqData);
-        
+
             savePlaceClear(); // 저장 정보 초기화
-        
+
             if (res.data.resultMsg !== '') {
                 alert(res.data.resultMsg);
             } else {
@@ -280,15 +281,31 @@ export default function PlaceStorage({ closeEvent }) {
         }
     }
 
+    const [showMobileMapList, setShowMobileMapList] = useState(true);
+
     return (
         <>
             <div className={`${!isMobile ? 'sidebar-content-box px-2 py-5' : 'menu-mobile-content-box'}`}>
                 {isMobile &&
-                    <div className='menu-mobile-close-btn-wrapper'>
-                        <button className='menu-mobile-close-btn' onClick={() => closeEvent('mapSearch')}>
-                            <AiOutlineClose className='size-5' />
-                        </button>
-                    </div>
+
+                    <>
+                        <div className='absolute top-5'>
+
+                            <button className=''>
+                                {showMobileMapList ?
+                                    <RiRoadMapFill className='size-7 text-[#96DBF4]' onClick={() => setShowMobileMapList((val) => !val)} />
+                                    :
+                                    <FaListUl className='size-7 text-[#96DBF4]' onClick={() => setShowMobileMapList((val) => !val)} />
+                                }
+                            </button>
+                        </div>
+                        <div className='absolute top-6 right-5'>
+                            <button className='menu-mobile-close-btn' onClick={() => closeEvent('mapSearch')}>
+                                <AiOutlineClose className='size-5' />
+                            </button>
+                        </div>
+                    </>
+
                 }
 
                 <div>
@@ -346,6 +363,11 @@ export default function PlaceStorage({ closeEvent }) {
                         }
                     </Scrollbars>
                 </div >
+            
+                
+
+
+
             </div >
 
             {showPlaceSave && <PlaceSave

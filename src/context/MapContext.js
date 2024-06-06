@@ -7,6 +7,7 @@ export const MapProvider = ({ children }) => {
     const [map, setMap] = useState(null);         // 맵
     const [markers, setMarkers] = useState([]);   // 마커
     const [showMobileMapSearch, setShowMobileMapSearch] = useState(false);  // 검색창 여부
+    const [showMobileMapList, setShowMobileMapList] = useState(false);      // 검색 목록 여부
     const psRef = useRef(null);   // psRef 생성
 
     // 기본 위도 경도 설정
@@ -16,7 +17,7 @@ export const MapProvider = ({ children }) => {
 
 
     return (
-        <MapContext.Provider value={{ map, setMap, markers, setMarkers, showMobileMapSearch, setShowMobileMapSearch, psRef, currentPosition, setCurrentPosition, DEFAULT_LAT, DEFAULT_LNG }}>
+        <MapContext.Provider value={{ map, setMap, markers, setMarkers, showMobileMapSearch, setShowMobileMapSearch,showMobileMapList, setShowMobileMapList, psRef, currentPosition, setCurrentPosition, DEFAULT_LAT, DEFAULT_LNG }}>
             {children}
         </MapContext.Provider>
     );

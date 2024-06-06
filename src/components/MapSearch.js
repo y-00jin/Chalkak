@@ -2,9 +2,9 @@ import { Scrollbars } from 'react-custom-scrollbars-2';
 import { SiMaplibre } from "react-icons/si";
 import { AiOutlineClose } from "react-icons/ai";
 import { RiRoadMapFill } from "react-icons/ri";
+import { FaListUl } from "react-icons/fa6";
 import { FaRegStar } from "react-icons/fa";
 import { FaStar } from "react-icons/fa";
-import { FaListUl } from "react-icons/fa6";
 import React, { useState, useRef, useEffect, useContext } from 'react';
 import PlaceSave from './PlaceSave';
 import useMobile from 'components/UseMobile.js';
@@ -16,10 +16,10 @@ export default function MapSearch({ closeEvent }) {
 
     const isMobile = useMobile();
 
-    const { showMobileMapSearch, setShowMobileMapSearch, map, psRef, markers, setMarkers, currentPosition } = useContext(MapContext);
+    const { showMobileMapSearch, setShowMobileMapSearch, showMobileMapList, setShowMobileMapList,  map, psRef, markers, setMarkers, currentPosition } = useContext(MapContext);
     const [datas, setDatas] = useState([]);
     const [selectedData, setSelectedData] = useState(null);
-    const [showMobileMapList, setShowMobileMapList] = useState(false);      // 검색 목록 여부
+    
 
     const [keyword, setKeyword] = useState('');
     const [pageNumber, setPageNumber] = useState(1); // 추가 검색을 위한 페이지 번호

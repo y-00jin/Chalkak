@@ -194,7 +194,7 @@
 
   /* 모바일 장소 검색 박스 */
   .map-mobile-search-box {
-    @apply absolute top-0 left-0 z-20 flex gap-2 h-24 w-full px-6 py-5 items-center;
+    @apply absolute top-0 left-0 z-[15] flex gap-2 h-24 w-full px-6 py-5 items-center;
   }
   /* 모바일 장소 검색창 */
   .map-mobile-search-input{
@@ -382,5 +382,4 @@ input[type='radio']:checked {
   border: 3px solid white;
   box-shadow: 0 0 0 1.6px #96DBF4;
 }
-
 
