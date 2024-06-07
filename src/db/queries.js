@@ -442,16 +442,16 @@ const insertPlace = async (placeData) => {
 
 
     const queryText = `INSERT INTO place
-    (place_seq_no, memory_code_seq_no, user_seq_no, place_id, place_nm, place_category_code, address, place_url, longitude, latitude, place_alias, notes, storage_category, edit_restrict)
-    VALUES(nextval('sq_place'), $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *`;
+    (place_seq_no, memory_code_seq_no, user_seq_no, place_id, place_nm, place_category_code, address, place_url, longitude, latitude, place_alias, notes, storage_category, edit_restrict, memory_date)
+    VALUES(nextval('sq_place'), $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING *`;
 
     const {
-      memoryCodeSeqNo, userSeqNo, placeId, placeNm, placeCategoryCode, address, placeUrl, longitude, latitude, placeAlias, notes, storageCategory, editRestrict
+      memoryCodeSeqNo, userSeqNo, placeId, placeNm, placeCategoryCode, address, placeUrl, longitude, latitude, placeAlias, notes, storageCategory, editRestrict, memoryDate
     } = placeData;
 
     // 쿼리 실행
     const placeInfo = await pool.query(queryText, [
-      memoryCodeSeqNo, userSeqNo, placeId, placeNm, placeCategoryCode, address, placeUrl, longitude, latitude, placeAlias, notes, storageCategory, editRestrict
+      memoryCodeSeqNo, userSeqNo, placeId, placeNm, placeCategoryCode, address, placeUrl, longitude, latitude, placeAlias, notes, storageCategory, editRestrict, memoryDate
     ]);
 
     return { result: true, placeInfo: placeInfo.rows[0] };
@@ -461,7 +461,7 @@ const insertPlace = async (placeData) => {
 };
 
 // 장소 목록 조회
-const getPlaces = async (placeSeqNo, memoryCodeSeqNo, userSeqNo, placeId, placeNm, placeCategoryCode, address, placeUrl, longitude, latitude, placeAlias, notes, storageCategory, editRestrict) => {
+const getPlaces = async (placeSeqNo, memoryCodeSeqNo, userSeqNo, placeId, placeNm, placeCategoryCode, address, placeUrl, longitude, latitude, placeAlias, notes, storageCategory, editRestrict, memoryDate) => {
   try {
     // let queryText = 'SELECT * FROM place WHERE 1 = 1';
     let queryText = `SELECT cc.common_code_nm as symbol_color_code, p.* 
@@ -520,6 +520,10 @@ const getPlaces = async (placeSeqNo, memoryCodeSeqNo, userSeqNo, placeId, placeN
     if (editRestrict !== undefined) {
       queryText += ` AND edit_restrict = $${queryParams.push(editRestrict)}`;
     }
+    if (memoryDate !== undefined) {
+      queryText += ` AND memory_date = $${queryParams.push(memoryDate)}`;
+    }
+
 
     queryText += ' order by place_seq_no desc';
 
@@ -539,7 +543,7 @@ const getPlaces = async (placeSeqNo, memoryCodeSeqNo, userSeqNo, placeId, placeN
 };
 
 
-const getPlace = async (placeSeqNo, memoryCodeSeqNo, userSeqNo, placeId, placeNm, placeCategoryCode, address, placeUrl, longitude, latitude, placeAlias, notes, storageCategory, editRestrict) => {
+const getPlace = async (placeSeqNo, memoryCodeSeqNo, userSeqNo, placeId, placeNm, placeCategoryCode, address, placeUrl, longitude, latitude, placeAlias, notes, storageCategory, editRestrict, memoryDate) => {
   try {
     let queryText = 'SELECT * FROM place WHERE 1 = 1';
     const queryParams = [];
@@ -587,6 +591,10 @@ const getPlace = async (placeSeqNo, memoryCodeSeqNo, userSeqNo, placeId, placeNm
     if (editRestrict !== undefined) {
       queryText += ` AND edit_restrict = $${queryParams.push(editRestrict)}`;
     }
+    if (memoryDate !== undefined) {
+      queryText += ` AND memory_date = $${queryParams.push(memoryDate)}`;
+    }
+
 
     queryText += ' order by place_seq_no desc';
 
@@ -608,7 +616,7 @@ const getPlace = async (placeSeqNo, memoryCodeSeqNo, userSeqNo, placeId, placeNm
 
 
 // 수정
-const updatePlace = async (placeSeqNo, memoryCodeSeqNo, userSeqNo, placeId, placeNm, placeCategoryCode, address, placeUrl, longitude, latitude, placeAlias, notes, storageCategory, editRestrict) => {
+const updatePlace = async (placeSeqNo, memoryCodeSeqNo, userSeqNo, placeId, placeNm, placeCategoryCode, address, placeUrl, longitude, latitude, placeAlias, notes, storageCategory, editRestrict, memoryDate) => {
 
   try {
     let queryText = 'UPDATE place SET ';
@@ -652,6 +660,9 @@ const updatePlace = async (placeSeqNo, memoryCodeSeqNo, userSeqNo, placeId, plac
     }
     if (editRestrict !== undefined) {
       queryText += `edit_restrict = $${queryParams.push(editRestrict )}, `;
+    }
+    if (memoryDate !== undefined) {
+      queryText += `memory_date = $${queryParams.push(memoryDate)}, `;
     }
 
     // 마지막 쉼표 제거
@@ -717,7 +728,9 @@ const deletePlace = async (conditions) => {
     if (conditions.editRestrict !== undefined) {
       conditionStrings.push(`edit_restrict = $${queryParams.push(conditions.editRestrict)}`);
     }
-
+    if (conditions.memoryDate !== undefined) {
+      conditionStrings.push(`memory_date = $${queryParams.push(conditions.memoryDate)}`);
+    }
     if (conditionStrings.length > 0) {
       queryText += conditionStrings.join(' AND ');
 
@@ -731,22 +744,6 @@ const deletePlace = async (conditions) => {
     throw error;
   }
 };
-
-// const deletePlace = async (placeSeqNo) => {
-//   try {
-
-//     let queryText = `DELETE FROM place 
-//     WHERE place_seq_no = $1 
-//     `;
-
-//     // 쿼리 실행
-//     const result = await pool.query(queryText, [placeSeqNo]);
-//     return result.rowCount > 0 ? true : false;
-
-//   } catch (error) {
-//     throw error;
-//   }
-// };
 // place ##
 
 

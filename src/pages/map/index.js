@@ -24,7 +24,7 @@ export default function MapHome() {
 
       {/* 지도서비스 기능 버튼 */}
       {/* {!showMobileMapSearch && */}
-{!showMobileMapList && 
+      {!showMobileMapList &&
         <MapFunction />
       }
 

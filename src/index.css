@@ -174,12 +174,12 @@
   }
   /* 사이드 바 */
   .map-sidebar-content {
-    @apply absolute top-0 p-5 left-20 h-full bg-white w-[380px] border-none z-10 shadow-lg ;
+    @apply absolute top-0 p-5 left-20 h-full bg-white w-[380px] border-none z-[25] shadow-lg ;
   }
 
   /* 사이드 바 토글 버튼 */
   .map-sidebar-content-toggle{
-    @apply absolute top-[50%] w-6 h-14 p-2 bg-white rounded-e-md border-none text-gray-800 cursor-pointer z-10 shadow-lg;
+    @apply absolute top-[50%] w-6 h-14 p-2 bg-white rounded-e-md border-none text-gray-800 cursor-pointer z-[25] shadow-lg;
   }
 }
 
@@ -346,9 +346,13 @@
 
 
 /* components > MapSearch, MemoryChange, MemoryInfo ### */
+.place-storage-mobile-content-box{
+  @apply z-[25] absolute top-20 bg-white w-full  justify-center flex flex-col gap-2 px-7;
+  
+  height: calc(100% - 80px);
+}
 .place-storage-tab-box{
   @apply flex justify-between items-center text-center text-xl mb-5;
-  
 }
 .place-storage-tab-item{
   @apply w-[50%] pb-3  text-gray-400 border-b border-gray-400;

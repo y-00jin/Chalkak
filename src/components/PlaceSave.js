@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AiOutlineClose } from "react-icons/ai";
 
 import useMobile from 'components/UseMobile';
 import CustomToggleSwitch from './CustomToggleSwitch';
 
 
-export default function PlaceSave({ onClose, placeAlias, setPlaceAlias, notes, setNotes, storageCategory, setStorageCategory, editRestrict, setEditRestrict, visibleEditRestrict, handleSavePlace }) {
+export default function PlaceSave({ onClose, placeAlias, setPlaceAlias, notes, setNotes, memoryDate, setMemoryDate, storageCategory, setStorageCategory, editRestrict, setEditRestrict, visibleEditRestrict, handleSavePlace }) {
 
     const isMobile = useMobile();
 
@@ -15,17 +15,20 @@ export default function PlaceSave({ onClose, placeAlias, setPlaceAlias, notes, s
     // const [editRestrict, setEditRestrict] = useState(false);
 
     const handleStorageCategory = (e) => {
+        setMemoryDate(null);
         setStorageCategory(e.target.value);
     };
 
     const handleEditRestrict = () => {
         setEditRestrict(!editRestrict);
     };
-
+useEffect(()=>{
+console.log(memoryDate);
+},[])
 
     return (
         <>
-            <div className='fixed top-0 left-0 z-20 w-full h-screen bg-gray-950 opacity-50' onClick={onClose} />
+            <div className='fixed top-0 left-0 z-[28] w-full h-screen bg-gray-950 opacity-50' onClick={onClose} />
 
             <div className={`min-h-[21rem] bg-white border-gray-300 z-[30] p-5 shadow-lg ${isMobile ? 'rounded-t-[30px] absolute bottom-0 border-t w-full ' : 'rounded-[30px] border top-1/2 left-1/2  transform -translate-x-1/2 -translate-y-1/2 fixed min-w-[500px] w-[30%]'} `}>
                 <div className="relative">
@@ -49,6 +52,19 @@ export default function PlaceSave({ onClose, placeAlias, setPlaceAlias, notes, s
                                 className='w-full bg-gray-100 px-5 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#96DBF4]'
                             />
                         </label>
+                        {
+                            storageCategory === 'PSCC_2' &&
+                            <label>
+                                <input
+                                    type="date"
+                                    value={memoryDate}
+                                    onChange={(e) => setMemoryDate(e.target.value === '' ? null: e.target.value)}
+                                    className={`w-full bg-gray-100 px-5 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#96DBF4] ${memoryDate === null ? 'text-gray-400': 'text-black'}`}
+                                />
+                            </label>
+                        }
+
+                        
 
                         <div className="flex justify-between">
                             <div className='flex gap-3'>

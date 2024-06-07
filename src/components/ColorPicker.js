@@ -20,6 +20,14 @@ export default function ColorPicker({ color, setStrokeStyle }) {
 
     return (
         <div className={`z-[25] `}  >
+            <style>
+                {`
+                    .chrome-picker div[style*="text-align: right"] {
+                        display: none !important;
+                    }
+                `}
+            </style>
+
             <button id="colorPicker" className={`text-[${color}]`} onClick={handleClick}><FaCircle className='size-11' /></button>
             {displayColorPicker ?
                 <div className={`absolute right-3 top-16`} >

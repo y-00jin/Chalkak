@@ -21,7 +21,7 @@ export default function Sidebar() {
 
     const isMobile = useMobile();
 
-    const { showMobileMapSearch, markers} = useContext(MapContext);
+    const { showMobileMapSearch, markers, storageMarker} = useContext(MapContext);
 
     const [activeMenu, setActiveMenu] = useState('mapSearch');  // 활성화 메뉴
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);   // pc 사이드바 펼침 상태
@@ -33,6 +33,8 @@ export default function Sidebar() {
         setIsMobileMenubarOpen(false);   // 모바일 메뉴 바 상태 false
         setActiveMenu(target);          // 클릭한 메뉴로 설정
         markers.forEach(marker => marker.setMap(null));
+
+        storageMarker.forEach(marker => marker.setMap(null));
     };
 
     return (
@@ -152,7 +154,7 @@ export default function Sidebar() {
 
                         <div className="map-mobile-menu-list">
 
-                            <button className="map-mobile-menu-item" onClick={() => setIsMobileMenubarOpen(false)}>
+                            <button className="map-mobile-menu-item" onClick={() => {handleMenuClick('mapSearch'); setIsMobileMenubarOpen(false)}}>
                                 <FiMapPin />
                                 지도
                             </button>

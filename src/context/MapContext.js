@@ -6,6 +6,8 @@ export const MapContext = createContext();
 export const MapProvider = ({ children }) => {
     const [map, setMap] = useState(null);         // 맵
     const [markers, setMarkers] = useState([]);   // 마커
+    const [storageMarker, setStorageMarker]= useState([]);
+
     const [showMobileMapSearch, setShowMobileMapSearch] = useState(false);  // 검색창 여부
     const [showMobileMapList, setShowMobileMapList] = useState(false);      // 검색 목록 여부
     const psRef = useRef(null);   // psRef 생성
@@ -17,7 +19,7 @@ export const MapProvider = ({ children }) => {
 
 
     return (
-        <MapContext.Provider value={{ map, setMap, markers, setMarkers, showMobileMapSearch, setShowMobileMapSearch,showMobileMapList, setShowMobileMapList, psRef, currentPosition, setCurrentPosition, DEFAULT_LAT, DEFAULT_LNG }}>
+        <MapContext.Provider value={{ map, setMap, markers, setMarkers, storageMarker, setStorageMarker, showMobileMapSearch, setShowMobileMapSearch,showMobileMapList, setShowMobileMapList, psRef, currentPosition, setCurrentPosition, DEFAULT_LAT, DEFAULT_LNG }}>
             {children}
         </MapContext.Provider>
     );

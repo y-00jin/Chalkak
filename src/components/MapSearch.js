@@ -35,6 +35,7 @@ export default function MapSearch({ closeEvent }) {
     const [savePlaceId, setSavePlaceId] = useState('');
     const [savePlaceAlias, setSavePlaceAlias] = useState('');
     const [saveNotes, setSaveNotes] = useState('');
+    const [memoryDate, setMemoryDate] = useState(null);
     const [saveStorageCategory, setSaveStorageCategory] = useState('PSCC_1');
     const [saveEditRestrict, setSaveEditRestrict] = useState(false);
 
@@ -70,6 +71,7 @@ export default function MapSearch({ closeEvent }) {
             ...placeData,
             placeAlias: savePlaceAlias,
             notes: saveNotes,
+            memoryDate: memoryDate,
             storageCategory: saveStorageCategory,
             editRestrict: saveEditRestrict
         };
@@ -125,6 +127,7 @@ export default function MapSearch({ closeEvent }) {
         setSavePlaceId('');
         setSavePlaceAlias('');
         setSaveNotes('');
+        setMemoryDate(null);
         setSaveStorageCategory('PSCC_1');
         setSaveEditRestrict(false);
     }
@@ -455,6 +458,7 @@ export default function MapSearch({ closeEvent }) {
                 onClose={() => { savePlaceClear(); }}
                 placeAlias={savePlaceAlias} setPlaceAlias={setSavePlaceAlias}
                 notes={saveNotes} setNotes={setSaveNotes}
+                memoryDate={memoryDate} setMemoryDate={setMemoryDate}
                 storageCategory={saveStorageCategory} setStorageCategory={setSaveStorageCategory}
                 editRestrict={saveEditRestrict} setEditRestrict={setSaveEditRestrict}
                 visibleEditRestrict={true}

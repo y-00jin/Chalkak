@@ -7,10 +7,12 @@ import useMobile from 'components/UseMobile.js';
 import PlaceSave from './PlaceSave';
 import axiosInstance from 'utils/axiosInstance';
 import { MapContext } from 'context/MapContext';
-import { IoInformationCircleOutline } from "react-icons/io5";
 import { RiRoadMapFill } from "react-icons/ri";
 import { FaListUl } from "react-icons/fa6";
-
+import { CiLocationOn } from "react-icons/ci";
+import { CiSignpostR1 } from "react-icons/ci";
+import { IoInformationCircleOutline } from "react-icons/io5";
+import PlaceDetail from './PlaceDetail';
 export default function PlaceStorage({ closeEvent }) {
 
     const isMobile = useMobile();
@@ -20,7 +22,8 @@ export default function PlaceStorage({ closeEvent }) {
     const [selectedData, setSelectedData] = useState(null); // 장소 선택
     const kakao = window.kakao;
     const itemRefs = useRef({});
-    const { showMobileMapSearch, setShowMobileMapSearch, map, psRef, markers, setMarkers, currentPosition } = useContext(MapContext);
+    const [showMobileStorage, setShowMobileStorage] = useState(true);
+    const { map, storageMarker, setStorageMarker } = useContext(MapContext);
 
     // 추억 정보 가져오기
     const getPlaceList = async (storageCategory) => {
@@ -38,6 +41,7 @@ export default function PlaceStorage({ closeEvent }) {
 
     // 장소목록
     useEffect(() => {
+        clearPlaceDetail();
         savePlaceClear();
     }, []);
 
@@ -51,8 +55,8 @@ export default function PlaceStorage({ closeEvent }) {
     // 카테고리별 장소 조회
     useEffect(() => {
 
-        markers.forEach(marker => marker.setMap(null));
-        setMarkers([]);
+        storageMarker.forEach(marker => marker.setMap(null));
+        setStorageMarker([]);
 
         getPlaceList(activeTab);
     }, [activeTab]);
@@ -62,13 +66,14 @@ export default function PlaceStorage({ closeEvent }) {
     const handlePlaceDataClick = async (data) => {
 
         setSelectedData(data);
+        setShowMobileStorage(false);
 
         const dataPosition = new kakao.maps.LatLng(data.latitude, data.longitude);
         map.panTo(dataPosition);
         // isMobile?map.setCenter(dataPosition):map.panTo(dataPosition);
 
         // 클릭된 장소의 좌표와 마커의 좌표를 비교하여 색상을 변경
-        markers.forEach(marker => {
+        storageMarker.forEach(marker => {
             if (marker.place_seq_no === data.place_seq_no) {  // 클릭한 정보 마커 변경
                 marker.setImage(new kakao.maps.MarkerImage(
                     `${process.env.PUBLIC_URL}/images/marker_search_current.png`, // 마커 이미지 경로
@@ -87,12 +92,12 @@ export default function PlaceStorage({ closeEvent }) {
 
     // 마커 이벤트
     useEffect(() => {
-        if (markers.length <= 0) {
+        if (storageMarker.length <= 0) {
             return;
         }
 
         // 마커 클릭리스너 추가
-        markers.forEach(marker => {
+        storageMarker.forEach(marker => {
             kakao.maps.event.addListener(marker, 'click', () => {
 
                 const clickData = {
@@ -100,6 +105,7 @@ export default function PlaceStorage({ closeEvent }) {
                     place_id: marker.place_id,
                     place_nm: marker.place_nm,
                     place_category_code: marker.place_category_code,
+                    memory_date: marker.memory_date,
                     address: marker.address,
                     place_url: marker.place_url,
                     latitude: marker.getPosition().getLat(),
@@ -107,6 +113,11 @@ export default function PlaceStorage({ closeEvent }) {
                 };
 
                 handlePlaceDataClick(clickData);
+
+                if (isMobile) {
+                    setShowMobileStorage(true);
+                }
+
                 setTimeout(() => {
                     if (itemRefs.current[clickData.place_seq_no]) {
                         itemRefs.current[clickData.place_seq_no].scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -114,7 +125,7 @@ export default function PlaceStorage({ closeEvent }) {
                 }, 100);
             });
         });
-    }, [markers]);
+    }, [storageMarker]);
 
 
     // 마커
@@ -140,12 +151,13 @@ export default function PlaceStorage({ closeEvent }) {
             marker.place_nm = place.place_nm;
             marker.place_category_code = place.place_category_code;
             marker.address = place.address;
+            marker.memory_date = place.memory_date;
             marker.place_url = place.place_url;
 
             marker.setMap(map);
             return marker;
         });
-        setMarkers(newMarkers);
+        setStorageMarker(newMarkers);
 
         // 마커가 모두 추가된 후에 map.panTo 호출
         if (newMarkers.length > 0) {
@@ -162,9 +174,11 @@ export default function PlaceStorage({ closeEvent }) {
     const [savePlaceSeqNo, setSavePlaceSeqNo] = useState(null);
     const [savePlaceAlias, setSavePlaceAlias] = useState('');
     const [saveNotes, setSaveNotes] = useState('');
+    const [memoryDate, setMemoryDate] = useState(null);
     const [saveStorageCategory, setSaveStorageCategory] = useState('PSCC_1');
     const [saveEditRestrict, setSaveEditRestrict] = useState(false);
     const [saveVisibleEditRestrict, setSaveVisibleEditRestrict] = useState(true);
+
 
     // 장소 저장 정보 초기화
     const savePlaceClear = () => {
@@ -172,6 +186,7 @@ export default function PlaceStorage({ closeEvent }) {
         setSavePlaceSeqNo(null);
         setSavePlaceAlias('');
         setSaveNotes('');
+        setMemoryDate(null);
         setSaveStorageCategory('PSCC_1');
         setSaveEditRestrict(false);
         setSaveVisibleEditRestrict(true);
@@ -182,6 +197,7 @@ export default function PlaceStorage({ closeEvent }) {
         setSavePlaceSeqNo(data.place_seq_no);
         setSavePlaceAlias(data.place_alias);
         setSaveNotes(data.notes);
+        setMemoryDate(data.memory_date);
         setSaveStorageCategory(data.storage_category);
         setSaveEditRestrict(data.edit_restrict);
 
@@ -206,6 +222,7 @@ export default function PlaceStorage({ closeEvent }) {
             place_seq_no: savePlaceSeqNo,
             place_alias: savePlaceAlias,
             notes: saveNotes,
+            memory_date :memoryDate,
             storage_category: saveStorageCategory,
             edit_restrict: saveEditRestrict
         };
@@ -219,44 +236,39 @@ export default function PlaceStorage({ closeEvent }) {
             if (res.data.resultMsg !== '') {
                 alert(res.data.resultMsg);
             } else {
-                markers.forEach(marker => marker.setMap(null));
-                setMarkers([]);
+                storageMarker.forEach(marker => marker.setMap(null));
+                setStorageMarker([]);
                 getPlaceList(activeTab);
             }
         } catch (error) {
             savePlaceClear(); // 저장 정보 초기화
             alert(error.response.data.resultMsg);
         }
-
-        // 장소정보 저장
-        // await axiosInstance.put(`/api/places/place`, reqData)
-        //     .then(res => {
-        //         savePlaceClear();   // 저장 정보 초기화
-        //         if (res.data.resultMsg !== '') {
-        //             alert(res.data.resultMsg);
-        //         } else {
-
-        //             markers.forEach(marker => marker.setMap(null));
-        //             setMarkers([]);
-
-        //             getPlaceList(activeTab);
-        //         }
-        //     })
-        //     .catch(error => {
-        //         savePlaceClear();   // 저장 정보 초기화
-        //         alert(error.response.data.resultMsg);
-        //     });
     }
+
+    const [showPlaceDetail, setShowPlaceDetail] = useState(false);  // 상세 정보
+    const [showPlaceDetailData, setShowPlaceDetailData] = useState(null);  // 상세 정보 데이터
 
     // 상세정보
     const openPlaceUrl = (data) => {
-        let placeUrl = data;
-        if (isMobile) {
-            const parts = data.split('.com');
-            placeUrl = parts[0] + '.com/m' + parts[1];
-            // const remainingUrl = parts.length > 1 ? parts[1] : '';
+        // 추억 장소
+        if (activeTab === 'PSCC_2') {
+            setShowPlaceDetailData(data);
+            setShowPlaceDetail(true);
+        } else {
+
+            let placeUrl = data.place_url;
+            if (isMobile) {
+                const parts = data.place_url.split('.com');
+                placeUrl = parts[0] + '.com/m' + parts[1];
+                // const remainingUrl = parts.length > 1 ? parts[1] : '';
+            }
+            window.open(placeUrl, '_blank')
         }
-        window.open(placeUrl, '_blank')
+    }
+    const clearPlaceDetail = () => {
+        setShowPlaceDetailData(null);
+        setShowPlaceDetail(false);
     }
 
     // 장소 삭제
@@ -270,8 +282,8 @@ export default function PlaceStorage({ closeEvent }) {
             });
 
             if (res.status === 200) {
-                markers.forEach(marker => marker.setMap(null));
-                setMarkers([]);
+                storageMarker.forEach(marker => marker.setMap(null));
+                setStorageMarker([]);
                 getPlaceList(activeTab);
             } else {
                 alert(res.data.resultMsg);
@@ -281,104 +293,173 @@ export default function PlaceStorage({ closeEvent }) {
         }
     }
 
-    const [showMobileMapList, setShowMobileMapList] = useState(true);
+
 
     return (
         <>
-            <div className={`${!isMobile ? 'sidebar-content-box px-2 py-5' : 'menu-mobile-content-box'}`}>
-                {isMobile &&
+            {!isMobile &&
 
-                    <>
-                        <div className='absolute top-5'>
+                <div className='sidebar-content-box px-2 py-5'>
+                    <div>
+                        <ul className='place-storage-tab-box' >
+                            <li className={`place-storage-tab-item  ${activeTab === 'PSCC_1' ? 'place-storage-tab-item-active' : ''}`}
+                            ><button className='w-full' onClick={() => { changeActiveTab('PSCC_1') }}>저장 장소</button>
+                            </li>
+                            <li className={`place-storage-tab-item  ${activeTab === 'PSCC_2' ? 'place-storage-tab-item-active' : ''}`}
+                            ><button className='w-full' onClick={() => { changeActiveTab('PSCC_2') }}>추억 장소</button>
+                            </li>
+                        </ul>
+                    </div>
 
-                            <button className=''>
-                                {showMobileMapList ?
-                                    <RiRoadMapFill className='size-7 text-[#96DBF4]' onClick={() => setShowMobileMapList((val) => !val)} />
-                                    :
-                                    <FaListUl className='size-7 text-[#96DBF4]' onClick={() => setShowMobileMapList((val) => !val)} />
-                                }
-                            </button>
-                        </div>
-                        <div className='absolute top-6 right-5'>
-                            <button className='menu-mobile-close-btn' onClick={() => closeEvent('mapSearch')}>
-                                <AiOutlineClose className='size-5' />
-                            </button>
-                        </div>
-                    </>
+                    <div className='place-storage-box' >
+                        <Scrollbars thumbSize={85}  >
 
-                }
+                            {placeList !== null && placeList.map((data) => (
+                                <div key={data.place_seq_no} className='border-b-gray-200 border-b py-5' ref={(el) => (itemRefs.current[data.place_seq_no] = el)}>
+                                    <div className='place-storage-item'>
 
-                <div>
-                    <ul className='place-storage-tab-box' >
-                        <li className={`place-storage-tab-item  ${activeTab === 'PSCC_1' ? 'place-storage-tab-item-active' : ''}`}
-                        ><button className='w-full' onClick={() => { changeActiveTab('PSCC_1') }}>저장 장소</button>
-                        </li>
-                        <li className={`place-storage-tab-item  ${activeTab === 'PSCC_2' ? 'place-storage-tab-item-active' : ''}`}
-                        ><button className='w-full' onClick={() => { changeActiveTab('PSCC_2') }}>추억 장소</button>
-                        </li>
-                    </ul>
-                </div>
+                                        <SiMaplibre className='size-10' style={{ color: data.symbol_color_code }} />
+                                        <div className={`flex-1 cursor-pointer ${selectedData !== null && selectedData.place_seq_no === data.place_seq_no ? 'text-[#96DBF4]' : ''}`} onClick={() => handlePlaceDataClick(data)}>
+                                            <p className='text-lg'>{data.place_alias}</p>
+                                            <p className='text-sm flex items-center gap-1 ' title={`${data.address}`}><CiLocationOn /> {data.address.length > 25 ? `${data.address.substring(0, 25)}...` : data.address}</p>
+                                            {data.notes !== '' &&
+                                                <p className='text-sm flex items-center gap-1  ' title={`${data.notes}`} ><CiSignpostR1 /> {data.notes.length > 25 ? `${data.notes.substring(0, 25)}...` : data.notes}</p>
+                                            }
 
-                <div className='place-storage-box' >
-                    <Scrollbars thumbSize={85}  >
+                                        </div>
 
-                        {placeList !== null && placeList.map((data) => (
-                            <div key={data.place_seq_no} className='border-b-gray-200 border-b py-5' ref={(el) => (itemRefs.current[data.place_seq_no] = el)}>
-                                <div className='place-storage-item'>
+                                        {(data.edit_restrict === false || (data.edit_restrict === true && data.user_seq_no === JSON.parse(sessionStorage.getItem('loginUser')).user_seq_no)) &&
+                                            <div className='flex gap-3 float-right text-gray-400 mr-3'>
+                                                <button onClick={() => { openSavePlace(data); }}>
+                                                    <FaPencilAlt />
+                                                </button>
+                                                <button onClick={() => { deletePlace(data); }}>
+                                                    <AiOutlineClose />
+                                                </button>
 
-                                    <SiMaplibre className='size-10' style={{ color: data.symbol_color_code }} />
-                                    <div className={`flex-1 cursor-pointer ${selectedData !== null && selectedData.place_seq_no === data.place_seq_no ? 'text-[#96DBF4]' : ''}`} onClick={() => handlePlaceDataClick(data)}>
-                                        <p className='text-lg'>{data.place_alias}</p>
-                                        <p className='text-sm ' title={`${data.address}`}>{data.address.length > 25 ? `${data.address.substring(0, 25)}...` : data.address}</p>
-                                        <p className='text-sm ' title={`${data.notes}`} >{data.notes.length > 25 ? `${data.notes.substring(0, 25)}...` : data.notes}</p>
+                                            </div>
+                                        }
                                     </div>
 
-                                    {(data.edit_restrict === false || (data.edit_restrict === true && data.user_seq_no === JSON.parse(sessionStorage.getItem('loginUser')).user_seq_no)) &&
-                                        <div className='flex gap-3 float-right text-gray-400 mr-3'>
-                                            <button onClick={() => { openSavePlace(data); }}>
-                                                <FaPencilAlt />
+                                    {data.place_url !== '' &&
+                                        <div className={`ml-[3.25rem] ${selectedData !== null && selectedData.place_seq_no === data.place_seq_no ? 'text-[#96DBF4]' : 'text-gray-600'} `}>
+                                            <button className='flex gap-1 items-center cursor-pointer text-sm' onClick={() => openPlaceUrl(data)}>
+                                                <IoInformationCircleOutline className='size-3' />
+                                                상세 정보
                                             </button>
-                                            <button onClick={() => { deletePlace(data); }}>
-                                                <AiOutlineClose />
-                                            </button>
-
                                         </div>
                                     }
                                 </div>
+                            ))}
+                            {placeList === null &&
+                                <div className='flex gap-3 items-center p-3 py-5'>
+                                    저장된 장소 정보가 없습니다.
+                                </div>
+                            }
+                        </Scrollbars>
+                    </div >
+                </div>
+            }
 
-                                {data.place_url !== '' &&
-                                    <div className={`ml-12 mt-1 ${selectedData !== null && selectedData.place_seq_no === data.place_seq_no ? 'text-[#96DBF4]' : 'text-gray-600'} `}>
-                                        <button className='flex gap-1 items-center cursor-pointer text-sm' onClick={() => openPlaceUrl(data.place_url)}>
-                                            <IoInformationCircleOutline className='size-3' />
-                                            상세 정보
-                                        </button>
-                                    </div>
-                                }
-                            </div>
-                        ))}
-                        {placeList === null &&
-                            <div className='flex gap-3 items-center p-3 py-5'>
-                                저장된 장소 정보가 없습니다.
-                            </div>
+
+            {isMobile &&
+                <div role="presentation" className='absolute top-0 left-0 flex gap-2 h-20 w-full px-6 py-5 items-center bg-white z-[25]'>
+                    <button className=''>
+                        {showMobileStorage ?
+                            <RiRoadMapFill className='size-6 text-[#96DBF4]' onClick={() => setShowMobileStorage((val) => !val)} />
+                            :
+                            <FaListUl className='size-6 text-[#96DBF4]' onClick={() => setShowMobileStorage((val) => !val)} />
                         }
-                    </Scrollbars>
-                </div >
-            
-                
+                    </button>
+                    <button className='menu-mobile-close-btn absolute right-5' onClick={() => closeEvent('mapSearch')}>
+                        <AiOutlineClose className='size-5' />
+                    </button>
+                </div>
+            }
+            {
+                isMobile && showMobileStorage &&
+                <div className='place-storage-mobile-content-box'>
+                    <div >
+                        <ul className='place-storage-tab-box' >
+                            <li className={`place-storage-tab-item  ${activeTab === 'PSCC_1' ? 'place-storage-tab-item-active' : ''}`}
+                            ><button className='w-full' onClick={() => { changeActiveTab('PSCC_1') }}>저장 장소</button>
+                            </li>
+                            <li className={`place-storage-tab-item  ${activeTab === 'PSCC_2' ? 'place-storage-tab-item-active' : ''}`}
+                            ><button className='w-full' onClick={() => { changeActiveTab('PSCC_2') }}>추억 장소</button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div className='place-storage-box flex-1' >
+                        <Scrollbars thumbSize={85}  >
+
+                            {placeList !== null && placeList.map((data) => (
+                                <div key={data.place_seq_no} className='border-b-gray-200 border-b py-5' ref={(el) => (itemRefs.current[data.place_seq_no] = el)}>
+                                    <div className='place-storage-item'>
+
+                                        <SiMaplibre className='size-10' style={{ color: data.symbol_color_code }} />
+                                        <div className={`flex-1 cursor-pointer ${selectedData !== null && selectedData.place_seq_no === data.place_seq_no ? 'text-[#96DBF4]' : ''}`} onClick={() => handlePlaceDataClick(data)}>
+                                            <p className='text-lg'>{data.place_alias}</p>
+
+                                            <p className='text-sm flex items-center gap-1 ' title={`${data.address}`}><CiLocationOn /> {data.address.length > 25 ? `${data.address.substring(0, 25)}...` : data.address}</p>
+                                            {data.notes !== '' &&
+                                                <p className='text-sm flex items-center gap-1  ' title={`${data.notes}`} ><CiSignpostR1 /> {data.notes.length > 25 ? `${data.notes.substring(0, 25)}...` : data.notes}</p>
+                                            }
+
+                                        </div>
+
+                                        {(data.edit_restrict === false || (data.edit_restrict === true && data.user_seq_no === JSON.parse(sessionStorage.getItem('loginUser')).user_seq_no)) &&
+                                            <div className='flex gap-3 float-right text-gray-400 mr-3'>
+                                                <button onClick={() => { openSavePlace(data); }}>
+                                                    <FaPencilAlt />
+                                                </button>
+                                                <button onClick={() => { deletePlace(data); }}>
+                                                    <AiOutlineClose />
+                                                </button>
+
+                                            </div>
+                                        }
+                                    </div>
+
+                                    {data.place_url !== '' &&
+
+                                        <div className={`ml-[3.25rem] ${selectedData !== null && selectedData.place_seq_no === data.place_seq_no ? 'text-[#96DBF4]' : 'text-gray-600'} `}>
+                                            <button className='flex gap-1 items-center cursor-pointer text-sm' onClick={() => openPlaceUrl(data)}>
+                                                <IoInformationCircleOutline className='size-3' />
+                                                상세 정보
+                                            </button>
+                                        </div>
+                                    }
+                                </div>
+                            ))}
+                            {placeList === null &&
+                                <div className='flex gap-3 items-center p-3 py-5'>
+                                    저장된 장소 정보가 없습니다.
+                                </div>
+                            }
+                        </Scrollbars>
+                    </div >
+                </div>
+            }
 
 
-
-            </div >
 
             {showPlaceSave && <PlaceSave
                 onClose={() => { savePlaceClear(); }}
                 placeAlias={savePlaceAlias} setPlaceAlias={setSavePlaceAlias}
                 notes={saveNotes} setNotes={setSaveNotes}
+                memoryDate={memoryDate} setMemoryDate ={setMemoryDate}
                 storageCategory={saveStorageCategory} setStorageCategory={setSaveStorageCategory}
                 editRestrict={saveEditRestrict} setEditRestrict={setSaveEditRestrict}
                 visibleEditRestrict={saveVisibleEditRestrict}
                 handleSavePlace={handleSavePlace}
             />
+            }
+
+            {showPlaceDetail && <PlaceDetail
+                onClose={() => { clearPlaceDetail(); }}
+                placeSeqNo={showPlaceDetailData.place_seq_no}
+            />
+
             }
 
         </>

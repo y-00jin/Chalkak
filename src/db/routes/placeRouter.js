@@ -29,8 +29,8 @@ router.post('/place', async (req, res) => {
         placeData.memoryCodeSeqNo = activeMemoryInfo.memory_code_seq_no;
 
         // 중복 데이터 확인 (추억코드, 장소ID)
-        const placeInfoCheck = await queries.getPlaces(undefined, placeData.memoryCodeSeqNo, undefined, placeData.placeId, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined);
-        if(placeInfoCheck !== null){
+        const placeInfoCheck = await queries.getPlaces(undefined, placeData.memoryCodeSeqNo, undefined, placeData.placeId, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined);
+        if (placeInfoCheck !== null) {
             status = 200;
             resultMsg = '이미 저장된 장소 정보입니다. 확인 후 다시 시도해주세요.';
             throw new Error(resultMsg);
@@ -38,7 +38,7 @@ router.post('/place', async (req, res) => {
 
         // 장소 저장
         const insertPlaceRes = await queries.insertPlace(placeData);    // 추억 코드 생성
-        if (!insertPlaceRes.result){ // 생성 실패 시 오류
+        if (!insertPlaceRes.result) { // 생성 실패 시 오류
             status = 400;
             throw new Error(resultMsg);
         }
@@ -65,7 +65,7 @@ router.put('/place', async (req, res) => {
     let status = 500;
     let resultMsg = '장소 수정 중 문제가 발생했습니다. 다시 시도해주세요.';
     let placeInfo = null;
-    
+
     try {
 
         await pool.query('BEGIN'); // 트랜잭션 시작
@@ -78,13 +78,13 @@ router.put('/place', async (req, res) => {
         }
 
         // 데이터 확인 (장소seqno, 추억 코드)
-        const placeInfoCheck = await queries.getPlace(placeData.place_seq_no, activeMemoryInfo.memory_code_seq_no, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined);
-        if(placeInfoCheck === null){
+        const placeInfoCheck = await queries.getPlace(placeData.place_seq_no, activeMemoryInfo.memory_code_seq_no, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined);
+        if (placeInfoCheck === null) {
             throw new Error(resultMsg);
         }
 
         // 수정 가능 여부 확인
-        if(placeInfoCheck.edit_restrict === true && placeInfoCheck.user_seq_no !== loginUser.user_seq_no){
+        if (placeInfoCheck.edit_restrict === true && placeInfoCheck.user_seq_no !== loginUser.user_seq_no) {
             resultMsg = '장소 정보를 수정할 권한이 존재하지 않습니다. 확인 후 다시 시도해주세요.';
             status = 403;
             throw new Error(resultMsg);
@@ -92,10 +92,10 @@ router.put('/place', async (req, res) => {
 
         // 장소 수정
         const updatePlaceRes = await queries.updatePlace(
-            placeInfoCheck.place_seq_no , undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, placeData.place_alias, placeData.notes, placeData.storage_category, placeData.edit_restrict
+            placeInfoCheck.place_seq_no, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, placeData.place_alias, placeData.notes, placeData.storage_category, placeData.edit_restrict, placeData.memory_date
         );
 
-        if (!updatePlaceRes.result){ // 생성 실패 시 오류
+        if (!updatePlaceRes.result) { // 생성 실패 시 오류
             status = 400;
             throw new Error(resultMsg);
         }
@@ -122,7 +122,13 @@ router.get('/memoryCode/:memoryCodeSeqNo', async (req, res) => {
     try {
 
         const memoryCodeSeqNo = req.params.memoryCodeSeqNo;
-        placeList = await queries.getPlaces(undefined, memoryCodeSeqNo, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined);
+        placeList = await queries.getPlaces(undefined, memoryCodeSeqNo, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined);
+
+        // 날짜 형식 변환
+        placeList.forEach(place => {
+            place.memory_date = formatDate(place.memory_date); // memory_date 값을 변환하여 재할당
+        });
+
 
     } catch (error) {
 
@@ -141,11 +147,16 @@ router.get('/active', async (req, res) => {
 
     try {
 
-        let {storageCategory} = req.query;
+        let { storageCategory } = req.query;
 
         const loginUser = req.session.loginUser;
         const activeMemoryInfo = await queries.getMemory(undefined, undefined, loginUser.user_seq_no, undefined, true);    // 활성화 된 추억 조회
-        placeList = await queries.getPlaces(undefined, activeMemoryInfo.memory_code_seq_no, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, storageCategory, undefined);
+        placeList = await queries.getPlaces(undefined, activeMemoryInfo.memory_code_seq_no, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, storageCategory, undefined, undefined);
+
+        // 날짜 형식 변환
+        placeList.forEach(place => {
+            place.memory_date = formatDate(place.memory_date); // memory_date 값을 변환하여 재할당
+        });
 
     } catch (error) {
         status == 500;
@@ -169,10 +180,10 @@ router.delete('/place', async (req, res) => {
 
         await pool.query('BEGIN'); // 트랜잭션 시작
 
-        const placeRes = await queries.getPlace(place_seq_no, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined);
+        const placeRes = await queries.getPlace(place_seq_no, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined);
 
         // 장소 정보 확인
-        if(placeRes === null){
+        if (placeRes === null) {
             throw new Error(resultMsg);
         }
 
@@ -205,4 +216,36 @@ router.delete('/place', async (req, res) => {
     }
 });
 
+// 장소 정보 조회
+router.get('/place/placeSeqNo', async (req, res) => {
+    //#swagger.tags = ["Place"]
+    //#swagger.summary = "장소 시퀀스 번호로 조회"
+    let placeInfo = null;
+    let status = 500;
+    try {
+        let { placeSeqNo } = req.query;
+
+        placeInfo = await queries.getPlace(placeSeqNo, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined);
+        if (placeInfo === null) {
+            throw new Error();
+        }
+
+        placeInfo.memory_date = formatDate(placeInfo.memory_date); // memory_date 값을 변환하여 재할당
+        status = 200;
+    } catch (error) {
+        status = 500;
+    } finally {
+        res.status(status).json({ placeInfo: placeInfo });
+    }
+
+});
+
+const formatDate = (param) => {
+    const date = new Date(param);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}`;
+    return formattedDate;
+};
 module.exports = router;
