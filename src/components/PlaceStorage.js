@@ -321,9 +321,9 @@ export default function PlaceStorage({ closeEvent }) {
                                         <SiMaplibre className='size-10' style={{ color: data.symbol_color_code }} />
                                         <div className={`flex-1 cursor-pointer ${selectedData !== null && selectedData.place_seq_no === data.place_seq_no ? 'text-[#96DBF4]' : ''}`} onClick={() => handlePlaceDataClick(data)}>
                                             <p className='text-lg'>{data.place_alias}</p>
-                                            <p className='text-sm flex items-center gap-1 ' title={`${data.address}`}><CiLocationOn /> {data.address.length > 25 ? `${data.address.substring(0, 25)}...` : data.address}</p>
+                                            <p className='text-sm flex items-center gap-1 ' title={`${data.address}`}><CiLocationOn /> {data.address.length > 25 ? `${data.address.substring(0, 18)}...` : data.address}</p>
                                             {data.notes !== '' &&
-                                                <p className='text-sm flex items-center gap-1  ' title={`${data.notes}`} ><CiSignpostR1 /> {data.notes.length > 25 ? `${data.notes.substring(0, 25)}...` : data.notes}</p>
+                                                <p className='text-sm flex items-center gap-1  ' title={`${data.notes}`} ><CiSignpostR1 /> {data.notes.length > 25 ? `${data.notes.substring(0, 18)}...` : data.notes}</p>
                                             }
 
                                         </div>
@@ -400,9 +400,9 @@ export default function PlaceStorage({ closeEvent }) {
                                         <div className={`flex-1 cursor-pointer ${selectedData !== null && selectedData.place_seq_no === data.place_seq_no ? 'text-[#96DBF4]' : ''}`} onClick={() => handlePlaceDataClick(data)}>
                                             <p className='text-lg'>{data.place_alias}</p>
 
-                                            <p className='text-sm flex items-center gap-1 ' title={`${data.address}`}><CiLocationOn /> {data.address.length > 25 ? `${data.address.substring(0, 25)}...` : data.address}</p>
+                                            <p className='text-sm flex items-center gap-1 ' title={`${data.address}`}><CiLocationOn /> {data.address.length > 25 ? `${data.address.substring(0, 18)}...` : data.address}</p>
                                             {data.notes !== '' &&
-                                                <p className='text-sm flex items-center gap-1  ' title={`${data.notes}`} ><CiSignpostR1 /> {data.notes.length > 25 ? `${data.notes.substring(0, 25)}...` : data.notes}</p>
+                                                <p className='text-sm flex items-center gap-1  ' title={`${data.notes}`} ><CiSignpostR1 /> {data.notes.length > 25 ? `${data.notes.substring(0, 18)}...` : data.notes}</p>
                                             }
 
                                         </div>
