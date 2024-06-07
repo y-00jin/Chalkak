@@ -241,6 +241,10 @@ router.get('/place/placeSeqNo', async (req, res) => {
 });
 
 const formatDate = (param) => {
+    if(param === null || param === ''){
+        return null;
+    }
+    
     const date = new Date(param);
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
