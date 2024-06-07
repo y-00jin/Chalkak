@@ -193,11 +193,13 @@ async function createTables() {
         notes text NULL,
         storage_category varchar(100) NOT NULL,
         edit_restrict bool NOT NULL,
+        memory_date date NULL,
         CONSTRAINT place_pk PRIMARY KEY (place_seq_no),
         CONSTRAINT place_fk FOREIGN KEY (memory_code_seq_no) REFERENCES public.memory_code(memory_code_seq_no),
         CONSTRAINT place_fk_1 FOREIGN KEY (user_seq_no) REFERENCES public.users(user_seq_no)
       );
     `);
+
     console.log('테이블 생성 완료');
   } catch (error) {
     console.error('테이블 생성 실패:', error);
