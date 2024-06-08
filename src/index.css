@@ -387,3 +387,16 @@ input[type='radio']:checked {
   box-shadow: 0 0 0 1.6px #96DBF4;
 }
 
+
+.arrow-box::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -10px; /* 화살표가 p 태그의 왼쪽에 위치하도록 조정 */
+  transform: translateY(-50%);
+  border-width: 8px;
+  border-style: solid;
+  border-color: transparent transparent transparent gray; /* 원하는 색상으로 변경 */
+}
+
+

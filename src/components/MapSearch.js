@@ -365,7 +365,7 @@ export default function MapSearch({ closeEvent }) {
                                             </div>
 
                                         </div>
-                                        <button className='mr-4' id={`starBtn_${data.placeId}`} onClick={() => { setSavePlaceId(data.placeId); setSavePlaceAlias(data.placeNm); setShowPlaceSave(true) }}>
+                                        <button className='mr-4' id={`starBtn_${data.placeId}`} onClick={() => { if(checkSavePlace(data) === false){setSavePlaceId(data.placeId); setSavePlaceAlias(data.placeNm); setShowPlaceSave(true); }}} >
                                             <FaRegStar className={`size-6 ${checkSavePlace(data) ? 'text-[#FFE400]' : ''}`} />
                                         </button>
                                     </div>
@@ -432,7 +432,7 @@ export default function MapSearch({ closeEvent }) {
                                                 <p>{data.address}</p>
                                             </div>
                                         </div>
-                                        <button className='mr-4' onClick={() => { setSavePlaceId(data.placeId); setSavePlaceAlias(data.placeNm); setShowPlaceSave(true) }}>
+                                        <button className='mr-4' onClick={() => { if(checkSavePlace(data) === false){setSavePlaceId(data.placeId); setSavePlaceAlias(data.placeNm); setShowPlaceSave(true); }}}>
                                             <FaRegStar className={`size-6 ${checkSavePlace(data) ? 'text-[#FFE400]' : ''}`} />
                                         </button>
                                     </div>

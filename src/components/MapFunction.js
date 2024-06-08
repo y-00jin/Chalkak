@@ -39,13 +39,16 @@ export default function MapFunction() {
     setDrawStatus(!drawStatus);   // 상태 변경
 
     let sidebar = document.querySelector('.map-sidebar-content');
+    let sidebarToggle = document.querySelector('.map-sidebar-content-toggle');
     console.log(sidebar);
     // 스크롤 잠그기
     if (!drawStatus) {
       sidebar.style.zIndex = '10';
+      sidebarToggle.style.zIndex = '10';
       document.body.style.overflow = 'hidden';  // 모바일의 경우 스크롤 정지
     } else {
       sidebar.style.zIndex = '25';
+      sidebarToggle.style.zIndex = '25';
       document.body.style.overflow = 'auto';
     }
   }

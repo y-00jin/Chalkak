@@ -22,9 +22,6 @@ export default function PlaceSave({ onClose, placeAlias, setPlaceAlias, notes, s
     const handleEditRestrict = () => {
         setEditRestrict(!editRestrict);
     };
-useEffect(()=>{
-console.log(memoryDate);
-},[])
 
     return (
         <>
