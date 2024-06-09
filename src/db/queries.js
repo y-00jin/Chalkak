@@ -680,6 +680,7 @@ const updatePlace = async (placeSeqNo, memoryCodeSeqNo, userSeqNo, placeId, plac
 };
 
 
+
 const deletePlace = async (conditions) => {
   try {
     let queryText = 'DELETE FROM place WHERE ';
@@ -746,7 +747,208 @@ const deletePlace = async (conditions) => {
 };
 // place ##
 
+// ## place_detailsymbol_color_code
 
+// 장소 목록 조회
+const getPlaceDetails = async (placeDetailSeqNo, placeSeqNo, userSeqNo, placeDetailContent, createDt) => {
+  try {
+    // let queryText = 'SELECT * FROM place WHERE 1 = 1';
+    let queryText = `
+    select cc.common_code_nm as symbol_color_code, u.user_nm , pd.*
+    from place_detail pd 
+    JOIN
+      common_code cc ON cc.common_code = (
+        SELECT m.symbol_color_code 
+        FROM memory m 
+        where (
+          select memory_code_seq_no
+          from place p
+          where p.place_seq_no = pd.place_seq_no 
+        ) = m.memory_code_seq_no 
+          AND m.user_seq_no = pd.user_seq_no
+      )
+    JOIN users u on u.user_seq_no = pd.user_seq_no 
+    WHERE 1 = 1
+    `;
+
+    const queryParams = [];
+
+    // 매개변수가 주어진 경우에만 해당 조건을 추가
+    if (placeDetailSeqNo !== undefined) {
+      queryText += ` AND pd.place_detail_seq_no = $${queryParams.push(placeDetailSeqNo)}`;
+    }
+    if (placeSeqNo !== undefined) {
+      queryText += ` AND pd.place_seq_no = $${queryParams.push(placeSeqNo)}`;
+    }
+    if (userSeqNo !== undefined) {
+      queryText += ` AND pd.user_seq_no = $${queryParams.push(userSeqNo)}`;
+    }
+    if (placeDetailContent !== undefined ) {
+      queryText += ` AND pd.place_detail_content = $${queryParams.push(placeDetailContent)}`;
+    }
+    if (createDt !== undefined ) {
+      queryText += ` AND pd.createDt = $${queryParams.push(createDt)}`;
+    }
+    queryText += ' order by place_detail_seq_no asc';
+
+    // 쿼리 실행
+    const result = await pool.query(queryText, queryParams);
+
+    // 결과가 정확히 하나인지 확인하고, 그렇지 않으면 오류 발생
+    if (result.rows.length < 1) {
+      return null;
+    } else {
+      return result.rows;
+    }
+
+  } catch (error) {
+    throw error;
+  }
+};
+
+
+// 장소 목록 조회
+const getPlaceDetail = async (placeDetailSeqNo, placeSeqNo, userSeqNo, placeDetailContent, createDt) => {
+  try {
+    // let queryText = 'SELECT * FROM place WHERE 1 = 1';
+    let queryText = `
+    SELECT place_detail_seq_no, place_seq_no, user_seq_no, place_detail_content, create_dt
+    FROM place_detail
+    WHERE 1 = 1
+    `;
+
+    const queryParams = [];
+
+    // 매개변수가 주어진 경우에만 해당 조건을 추가
+    if (placeDetailSeqNo !== undefined) {
+      queryText += ` AND place_detail_seq_no = $${queryParams.push(placeDetailSeqNo)}`;
+    }
+    if (placeSeqNo !== undefined) {
+      queryText += ` AND place_seq_no = $${queryParams.push(placeSeqNo)}`;
+    }
+    if (userSeqNo !== undefined) {
+      queryText += ` AND user_seq_no = $${queryParams.push(userSeqNo)}`;
+    }
+    if (placeDetailContent !== undefined ) {
+      queryText += ` AND place_detail_content = $${queryParams.push(placeDetailContent)}`;
+    }
+    if (createDt !== undefined ) {
+      queryText += ` AND createDt = $${queryParams.push(createDt)}`;
+    }
+    queryText += ' order by place_detail_seq_no asc';
+
+    // 쿼리 실행
+    const result = await pool.query(queryText, queryParams);
+
+    if (result.rows.length < 1) {
+      return null;
+    } else if (result.rows.length > 1) {
+      throw new Error();
+    } else {
+      return result.rows[0];
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
+
+const insertPlaceDetail = async (placeDetailData) => {
+  try {
+    const queryText = `INSERT INTO place_detail
+    (place_detail_seq_no, place_seq_no, user_seq_no, place_detail_content, create_dt)
+    VALUES(nextval('sq_place_detail'), $1, $2, $3, $4)`;
+
+    const {
+      place_seq_no, user_seq_no, place_detail_content, create_dt
+    } = placeDetailData;
+
+    // 쿼리 실행
+    const placeInfo = await pool.query(queryText, [
+      place_seq_no, user_seq_no, place_detail_content, create_dt
+    ]);
+
+    return { result: true };
+  } catch (error) {
+    return { result: false };
+  }
+};
+
+
+
+
+const deletePlaceDetail = async (conditions) => {
+  try {
+    let queryText = 'DELETE FROM place_detail WHERE ';
+    const queryParams = [];
+    const conditionStrings = [];
+
+    if (conditions.place_detail_seq_no !== undefined) {
+      conditionStrings.push(`place_detail_seq_no = $${queryParams.push(conditions.place_detail_seq_no)}`);
+    }
+    if (conditions.place_seq_no !== undefined) {
+      conditionStrings.push(`place_seq_no = $${queryParams.push(conditions.place_seq_no)}`);
+    }
+    if (conditions.user_seq_no !== undefined) {
+      conditionStrings.push(`user_seq_no = $${queryParams.push(conditions.user_seq_no)}`);
+    }
+    if (conditionStrings.length > 0) {
+      queryText += conditionStrings.join(' AND ');
+
+      // 쿼리 실행
+      const result = await pool.query(queryText, queryParams);
+      return result.rowCount > 0 ? true : false;
+    } else {
+      throw new Error();
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
+
+// 추억 코드 수정
+const updatePlaceDetail = async (place_detail_seq_no, place_seq_no, user_seq_no, place_detail_content, create_dt) => {
+
+  try {
+
+    let queryText = 'UPDATE place_detail SET ';
+    const queryParams = [];
+
+    if (place_seq_no !== undefined) {
+      queryText += `place_seq_no = $${queryParams.push(place_seq_no)}, `;
+    }
+    if (user_seq_no !== undefined) {
+      queryText += `user_seq_no = $${queryParams.push(user_seq_no)}, `;
+    }
+    if (place_detail_content !== undefined) {
+      queryText += `place_detail_content = $${queryParams.push(place_detail_content)}, `;
+    }
+    if (create_dt !== undefined) {
+      queryText += `create_dt = $${queryParams.push(create_dt)}, `;
+    }
+
+    // 마지막 쉼표 제거
+    queryText = queryText.slice(0, -2);
+    queryText += ` WHERE place_detail_seq_no = $${queryParams.push(place_detail_seq_no)} RETURNING * `;
+
+    // 쿼리 실행
+    const result = await pool.query(queryText, queryParams);
+
+    // 결과가 존재하면 첫 번째 레코드 반환, 그렇지 않으면 null 반환
+    const updatedPlaceDetailInfo = result.rows.length > 0 ? result.rows[0] : null;
+
+    // 결과 반환
+    return { result: true, updatedPlaceDetailInfo: updatedPlaceDetailInfo };
+
+  } catch (error) {
+    return { result: false, updatedPlaceDetailInfo: null };
+  }
+
+}
+
+
+// place_detail ##
 
 
 module.exports = {
@@ -755,5 +957,8 @@ module.exports = {
   getMemory, insertMemory, updateMemoryActiveNotThis, getMemorys, updateMemory, getUsersByMemoryCode, getMemorysInactive, deleteMemory,
   getMemoryCode, getMemoryCodes, insertMemoryCode, updateMemoryCode, deleteMemoryCode,
   getMemorySymbolColorCodeChoice,
-  insertPlace, getPlaces, getPlace, updatePlace, deletePlace
+  insertPlace, getPlaces, getPlace, updatePlace, deletePlace,
+  getPlaceDetails,getPlaceDetail, insertPlaceDetail, deletePlaceDetail, updatePlaceDetail
 };
+
+

@@ -301,14 +301,27 @@ router.delete('/:memorySeqNo', async (req, res) => {
             throw new Error(resultMsg);
         }
 
-        // place 삭제
-        const deletePlaceData = {
-            memoryCodeSeqNo : memoryRes.memory_code_seq_no,
-            userSeqNo: loginUser.user_seq_no
-        }
-        const placeDeleteRes = await queries.deletePlace(deletePlaceData);
-        if (!placeDeleteRes) {
-            throw new Error(resultMsg);
+        // 본인이 저장한 장소 조회
+        const placeRes = await queries.getPlaces(undefined, memoryRes.memory_code_seq_no, loginUser.user_seq_no, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined);
+        if(placeRes !== null){
+            placeRes.forEach(async place => {
+                // 장소 댓글 삭제
+                let deletePlaceDetailData = {
+                    place_seq_no: place.place_seq_no
+                };
+                await queries.deletePlaceDetail(deletePlaceDetailData);
+            });
+
+            // place 삭제
+            const deletePlaceData = {
+                memoryCodeSeqNo : memoryRes.memory_code_seq_no,
+                userSeqNo: loginUser.user_seq_no
+            }
+            const placeDeleteRes = await queries.deletePlace(deletePlaceData);
+            if (!placeDeleteRes) {
+                throw new Error(resultMsg);
+            }
+
         }
 
         // memory 삭제
@@ -336,6 +349,7 @@ router.delete('/:memorySeqNo', async (req, res) => {
         await pool.query('COMMIT'); // 트랜잭션 커밋
 
     } catch (error) {
+        console.log(error);
         await pool.query('ROLLBACK'); // 트랜잭션 롤백
     } finally {
         res.status(status).json({ resultMsg: resultMsg, redirectUrl: redirectUrl });

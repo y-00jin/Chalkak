@@ -15,7 +15,7 @@ export default function MemoryLogin() {
     const handleLoginTest1 = async () => {
         const reqData = {
             userInfo: {
-                user_seq_no: 1,
+                user_seq_no: 2,
                 email: 'test1@test.com',
                 user_nm: '테스트1',
                 social_type: 'naver',
@@ -42,7 +42,7 @@ export default function MemoryLogin() {
     const handleLoginTest2 = async () => {
         const reqData = {
             userInfo: {
-                user_seq_no: 2,
+                user_seq_no: 3,
                 email: 'test2@test.com',
                 user_nm: '테스트2',
                 social_type: 'google',
@@ -65,6 +65,17 @@ export default function MemoryLogin() {
                 navigate('/');
             });
     }
+    
+
+    useEffect(() => {
+        const loginCheck = async () => {
+            const res = await axiosInstance.get('/api/users/login/check');
+            if (res.data.result) {
+                navigate('/memories/connection');
+            }
+        }
+        loginCheck();
+    },[])
 
     return (
 
