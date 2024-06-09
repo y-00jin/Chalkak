@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { GoStar } from "react-icons/go";
 import { IoInformationCircleOutline } from "react-icons/io5";
 import { CiSettings } from "react-icons/ci";
@@ -16,6 +16,7 @@ import useMobile from 'components/UseMobile';
 import { IoExitOutline } from "react-icons/io5";
 import { handleLogout } from 'utils/commonFunctionsReact';
 import { MapContext } from 'context/MapContext';
+import axiosInstance from 'utils/axiosInstance';
 
 export default function Sidebar() {
 
@@ -27,7 +28,7 @@ export default function Sidebar() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);   // pc 사이드바 펼침 상태
     const [isMobileMenubarOpen, setIsMobileMenubarOpen] = useState(false);  // 모바일 메뉴바 펼침 상태
 
-    
+    const [memoryNmMenu, setMemoryNmMenu] = useState('');
     // 메뉴 클릭 이벤트
     const handleMenuClick = (target) => {
         setIsMobileMenubarOpen(false);   // 모바일 메뉴 바 상태 false
@@ -36,6 +37,25 @@ export default function Sidebar() {
 
         storageMarker.forEach(marker => marker.setMap(null));
     };
+
+    useEffect(()=> {
+
+        // 추억 정보 가져오기
+        const getActiveMemoryInfo = async () => {
+            try {
+
+                // 세션이 비어있는 경우 추억 정보 조회
+                const res = await axiosInstance.get(`/api/memories/active`);
+                const activeMemoryInfo = res.data.memoryInfo;
+                // 추억 정보 설정
+                setMemoryNmMenu(activeMemoryInfo.memory_nm);
+            } catch (error) {
+                setMemoryNmMenu('');
+            }
+        };
+        getActiveMemoryInfo();
+
+    },[])
 
     return (
 
@@ -147,8 +167,8 @@ export default function Sidebar() {
                             <HiUserCircle className='size-[50%] p-2 text-gray-300' />
 
                             <div className='flex flex-col justify-center'>
-                                <b>이유진</b>
-                                <p>강릉여행</p>
+                                <b>{JSON.parse(sessionStorage.getItem('loginUser')).user_nm}</b>
+                                <p>{memoryNmMenu}</p>
                             </div>
                         </div>
 

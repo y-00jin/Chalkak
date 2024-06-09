@@ -150,7 +150,7 @@ router.get('/active', async (req, res) => {
         let { storageCategory } = req.query;
 
         const loginUser = req.session.loginUser;
-        const activeMemoryInfo = await queries.getMemory(undefined, undefined,3, undefined, true);    // 활성화 된 추억 조회
+        const activeMemoryInfo = await queries.getMemory(undefined, undefined, loginUser.user_seq_no, undefined, true);    // 활성화 된 추억 조회
         placeList = await queries.getPlaces(undefined, activeMemoryInfo.memory_code_seq_no, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, storageCategory, undefined, undefined);
 
         // 날짜 형식 변환

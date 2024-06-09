@@ -15,8 +15,11 @@ import { GoTrash } from "react-icons/go";
 export default function PlaceDetail({ onClose, placeSeqNo }) {
 
     const isMobile = useMobile();
-    const [placeData, setPlaceData] = useState({})
+    const [placeData, setPlaceData] = useState({});
 
+    const [placeDetailList, setPlaceDetailList] = useState(null);
+    const [writePd, setWritePd] = useState('');
+    const [modifyPd, setModifyPd] = useState('');
 
     // 장소 정보 가져오기
     const getPlaceInfo = async () => {
@@ -34,6 +37,38 @@ export default function PlaceDetail({ onClose, placeSeqNo }) {
         }
     }
 
+    // 장소 정보 가져오기
+    const getPlaceDetailList = async () => {
+
+        if (Object.keys(placeData).length === 0 && placeData.constructor === Object) return;
+
+        try {
+            const res = await axiosInstance.get(`/api/placeDetails/placeSeqNo`, {
+                params: {
+                    placeSeqNo: placeSeqNo
+                }
+            });
+
+            const loginUser = JSON.parse(sessionStorage.getItem('loginUser'));
+            if (res.data.placeDetailList !== null) {
+                res.data.placeDetailList.forEach(placeDetail => {
+                    placeDetail.editCheck = false;
+                    if (placeDetail.user_seq_no === loginUser.user_seq_no) {
+                        placeDetail.editCheck = true;
+                    }
+                });
+                setPlaceDetailList(res.data.placeDetailList);
+            }
+
+
+        } catch (error) {
+            setPlaceData(null);
+            setPlaceDetailList(null);
+            alert(error.response.data.resultMsg);
+            onClose();
+        }
+    }
+
     // 상세정보
     const openDetailPlaceUrl = (data) => {
         let placeUrl = data;
@@ -46,13 +81,149 @@ export default function PlaceDetail({ onClose, placeSeqNo }) {
     }
 
     // 추억 정보 가져온 후 place_detail 정보 조회
-    useEffect(()=>{
+    useEffect(() => {
 
-    },[placeData])
+        getPlaceDetailList();
+
+    }, [placeData])
 
     useEffect(() => {
+        setWritePd('');
         getPlaceInfo(); // 추억 정보
-    }, [])
+    }, []);
+
+    // 
+    const handleWritePd = async () => {
+        if (writePd === '') {
+            alert('댓글 내용을 입력하세요');
+            return;
+        }
+
+        // 저장  데이터
+        let reqData = {
+            place_seq_no: placeSeqNo,
+            place_detail_content: writePd
+        };
+
+        try {
+            const res = await axiosInstance.post(`/api/placeDetails/placeDetail`, reqData);
+
+            if (res.data.resultMsg !== '') {
+                alert(res.data.resultMsg);
+            } else {
+                setWritePd('');
+                getPlaceDetailList();
+            }
+        } catch (error) {
+            setWritePd('');
+            alert(error.response.data.resultMsg);
+        }
+
+
+    }
+
+    // 수정 버튼
+    const handleModify = async (place_detail_seq_no, place_detail_content) => {
+        setModifyPd(place_detail_content);
+
+        // 기존 스타일 reset
+        document.querySelectorAll('[id^="modify_"]').forEach(element => { if (element.style.display === 'none') { element.style.display = 'block'; } });
+        document.querySelectorAll('[id^="delete_"]').forEach(element => { if (element.style.display === 'none') { element.style.display = 'block'; } });
+        document.querySelectorAll('[id^="content_"]').forEach(element => { if (element.style.display === 'none') { element.style.display = 'block'; } });
+        document.querySelectorAll('[id^="content_ta_"]').forEach(element => { if (element.style.display === 'block') { element.style.display = 'none'; } });
+        document.querySelectorAll('[id^="save_"]').forEach(element => { if (element.style.display === 'block') { element.style.display = 'none'; } });
+        document.querySelectorAll('[id^="cancel_"]').forEach(element => { if (element.style.display === 'block') { element.style.display = 'none'; } });
+
+        // UI 변경
+        document.getElementById(`modify_${place_detail_seq_no}`).style.display = 'none';
+        document.getElementById(`delete_${place_detail_seq_no}`).style.display = 'none';
+        document.getElementById(`content_${place_detail_seq_no}`).style.display = 'none';
+
+        document.getElementById(`content_ta_${place_detail_seq_no}`).style.display = 'block';
+        document.getElementById(`save_${place_detail_seq_no}`).style.display = 'block';
+        document.getElementById(`cancel_${place_detail_seq_no}`).style.display = 'block';
+    }
+
+    // 취소 버튼
+    const handleCancel = async (place_detail_seq_no) => {
+        setModifyPd('');
+        document.getElementById(`modify_${place_detail_seq_no}`).style.display = 'block';
+        document.getElementById(`delete_${place_detail_seq_no}`).style.display = 'block';
+        document.getElementById(`content_${place_detail_seq_no}`).style.display = 'block';
+
+        document.getElementById(`content_ta_${place_detail_seq_no}`).style.display = 'none';
+        document.getElementById(`save_${place_detail_seq_no}`).style.display = 'none';
+        document.getElementById(`cancel_${place_detail_seq_no}`).style.display = 'none';
+    }
+
+    // 삭제 버튼
+    const handleDelete = async (place_detail_seq_no) => {
+        try {
+            const res = await axiosInstance.delete(`/api/placeDetails/placeDetail`, {
+                params: {
+                    place_detail_seq_no: place_detail_seq_no,
+                }
+            });
+
+            if (res.status === 200) {
+                // 기존 스타일 reset
+                document.querySelectorAll('[id^="modify_"]').forEach(element => { if (element.style.display === 'none') { element.style.display = 'block'; } });
+                document.querySelectorAll('[id^="delete_"]').forEach(element => { if (element.style.display === 'none') { element.style.display = 'block'; } });
+                document.querySelectorAll('[id^="content_"]').forEach(element => { if (element.style.display === 'none') { element.style.display = 'block'; } });
+                document.querySelectorAll('[id^="content_ta_"]').forEach(element => { if (element.style.display === 'block') { element.style.display = 'none'; } });
+                document.querySelectorAll('[id^="save_"]').forEach(element => { if (element.style.display === 'block') { element.style.display = 'none'; } });
+                document.querySelectorAll('[id^="cancel_"]').forEach(element => { if (element.style.display === 'block') { element.style.display = 'none'; } });
+
+
+                getPlaceDetailList();
+            } else {
+                alert(res.data.resultMsg);
+            }
+        } catch (error) {
+            alert(error.response.data.resultMsg);
+        }
+    }
+
+    const handleSave = async (place_detail_seq_no) => {
+        if (modifyPd === '') {
+            alert('수정할 댓글 내용을 입력하세요');
+            return;
+        }
+
+        // 저장  데이터
+        let reqData = {
+            place_detail_seq_no: place_detail_seq_no,
+            place_detail_content: modifyPd
+        };
+
+        try {
+            const res = await axiosInstance.put(`/api/placeDetails/placeDetail`, reqData);
+
+            if (res.data.resultMsg !== '') {
+                alert(res.data.resultMsg);
+            } else {
+
+                document.querySelectorAll('[id^="modify_"]').forEach(element => { if (element.style.display === 'none') { element.style.display = 'block'; } });
+                document.querySelectorAll('[id^="delete_"]').forEach(element => { if (element.style.display === 'none') { element.style.display = 'block'; } });
+                document.querySelectorAll('[id^="content_"]').forEach(element => { if (element.style.display === 'none') { element.style.display = 'block'; } });
+                document.querySelectorAll('[id^="content_ta_"]').forEach(element => { if (element.style.display === 'block') { element.style.display = 'none'; } });
+                document.querySelectorAll('[id^="save_"]').forEach(element => { if (element.style.display === 'block') { element.style.display = 'none'; } });
+                document.querySelectorAll('[id^="cancel_"]').forEach(element => { if (element.style.display === 'block') { element.style.display = 'none'; } });
+
+                setWritePd('');
+                getPlaceDetailList();
+            }
+        } catch (error) {
+            setWritePd('');
+            alert(error.response.data.resultMsg);
+        }
+
+
+    }
+
+
+
+
     return (
         <>
             <div className='fixed top-0 left-0 z-[38] w-full h-screen bg-gray-950 opacity-50' onClick={onClose} />
@@ -93,76 +264,53 @@ export default function PlaceDetail({ onClose, placeSeqNo }) {
                         <div className='flex flex-col flex-1 pt-7 '>
                             <div className='flex-1'>
 
-                                {/* 사용자 추억 목록 */}
-                                <div className='flex flex-col gap-5 mb-5 '>
-                                    <div className='flex flex-col gap-1'>
-                                        <div className='flex items-center gap-1'>
-                                            <BsEmojiSmileFill className='text-[#ff0000]' />
-                                            <p className='text-[#ff0000] text-lg'>강성현</p>
+                                {placeDetailList !== null && placeDetailList.map((data) => (
+                                    <div className='flex flex-col gap-5 mb-5 ' key={data.place_detail_seq_no}>
+                                        <div className='flex flex-col gap-1'>
+                                            <div className='flex items-center gap-1'>
+                                                <BsEmojiSmileFill style={{ color: data.symbol_color_code }} />
+                                                <p style={{ color: data.symbol_color_code }} className='text-lg'>{data.user_nm}</p>
+                                            </div>
+
+                                            <div className='px-5 '>
+                                                <div id={`content_${data.place_detail_seq_no}`} dangerouslySetInnerHTML={{ __html: data.place_detail_content.replace(/\n/g, '<br />') }} />
+                                                <textarea style={{ display: 'none' }} id={`content_ta_${data.place_detail_seq_no}`} className='bg-gray-200 rounded-2xl w-full min-h-[4.5rem]  resize-none overflow-hidden focus:outline-none focus:ring-2 focus:ring-[#96DBF4] p-2 ' value={modifyPd} onChange={(e) => setModifyPd(e.target.value)} />
+                                            </div>
+
+
+                                            <div className='flex items-center px-5 text-gray-400'>
+                                                <p className=' text-xs flex-1'>{data.create_dt}</p>
+
+                                                {data.editCheck &&
+                                                    <div className='flex gap-2'>
+
+                                                        <button id={`save_${data.place_detail_seq_no}`} style={{ display: 'none' }} className='cursor-pointer hover:text-[#96DBF4] hover:border-[#96DBF4] shadow-sm border-[1px] rounded-full w-12 text-sm' onClick={() => handleSave(data.place_detail_seq_no)}>저장</button>
+                                                        <button id={`cancel_${data.place_detail_seq_no}`} style={{ display: 'none' }} className='cursor-pointer hover:text-[#96DBF4] hover:border-[#96DBF4] shadow-sm border-[1px] rounded-full w-12 text-sm' onClick={() => handleCancel(data.place_detail_seq_no)}>취소</button>
+
+                                                        <button id={`modify_${data.place_detail_seq_no}`} className='cursor-pointer hover:text-[#96DBF4] hover:border-[#96DBF4] shadow-sm border-[1px] rounded-full w-12 text-sm' onClick={() => handleModify(data.place_detail_seq_no, data.place_detail_content)}>수정</button>
+                                                        <button id={`delete_${data.place_detail_seq_no}`} className='cursor-pointer hover:text-[#96DBF4] hover:border-[#96DBF4] shadow-sm border-[1px] rounded-full w-12 text-sm' onClick={() => handleDelete(data.place_detail_seq_no)} >삭제</button>
+                                                    </div>
+                                                }
+
+
+                                            </div>
+
                                         </div>
 
-                                        <div className='px-5 '>
-                                            강릉 여행 너무 재밌었음
-                                        </div>
-                                        <div className='flex items-center px-5 text-gray-400'>
-                                            <p className=' text-xs flex-1'>2024.06.09</p>
-                                            <div className='flex gap-2'>
-                                                <button className='cursor-pointer hover:text-[#96DBF4] hover:border-[#96DBF4] shadow-sm border-[1px] rounded-full w-12 text-sm'>수정</button>
-                                                <button className='cursor-pointer hover:text-[#96DBF4] hover:border-[#96DBF4] shadow-sm border-[1px] rounded-full w-12 text-sm'>삭제</button>
-                                            </div>
-                                        </div>
-                                        {/* <p className='border-[1px] flex-1 rounded-lg p-2 min-h-16 border-gray-200 relative before:content-["<"] before:absolute before:left-[-1rem] before:text-gray-200 before:text-2xl '>내용~~</p> */}
                                     </div>
 
-                                </div>
-
-                                <div className='flex flex-col gap-5 mb-5'>
-                                    <div className='flex flex-col gap-1'>
-                                        <div className='flex items-center gap-1'>
-                                            <BsEmojiSmileFill className='text-[#ff0000]' />
-                                            <p className='text-[#ff0000] text-lg'>강성현</p>
-                                        </div>
-
-                                        <div className='px-5 '>
-                                            강릉 여행 너무 재밌었음
-                                        </div>
-                                        <div className='flex items-center px-5 text-gray-400'>
-                                            <p className=' text-xs flex-1'>2024.06.09</p>
-                                            <div className='flex gap-2'>
-                                                <button className='cursor-pointer hover:text-[#96DBF4] hover:border-[#96DBF4] shadow-sm border-[1px] rounded-full w-12 text-sm'>수정</button>
-                                                <button className='cursor-pointer hover:text-[#96DBF4] hover:border-[#96DBF4] shadow-sm border-[1px] rounded-full w-12 text-sm'>삭제</button>
-                                            </div>
-                                        </div>
-                                        {/* <p className='border-[1px] flex-1 rounded-lg p-2 min-h-16 border-gray-200 relative before:content-["<"] before:absolute before:left-[-1rem] before:text-gray-200 before:text-2xl '>내용~~</p> */}
-                                    </div>
-
-                                </div>
-
+                                ))}
+                                {placeDetailList === null && <div>댓글을 작성해주세요.</div>}
 
                             </div>
-
-
-
-
 
                             {/* 입력창 */}
                             <div className='gap-2 flex items-center p-1 ' >
-                                <textarea className='bg-gray-100 rounded-2xl w-full min-h-[4.5rem]  resize-none overflow-hidden focus:outline-none focus:ring-2 focus:ring-[#96DBF4] '>
+                                <textarea className='bg-gray-200 rounded-2xl w-full min-h-[4.5rem]  resize-none overflow-hidden focus:outline-none focus:ring-2 focus:ring-[#96DBF4] p-2 ' value={writePd} onChange={(e) => setWritePd(e.target.value)} />
 
-                                </textarea>
-                                <button className="bg-[#96DBF4] rounded-full w-20 h-16 text-white text-center ">저장</button>
-
-                                {/* <button className='flex justify-end'>
-                                    <FaCircleCheck className='size-5'/>
-                                </button> */}
-
+                                <button className="bg-[#96DBF4] rounded-full w-20 h-16 text-white text-center " onClick={() => handleWritePd()}>저장</button>
                             </div>
-
-
-
-
                         </div>
-
                     </div>
 
 
