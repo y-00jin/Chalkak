@@ -302,13 +302,17 @@ router.delete('/:memorySeqNo', async (req, res) => {
         }
 
         // 본인이 저장한 장소 조회
-        const placeRes = await queries.getPlaces(undefined, memoryRes.memory_code_seq_no, loginUser.user_seq_no, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined);
+        const placeRes = await queries.getPlaces(undefined, memoryRes.memory_code_seq_no, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined);
         if(placeRes !== null){
             placeRes.forEach(async place => {
-                // 장소 댓글 삭제
+
                 let deletePlaceDetailData = {
-                    place_seq_no: place.place_seq_no
+                    place_seq_no : place.place_seq_no
                 };
+
+                if(place.user_seq_no !== loginUser.user_seq_no){
+                    deletePlaceDetailData.user_seq_no = loginUser.user_seq_no;
+                }
                 await queries.deletePlaceDetail(deletePlaceDetailData);
             });
 

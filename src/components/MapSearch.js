@@ -217,6 +217,8 @@ export default function MapSearch({ closeEvent }) {
                     marker.address = place.address_name;
                     marker.placeUrl = place.place_url;
 
+
+
                     marker.setMap(map);
                     return marker;
                 });

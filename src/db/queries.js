@@ -309,10 +309,10 @@ const deleteMemory = async (memory_seq_no) => {
 
     // 쿼리 실행
     const result = await pool.query(queryText, [memory_seq_no]);
-    return result.rowCount > 0 ? true : false;
+    return true;
 
   } catch (error) {
-    throw error;
+    throw false;
   }
 };
 
@@ -425,10 +425,10 @@ const deleteMemoryCode = async (memory_code_seq_no) => {
 
     // 쿼리 실행
     const result = await pool.query(queryText, [memory_code_seq_no]);
-    return result.rowCount > 0 ? true : false;
+    return true;
 
   } catch (error) {
-    throw error;
+    throw false;
   }
 };
 
@@ -737,12 +737,12 @@ const deletePlace = async (conditions) => {
 
       // 쿼리 실행
       const result = await pool.query(queryText, queryParams);
-      return result.rowCount > 0 ? true : false;
+      return true;
     } else {
-      throw new Error('No conditions provided for deletion.');
+      return false;
     }
   } catch (error) {
-    throw error;
+    return false;
   }
 };
 // place ##
