@@ -742,6 +742,7 @@ const deletePlace = async (conditions) => {
       return false;
     }
   } catch (error) {
+    console.log(error);
     return false;
   }
 };
@@ -897,7 +898,7 @@ const deletePlaceDetail = async (conditions) => {
 
       // 쿼리 실행
       const result = await pool.query(queryText, queryParams);
-      return result.rowCount > 0 ? true : false;
+      return true;
     } else {
       throw new Error();
     }

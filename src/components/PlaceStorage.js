@@ -76,7 +76,7 @@ export default function PlaceStorage({ closeEvent }) {
         storageMarker.forEach(marker => {
             if (marker.place_seq_no === data.place_seq_no) {  // 클릭한 정보 마커 변경
                 marker.setImage(new kakao.maps.MarkerImage(
-                    `${process.env.PUBLIC_URL}/images/marker_search_current.png`, // 마커 이미지 경로
+                    `${process.env.PUBLIC_URL}/images/marker_search_skyblue.png`, // 마커 이미지 경로
                     new kakao.maps.Size(32, 32)
                 ));
                 marker.setZIndex(35); // 클릭된 마커를 가장 위로 올림
@@ -319,7 +319,7 @@ export default function PlaceStorage({ closeEvent }) {
                                     <div className='place-storage-item'>
 
                                         <SiMaplibre className='size-10' style={{ color: data.symbol_color_code }} />
-                                        <div className={`flex-1 cursor-pointer ${selectedData !== null && selectedData.place_seq_no === data.place_seq_no ? 'text-[#96DBF4]' : ''}`} onClick={() => handlePlaceDataClick(data)}>
+                                        <div className={`flex-1 cursor-pointer ${selectedData !== null && selectedData.place_seq_no === data.place_seq_no ? 'text-[#00BFFF]' : ''}`} onClick={() => handlePlaceDataClick(data)}>
                                             <p className='text-lg'>{data.place_alias}</p>
                                             <p className='text-sm flex items-center gap-1 ' title={`${data.address}`}><CiLocationOn /> {data.address.length > 25 ? `${data.address.substring(0, 18)}...` : data.address}</p>
                                             {data.notes !== '' &&
@@ -342,7 +342,7 @@ export default function PlaceStorage({ closeEvent }) {
                                     </div>
 
                                     {data.place_url !== '' &&
-                                        <div className={`ml-[3.25rem] ${selectedData !== null && selectedData.place_seq_no === data.place_seq_no ? 'text-[#96DBF4]' : 'text-gray-600'} `}>
+                                        <div className={`ml-[3.25rem] ${selectedData !== null && selectedData.place_seq_no === data.place_seq_no ? 'text-[#00BFFF]' : 'text-gray-600'} `}>
                                             <button className='flex gap-1 items-center cursor-pointer text-sm' onClick={() => openPlaceUrl(data)}>
                                                 <IoInformationCircleOutline className='size-3' />
                                                 상세 정보
@@ -366,9 +366,9 @@ export default function PlaceStorage({ closeEvent }) {
                 <div role="presentation" className='absolute top-0 left-0 flex gap-2 h-20 w-full px-6 py-5 items-center bg-white z-[25]'>
                     <button className=''>
                         {showMobileStorage ?
-                            <RiRoadMapFill className='size-6 text-[#96DBF4]' onClick={() => setShowMobileStorage((val) => !val)} />
+                            <RiRoadMapFill className='size-6 text-[#00BFFF]' onClick={() => setShowMobileStorage((val) => !val)} />
                             :
-                            <FaListUl className='size-6 text-[#96DBF4]' onClick={() => setShowMobileStorage((val) => !val)} />
+                            <FaListUl className='size-6 text-[#00BFFF]' onClick={() => setShowMobileStorage((val) => !val)} />
                         }
                     </button>
                     <button className='menu-mobile-close-btn absolute right-5' onClick={() => closeEvent('mapSearch')}>
@@ -397,7 +397,7 @@ export default function PlaceStorage({ closeEvent }) {
                                     <div className='place-storage-item'>
 
                                         <SiMaplibre className='size-10' style={{ color: data.symbol_color_code }} />
-                                        <div className={`flex-1 cursor-pointer ${selectedData !== null && selectedData.place_seq_no === data.place_seq_no ? 'text-[#96DBF4]' : ''}`} onClick={() => handlePlaceDataClick(data)}>
+                                        <div className={`flex-1 cursor-pointer ${selectedData !== null && selectedData.place_seq_no === data.place_seq_no ? 'text-[#00BFFF]' : ''}`} onClick={() => handlePlaceDataClick(data)}>
                                             <p className='text-lg'>{data.place_alias}</p>
 
                                             <p className='text-sm flex items-center gap-1 ' title={`${data.address}`}><CiLocationOn /> {data.address.length > 25 ? `${data.address.substring(0, 18)}...` : data.address}</p>
@@ -422,7 +422,7 @@ export default function PlaceStorage({ closeEvent }) {
 
                                     {data.place_url !== '' &&
 
-                                        <div className={`ml-[3.25rem] ${selectedData !== null && selectedData.place_seq_no === data.place_seq_no ? 'text-[#96DBF4]' : 'text-gray-600'} `}>
+                                        <div className={`ml-[3.25rem] ${selectedData !== null && selectedData.place_seq_no === data.place_seq_no ? 'text-[#00BFFF]' : 'text-gray-600'} `}>
                                             <button className='flex gap-1 items-center cursor-pointer text-sm' onClick={() => openPlaceUrl(data)}>
                                                 <IoInformationCircleOutline className='size-3' />
                                                 상세 정보

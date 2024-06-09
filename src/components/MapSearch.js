@@ -291,7 +291,7 @@ export default function MapSearch({ closeEvent }) {
         markers.forEach(marker => {
             if (marker.placeId === data.placeId) {  // 클릭한 정보 마커 변경
                 marker.setImage(new kakao.maps.MarkerImage(
-                    `${process.env.PUBLIC_URL}/images/marker_search_current.png`, // 마커 이미지 경로
+                    `${process.env.PUBLIC_URL}/images/marker_search_skyblue.png`, // 마커 이미지 경로
                     new kakao.maps.Size(32, 32)
                 ));
                 marker.setZIndex(10); // 클릭된 마커를 가장 위로 올림
@@ -361,7 +361,7 @@ export default function MapSearch({ closeEvent }) {
                                     <div className='place-search-item'>
                                         <div className='place-search-item flex-1' onClick={() => handlePlaceDataClick(data)}>
                                             <SiMaplibre className='size-10 text-slate-300' />
-                                            <div className={`flex-1 ${selectedData !== null && selectedData.placeId === data.placeId ? 'text-[#96DBF4]' : ''}`}>
+                                            <div className={`flex-1 ${selectedData !== null && selectedData.placeId === data.placeId ? 'text-[#00BFFF]' : ''}`}>
                                                 <p>{data.placeNm}</p>
                                                 <p>{data.address}</p>
                                             </div>
@@ -393,9 +393,9 @@ export default function MapSearch({ closeEvent }) {
                     {showMobileMapSearch &&
                         <button>
                             {showMobileMapList ?
-                                <RiRoadMapFill className='size-7 text-[#96DBF4]' onClick={() => setShowMobileMapList((val) => !val)} />
+                                <RiRoadMapFill className='size-7 text-[#00BFFF]' onClick={() => setShowMobileMapList((val) => !val)} />
                                 :
-                                <FaListUl className='size-7 text-[#96DBF4]' onClick={() => setShowMobileMapList((val) => !val)} />
+                                <FaListUl className='size-7 text-[#00BFFF]' onClick={() => setShowMobileMapList((val) => !val)} />
                             }
                         </button>
                     }
@@ -429,7 +429,7 @@ export default function MapSearch({ closeEvent }) {
                                     <div className='place-search-item'>
                                         <div className='place-search-item flex-1' onClick={() => handlePlaceDataClick(data)}>
                                             <SiMaplibre className='size-10 text-slate-300' />
-                                            <div className={`flex-1 ${selectedData !== null && selectedData.placeId === data.placeId ? 'text-[#96DBF4]' : ''}`}>
+                                            <div className={`flex-1 ${selectedData !== null && selectedData.placeId === data.placeId ? 'text-[#00BFFF]' : ''}`}>
                                                 <p>{data.placeNm}</p>
                                                 <p>{data.address}</p>
                                             </div>

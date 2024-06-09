@@ -150,7 +150,7 @@ export default function MapFunction() {
     <>
       <div className={`absolute right-4 ${isMobile ? 'top-28' : 'top-4'} flex flex-col gap-4`}>
         
-        <button className={`map-func-btn z-[25] ${drawStatus === true ? 'text-white bg-[#96DBF4]' : 'bg-white text-black'}`} onClick={handleDraw}>
+        <button className={`map-func-btn z-[25] ${drawStatus === true ? 'text-white bg-[#00BFFF]' : 'bg-white text-black'}`} onClick={handleDraw}>
           <TfiPencilAlt />
         </button>
 

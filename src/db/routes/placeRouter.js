@@ -195,11 +195,19 @@ router.delete('/place', async (req, res) => {
             throw new Error(resultMsg);
         }
 
+        // 장소 댓글 삭제
+        let deletePlaceDetailData = {
+            place_seq_no: place_seq_no
+        };
+        const deletePlaceRes = await queries.deletePlaceDetail(deletePlaceDetailData);
+        if (!deletePlaceRes) {
+            throw new Error(resultMsg);
+        }
+
         const deletePlaceData = {
             placeSeqNo: place_seq_no
         }
-
-        // 삭제
+        // 장소 삭제
         const deleteRes = await queries.deletePlace(deletePlaceData);
         if (!deleteRes) {
             throw new Error(resultMsg);

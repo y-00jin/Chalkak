@@ -96,7 +96,7 @@
   @apply text-2xl font-bold;
 }
 .memory-write-input-box{
-  @apply w-[80%] max-w-sm  mx-auto border-b-2 border-gray-600 hover:border-[#96DBF4] py-2;
+  @apply w-[80%] max-w-sm  mx-auto border-b-2 border-gray-600 hover:border-[#00BFFF] py-2;
 }
 .memory-write-input{
   @apply appearance-none bg-transparent border-none w-full text-gray-700 py-1 px-2 focus:outline-none
@@ -118,7 +118,7 @@
 
 /* 구름 버튼 */
 .cloud-button{
-  @apply bg-transparent border-none  text-base cursor-pointer h-[150px] pl-2 text-[#96DBF4] mx-auto my-0 w-[40%];
+  @apply bg-transparent border-none  text-base cursor-pointer h-[150px] pl-2 text-[#00BFFF] mx-auto my-0 w-[40%];
 
   /* 구름 모양 배경 이미지 */
   background-image: url('../public/images/cloud.png');
@@ -150,7 +150,7 @@
 
 /* 메뉴 활성화 탭 */
 .map-menu-item-active{
-  @apply text-white bg-[#96DBF4]
+  @apply text-white bg-[#00BFFF]
 }
 
 /* 데스크톱 화면 */
@@ -198,11 +198,11 @@
   }
   /* 모바일 장소 검색창 */
   .map-mobile-search-input{
-    @apply flex-grow mx-2 rounded-full px-5 py-1 border border-gray-300 focus:outline-none focus:border-[#96DBF4] shadow-lg;
+    @apply flex-grow mx-2 rounded-full px-5 py-1 border border-gray-300 focus:outline-none focus:border-[#00BFFF] shadow-lg;
   }
   /* 모바일 메뉴 버튼 */
   .map-mobile-menu-btn{
-    @apply rounded-full  bg-[#96DBF4] text-white cursor-pointer z-20 shadow-lg text-3xl font-bold size-14 flex items-center justify-center;
+    @apply rounded-full  bg-[#00BFFF] text-white cursor-pointer z-20 shadow-lg text-3xl font-bold size-14 flex items-center justify-center;
   }
   
   /* 모바일 메뉴 박스 */
@@ -235,7 +235,7 @@
 /* ### components > MapSearch, MemoryChange, MemoryInfo */
 
 .map-search-input{
-  @apply flex-grow rounded-full px-5 py-3 w-full border border-gray-300 focus:outline-none focus:border-[#96DBF4] shadow-lg;
+  @apply flex-grow rounded-full px-5 py-3 w-full border border-gray-300 focus:outline-none focus:border-[#00BFFF] shadow-lg;
 }
 .place-search-item{
   @apply flex gap-3 items-center ;
@@ -252,10 +252,10 @@
   @apply flex flex-col justify-center py-5 items-center gap-5;
 }
 .memory-change-btn{
-  @apply bg-[#96DBF4] w-32 h-12 rounded-full text-white ;
+  @apply bg-[#00BFFF] w-32 h-12 rounded-full text-white ;
 }
 .memory-change-item-selected{
-  @apply text-[#96DBF4];
+  @apply text-[#00BFFF];
 }
 
 /* 데스크톱 화면 */
@@ -358,7 +358,7 @@
   @apply w-[50%] pb-3  text-gray-400 border-b border-gray-400;
 }
 .place-storage-tab-item-active{
-  @apply text-[#96DBF4] border-b border-[#96DBF4];
+  @apply text-[#00BFFF] border-b border-[#00BFFF];
 }
 .place-storage-box{
   @apply flex flex-col min-h-[82%];
@@ -382,9 +382,9 @@ input[type='radio'] {
   cursor: pointer;
 }
 input[type='radio']:checked {
-  background-color: #96DBF4; 
+  background-color: #00BFFF; 
   border: 3px solid white;
-  box-shadow: 0 0 0 1.6px #96DBF4;
+  box-shadow: 0 0 0 1.6px #00BFFF;
 }
 
 

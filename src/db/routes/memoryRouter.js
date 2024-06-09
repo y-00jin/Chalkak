@@ -301,20 +301,20 @@ router.delete('/:memorySeqNo', async (req, res) => {
             throw new Error(resultMsg);
         }
 
-        // 본인이 저장한 장소 조회
+        
         const placeRes = await queries.getPlaces(undefined, memoryRes.memory_code_seq_no, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined);
         if(placeRes !== null){
-            placeRes.forEach(async place => {
 
+            for (const place of placeRes) {
                 let deletePlaceDetailData = {
-                    place_seq_no : place.place_seq_no
+                    place_seq_no: place.place_seq_no
                 };
-
-                if(place.user_seq_no !== loginUser.user_seq_no){
+        
+                if (place.user_seq_no !== loginUser.user_seq_no) {
                     deletePlaceDetailData.user_seq_no = loginUser.user_seq_no;
                 }
                 await queries.deletePlaceDetail(deletePlaceDetailData);
-            });
+            }
 
             // place 삭제
             const deletePlaceData = {
@@ -322,6 +322,7 @@ router.delete('/:memorySeqNo', async (req, res) => {
                 userSeqNo: loginUser.user_seq_no
             }
             const placeDeleteRes = await queries.deletePlace(deletePlaceData);
+            console.log(placeDeleteRes);
             if (!placeDeleteRes) {
                 throw new Error(resultMsg);
             }

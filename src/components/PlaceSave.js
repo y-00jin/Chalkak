@@ -37,7 +37,7 @@ export default function PlaceSave({ onClose, placeAlias, setPlaceAlias, notes, s
                                 value={placeAlias}
                                 onChange={(e) => setPlaceAlias(e.target.value)}
                                 placeholder='장소 명'
-                                className='w-full bg-gray-100 px-5 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#96DBF4]'
+                                className='w-full bg-gray-100 px-5 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00BFFF]'
                             />
                         </label>
                         <label>
@@ -46,7 +46,7 @@ export default function PlaceSave({ onClose, placeAlias, setPlaceAlias, notes, s
                                 value={notes}
                                 onChange={(e) => setNotes(e.target.value)}
                                 placeholder='설명'
-                                className='w-full bg-gray-100 px-5 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#96DBF4]'
+                                className='w-full bg-gray-100 px-5 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00BFFF]'
                             />
                         </label>
                         {
@@ -56,7 +56,7 @@ export default function PlaceSave({ onClose, placeAlias, setPlaceAlias, notes, s
                                     type="date"
                                     value={memoryDate}
                                     onChange={(e) => setMemoryDate(e.target.value === '' ? null: e.target.value)}
-                                    className={`w-full bg-gray-100 px-5 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#96DBF4] ${memoryDate === null ? 'text-gray-400': 'text-black'}`}
+                                    className={`w-full bg-gray-100 px-5 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00BFFF] ${memoryDate === null ? 'text-gray-400': 'text-black'}`}
                                 />
                             </label>
                         }
@@ -89,7 +89,7 @@ export default function PlaceSave({ onClose, placeAlias, setPlaceAlias, notes, s
                                 <CustomToggleSwitch checked={editRestrict} onChange={handleEditRestrict} toggleText={'나만 수정'} />
                             }
                         </div>
-                        <button className="bg-[#96DBF4] w-[50%] mx-auto mt-5 py-2 rounded-full text-white " onClick={handleSavePlace}>저장</button>
+                        <button className="bg-[#00BFFF] w-[50%] mx-auto mt-5 py-2 rounded-full text-white " onClick={handleSavePlace}>저장</button>
 
                     </div>
                 </div>

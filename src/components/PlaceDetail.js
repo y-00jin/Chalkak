@@ -237,7 +237,7 @@ export default function PlaceDetail({ onClose, placeSeqNo }) {
                         </div>
 
                         <div className='gap-1 flex flex-col border-b border-gray-200 pb-5'>
-                            <p className='text-[#96DBF4] text-2xl mb-2 flex items-center gap-2'>
+                            <p className='text-[#00BFFF] text-2xl mb-2 flex items-center gap-2'>
                                 {placeData.place_alias}
                                 <button className='size-5 cursor-pointer hover:text-cyan-800' onClick={() => openDetailPlaceUrl(placeData.place_url)}>
                                     <IoInformationCircleOutline className='size-5' />
@@ -274,7 +274,7 @@ export default function PlaceDetail({ onClose, placeSeqNo }) {
 
                                             <div className='px-5 '>
                                                 <div id={`content_${data.place_detail_seq_no}`} dangerouslySetInnerHTML={{ __html: data.place_detail_content.replace(/\n/g, '<br />') }} />
-                                                <textarea style={{ display: 'none' }} id={`content_ta_${data.place_detail_seq_no}`} className='bg-gray-200 rounded-2xl w-full min-h-[4.5rem]  resize-none overflow-hidden focus:outline-none focus:ring-2 focus:ring-[#96DBF4] p-2 ' value={modifyPd} onChange={(e) => setModifyPd(e.target.value)} />
+                                                <textarea style={{ display: 'none' }} id={`content_ta_${data.place_detail_seq_no}`} className='bg-gray-200 rounded-2xl w-full min-h-[4.5rem]  resize-none overflow-hidden focus:outline-none focus:ring-2 focus:ring-[#00BFFF] p-2 ' value={modifyPd} onChange={(e) => setModifyPd(e.target.value)} />
                                             </div>
 
 
@@ -284,11 +284,11 @@ export default function PlaceDetail({ onClose, placeSeqNo }) {
                                                 {data.editCheck &&
                                                     <div className='flex gap-2'>
 
-                                                        <button id={`save_${data.place_detail_seq_no}`} style={{ display: 'none' }} className='cursor-pointer hover:text-[#96DBF4] hover:border-[#96DBF4] shadow-sm border-[1px] rounded-full w-12 text-sm' onClick={() => handleSave(data.place_detail_seq_no)}>저장</button>
-                                                        <button id={`cancel_${data.place_detail_seq_no}`} style={{ display: 'none' }} className='cursor-pointer hover:text-[#96DBF4] hover:border-[#96DBF4] shadow-sm border-[1px] rounded-full w-12 text-sm' onClick={() => handleCancel(data.place_detail_seq_no)}>취소</button>
+                                                        <button id={`save_${data.place_detail_seq_no}`} style={{ display: 'none' }} className='cursor-pointer hover:text-[#00BFFF] hover:border-[#00BFFF] shadow-sm border-[1px] rounded-full w-12 text-sm' onClick={() => handleSave(data.place_detail_seq_no)}>저장</button>
+                                                        <button id={`cancel_${data.place_detail_seq_no}`} style={{ display: 'none' }} className='cursor-pointer hover:text-[#00BFFF] hover:border-[#00BFFF] shadow-sm border-[1px] rounded-full w-12 text-sm' onClick={() => handleCancel(data.place_detail_seq_no)}>취소</button>
 
-                                                        <button id={`modify_${data.place_detail_seq_no}`} className='cursor-pointer hover:text-[#96DBF4] hover:border-[#96DBF4] shadow-sm border-[1px] rounded-full w-12 text-sm' onClick={() => handleModify(data.place_detail_seq_no, data.place_detail_content)}>수정</button>
-                                                        <button id={`delete_${data.place_detail_seq_no}`} className='cursor-pointer hover:text-[#96DBF4] hover:border-[#96DBF4] shadow-sm border-[1px] rounded-full w-12 text-sm' onClick={() => handleDelete(data.place_detail_seq_no)} >삭제</button>
+                                                        <button id={`modify_${data.place_detail_seq_no}`} className='cursor-pointer hover:text-[#00BFFF] hover:border-[#00BFFF] shadow-sm border-[1px] rounded-full w-12 text-sm' onClick={() => handleModify(data.place_detail_seq_no, data.place_detail_content)}>수정</button>
+                                                        <button id={`delete_${data.place_detail_seq_no}`} className='cursor-pointer hover:text-[#00BFFF] hover:border-[#00BFFF] shadow-sm border-[1px] rounded-full w-12 text-sm' onClick={() => handleDelete(data.place_detail_seq_no)} >삭제</button>
                                                     </div>
                                                 }
 
@@ -306,9 +306,9 @@ export default function PlaceDetail({ onClose, placeSeqNo }) {
 
                             {/* 입력창 */}
                             <div className='gap-2 flex items-center p-1 ' >
-                                <textarea className='bg-gray-200 rounded-2xl w-full min-h-[4.5rem]  resize-none overflow-hidden focus:outline-none focus:ring-2 focus:ring-[#96DBF4] p-2 ' value={writePd} onChange={(e) => setWritePd(e.target.value)} />
+                                <textarea className='bg-gray-200 rounded-2xl w-full min-h-[4.5rem]  resize-none overflow-hidden focus:outline-none focus:ring-2 focus:ring-[#00BFFF] p-2 ' value={writePd} onChange={(e) => setWritePd(e.target.value)} />
 
-                                <button className="bg-[#96DBF4] rounded-full w-20 h-16 text-white text-center " onClick={() => handleWritePd()}>저장</button>
+                                <button className="bg-[#00BFFF] rounded-full w-20 h-16 text-white text-center " onClick={() => handleWritePd()}>저장</button>
                             </div>
                         </div>
                     </div>

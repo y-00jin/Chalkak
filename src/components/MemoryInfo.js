@@ -149,7 +149,7 @@ export default function MemoryInfo({ closeEvent }) {
                             {memoryNmEdit ? ( // 수정 모드인 경우
                                 <input
                                     type="text"
-                                    className='bg-gray-100 rounded-lg px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-[#96DBF4] focus:ring-opacity-50'
+                                    className='bg-gray-100 rounded-lg px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-[#00BFFF] focus:ring-opacity-50'
                                     value={editedMemoryNm}
                                     onChange={(e) => setEditedMemoryNm(e.target.value)}
                                 />
