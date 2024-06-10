@@ -15,7 +15,7 @@ export default function MemoryLogin() {
     const handleLoginTest1 = async () => {
         const reqData = {
             userInfo: {
-                user_seq_no: 2,
+                user_seq_no: 1,
                 email: 'test1@test.com',
                 user_nm: '테스트1',
                 social_type: 'naver',
@@ -42,7 +42,7 @@ export default function MemoryLogin() {
     const handleLoginTest2 = async () => {
         const reqData = {
             userInfo: {
-                user_seq_no: 3,
+                user_seq_no: 2,
                 email: 'test2@test.com',
                 user_nm: '테스트2',
                 social_type: 'google',
