@@ -102,6 +102,16 @@ async function createSequences() {
     NO MAXVALUE
     CACHE 1;
 `);
+
+  // sq_place_detail 시퀀스 생성
+  await pool.query(`
+  CREATE SEQUENCE IF NOT EXISTS sq_place_detail
+  START 1
+  INCREMENT 1
+  NO MINVALUE
+  NO MAXVALUE
+  CACHE 1;
+`);
 }
 
 // 테이블 생성
@@ -200,6 +210,22 @@ async function createTables() {
       );
     `);
 
+    // place
+    await pool.query(`
+          CREATE TABLE IF NOT EXISTS public.place_detail (
+	place_detail_seq_no int4 NOT NULL,
+	place_seq_no int4 NOT NULL,
+	user_seq_no int4 NOT NULL,
+	place_detail_content text NOT NULL,
+	create_dt timestamp NOT NULL,
+	CONSTRAINT place_detail_pk PRIMARY KEY (place_detail_seq_no),
+	CONSTRAINT place_detail_place_fk FOREIGN KEY (place_seq_no) REFERENCES public.place(place_seq_no),
+	CONSTRAINT place_detail_users_fk FOREIGN KEY (user_seq_no) REFERENCES public.users(user_seq_no)
+);
+        `);
+
+
+
     console.log('테이블 생성 완료');
   } catch (error) {
     console.error('테이블 생성 실패:', error);
@@ -293,7 +319,7 @@ async function insertData() {
       [ccq.common_code, ccq.group_code, ccq.common_code_nm, ccq.common_code_dc]
     );
   }
-  
+
 }
 
 (async () => {
