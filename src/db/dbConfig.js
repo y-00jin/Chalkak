@@ -226,6 +226,20 @@ async function createTables() {
 
 
 
+    // place_detail
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS public.place_detail (
+        place_detail_seq_no int4 NOT NULL,
+        place_seq_no int4 NOT NULL,
+        user_seq_no int4 NOT NULL,
+        place_detail_content text NOT NULL,
+        create_dt timestamp NOT NULL,
+        CONSTRAINT place_detail_pk PRIMARY KEY (place_detail_seq_no),
+        CONSTRAINT place_detail_place_fk FOREIGN KEY (place_seq_no) REFERENCES public.place(place_seq_no),
+        CONSTRAINT place_detail_users_fk FOREIGN KEY (user_seq_no) REFERENCES public.users(user_seq_no)
+      );
+    `);
+
     console.log('테이블 생성 완료');
   } catch (error) {
     console.error('테이블 생성 실패:', error);
