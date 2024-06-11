@@ -742,6 +742,7 @@ const deletePlace = async (conditions) => {
       return false;
     }
   } catch (error) {
+    console.log(error);
     return false;
   }
 };
